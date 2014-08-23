@@ -176,6 +176,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		switch (actualGameView)
 		{
+
 			case MAP:
 				nextGameView = GameView.DOCKS;
 				break;

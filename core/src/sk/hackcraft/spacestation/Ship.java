@@ -15,7 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 public class Ship extends Actor
 {
 	private Sprite sprite;
-	
+
 	private Vector2 dockingPortPosition;
 	
 	public Ship(Sprite sprite, Vector2 dockingPortPosition)
@@ -35,18 +35,18 @@ public class Ship extends Actor
 	{
 		addAction(Actions.moveTo(targetPosition.x, targetPosition.y, duration, Interpolation.exp5Out));
 	}
-	
+
 	public void depart(Vector2 targetPosition, float duration)
 	{
 		addAction(Actions.moveTo(targetPosition.x, targetPosition.y, duration, Interpolation.exp5In));
 	}
-	
+
 	@Override
 	public void act(float delta)
 	{
 		super.act(delta);
 	}
-	
+
 	@Override
 	public void draw(Batch batch, float parentAlpha)
 	{

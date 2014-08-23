@@ -32,11 +32,14 @@ public class Dock extends Actor
 	
 	public Vector2 calculateShipDockingPosition(Ship ship)
 	{
-		/*Vector2 shipDockingAdapterPosition = ship.getDockingAdapterPosition();
+		Vector2 shipDockingAdapterPosition = ship.getDockingAdapterPosition();
 		Vector2 dockDockingAdapterPosition = getDockingAdapterPosition();
 		
-		return dockDockingAdapterPosition.add(shipDockingAdapterPosition);*/
-		return new Vector2(getX(), getY());
+		Vector2 position = new Vector2(getX(), getY())
+		.add(dockDockingAdapterPosition)
+		.sub(shipDockingAdapterPosition);
+		
+		return position;
 	}
 	
 	public void undockShip()

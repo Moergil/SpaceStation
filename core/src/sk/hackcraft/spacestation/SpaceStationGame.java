@@ -71,11 +71,20 @@ public class SpaceStationGame extends ApplicationAdapter
 					{
 						if (dock.hasDockedShip())
 						{
-							Ship ship = dock.getDockedShip();
+							final Ship ship = dock.getDockedShip();
 							
 							dock.undockShip();
 							
-							ship.arrive(new Vector2(450, dock.getCenterY()), 5);
+							ship.depart(new Vector2(450, dock.getY()), 5);
+							
+							timer.scheduleTask(new Timer.Task()
+							{
+								@Override
+								public void run()
+								{
+									ship.remove();
+								}
+							}, 5);
 						}
 					}
 	
@@ -109,14 +118,14 @@ public class SpaceStationGame extends ApplicationAdapter
 			@Override
 			public void run()
 			{
-				Ship ship = shipsGenerator.generate();
+				final Ship ship = shipsGenerator.generate();
 				ship.setPosition(450, 0);
 				
 				stage.addActor(ship);
 				
 				System.out.println("ship generated");
 				
-				Dock dock = docks.get(random.nextInt(docks.size()));
+				final Dock dock = docks.get(random.nextInt(docks.size()));
 				
 				if (dock.hasDockedShip())
 				{
@@ -124,14 +133,19 @@ public class SpaceStationGame extends ApplicationAdapter
 					return;
 				}
 				
-				ship.setCenterPosition(450, dock.getCenterY());
+				ship.setCenterPosition(450, dock.getY());
 				
 				Vector2 position = dock.calculateShipDockingPosition(ship);
 				ship.arrive(position, 5);
 				
-				DockAction action = new DockAction();
-				action.set(ship, dock, 6);
-				stage.addAction(action);
+				timer.scheduleTask(new Timer.Task()
+				{
+					@Override
+					public void run()
+					{
+						dock.dockShip(ship);
+					}
+				}, 6);
 			}
 		}, 0, 5);
 	}

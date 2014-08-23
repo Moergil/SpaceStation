@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -37,10 +38,12 @@ public class SpaceStationGame extends ApplicationAdapter
 	private Stage stage;
 	private GameView actualGameView;
 
-	private ShipsGenerator shipsGenerator;
+	private ShipsCreator shipsGenerator;
 	private Timer timer;
 
 	private List<Dock> docks = new ArrayList<Dock>();
+	
+	
 
 	@Override
 	public void create()
@@ -110,7 +113,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		}
 		
 		// ships generation
-		shipsGenerator = new ShipsGenerator();
+		shipsGenerator = new ShipsCreator();
 		
 		timer = new Timer();
 		timer.scheduleTask(new Timer.Task()
@@ -118,7 +121,7 @@ public class SpaceStationGame extends ApplicationAdapter
 			@Override
 			public void run()
 			{
-				final Ship ship = shipsGenerator.generate();
+				final Ship ship = shipsGenerator.createGeneric();
 				ship.setPosition(450, 0);
 				
 				stage.addActor(ship);

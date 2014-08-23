@@ -2,15 +2,16 @@ package sk.hackcraft.spacestation;
 
 public class CargoContainer
 {
-	private int type, amount, capacity;
+	private int amount, capacity;
+	private CargoType type;
 	
-	public CargoContainer(int type, int capacity)
+	public CargoContainer(CargoType type, int capacity)
 	{
 		this.type = type;
 		this.capacity = capacity;
 	}
 	
-	public int getCargoType()
+	public CargoType getCargoType()
 	{
 		return type;
 	}

@@ -15,21 +15,33 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 
-public class Ship extends Actor
+public class Ship extends Actor implements Selectable
 {
+	public enum State
+	{
+		DOCKING,
+		UNDOCKING,
+		IDLE;
+	}
+	
 	private Sprite sprite;
 
 	private Vector2 dockingPortPosition;
 	
 	private CargoContainer cargoContainer;
 	
-	public Ship(Sprite sprite, Vector2 dockingPortPosition, CargoContainer cargoContainer)
+	private boolean selected;
+	private SelectionBound selectionBound;
+	
+	public Ship(Sprite sprite, Vector2 size, Vector2 dockingPortPosition, CargoContainer cargoContainer, SelectionBound selectionBound)
 	{
 		this.sprite = sprite;
 		
-		setSize(50, 20);
+		setSize(size.x, size.y);
 		this.dockingPortPosition = dockingPortPosition;
 		this.cargoContainer = cargoContainer;
+		
+		this.selectionBound = selectionBound;
 	}
 	
 	public Vector2 getDockingAdapterPosition()
@@ -63,6 +75,11 @@ public class Ship extends Actor
 	{
 		sprite.setCenter(getCenterX(), getCenterY());
 		sprite.draw(batch);
+		
+		if (selected || true)
+		{
+			selectionBound.draw(this, batch);
+		}
 	}
 	
 	@Override
@@ -73,5 +90,11 @@ public class Ship extends Actor
 		
 		shapes.setColor(Color.GREEN);
 		shapes.rect(getX(), getY(), getWidth(), getHeight());
+	}
+	
+	@Override
+	public void setSelected(boolean selected)
+	{
+		this.selected = selected;
 	}
 }

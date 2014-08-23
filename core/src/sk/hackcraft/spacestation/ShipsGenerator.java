@@ -11,6 +11,6 @@ public class ShipsGenerator
 	{
 		Texture texture = new Texture(Gdx.files.internal("sprite/dummyship.png"));
 		Sprite sprite = new Sprite(texture);
-		return new Ship(sprite, new Vector2(10, 10));
+		return new Ship(sprite, new Vector2(10, 10), new CargoContainer(0, 20));
 	}
 }

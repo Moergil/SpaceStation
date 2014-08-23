@@ -1,5 +1,8 @@
 package sk.hackcraft.spacestation;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.swing.plaf.basic.BasicToolBarUI.DockingListener;
 
 import com.badlogic.gdx.graphics.Color;
@@ -18,12 +21,15 @@ public class Ship extends Actor
 
 	private Vector2 dockingPortPosition;
 	
-	public Ship(Sprite sprite, Vector2 dockingPortPosition)
+	private CargoContainer cargoContainer;
+	
+	public Ship(Sprite sprite, Vector2 dockingPortPosition, CargoContainer cargoContainer)
 	{
 		this.sprite = sprite;
 		
 		setSize(50, 20);
 		this.dockingPortPosition = dockingPortPosition;
+		this.cargoContainer = cargoContainer;
 	}
 	
 	public Vector2 getDockingAdapterPosition()
@@ -39,6 +45,11 @@ public class Ship extends Actor
 	public void depart(Vector2 targetPosition, float duration)
 	{
 		addAction(Actions.moveTo(targetPosition.x, targetPosition.y, duration, Interpolation.exp5In));
+	}
+	
+	public CargoContainer getCargoContainer()
+	{
+		return cargoContainer;
 	}
 
 	@Override

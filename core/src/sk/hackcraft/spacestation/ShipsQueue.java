@@ -11,20 +11,19 @@ public class ShipsQueue extends Actor
 	{
 
 	}
-	
+
 	@Override
 	public void draw(Batch batch, float parentAlpha)
 	{
 		// TODO Auto-generated method stub
 		super.draw(batch, parentAlpha);
 	}
-	
+
 	@Override
 	public void act(float delta)
 	{
 		// TODO Auto-generated method stub
 		super.act(delta);
 	}
-	
-	
+
 }

@@ -45,7 +45,7 @@ public class SpaceStationGame extends ApplicationAdapter
 	public void create()
 	{
 		
-		Intro intro = new Intro();
+		final Intro intro = new Intro();
 		intro.setPosition(0, 0);
 		
 		mp3Intro = Gdx.audio.newMusic(Gdx.files.internal("sounds/intro.mp3"));
@@ -61,21 +61,33 @@ public class SpaceStationGame extends ApplicationAdapter
 			@Override
 			public void run()
 			{
-				System.out.println("tick");
-//				timer.stop();
-				mp3Intro.stop();
-				createGame();
+				if (intro.setNextPage())
+				{
+					System.out.println("tick");
+				}
+				else
+				{
+					mp3Intro.stop();
+					createGame();
+				}
+				timer.scheduleTask(this, 5);
 			}
-		}, 30);
+		}, 5);
 		
 		stage.addListener(new InputListener()
 		{
 			@Override
 			public boolean keyDown(InputEvent event, int keycode)
 			{
-				timer.stop();
-				mp3Intro.stop();
-				createGame();
+				if (intro.setNextPage())
+				{
+					System.out.println("tick");
+				}
+				else
+				{
+					mp3Intro.stop();
+					createGame();
+				}
 				return true;
 			}
 		});

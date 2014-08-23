@@ -3,14 +3,18 @@ package sk.hackcraft.spacestation;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 
 public class Intro extends Actor
@@ -19,13 +23,45 @@ public class Intro extends Actor
 //	private String IntroText =  "SpaceStation";
 	private SpriteBatch batch;
     private BitmapFont font;
+    private int actualNum;
+    final private int pageNum = 2;
+    
+    private Sprite Background;
+    private Sprite[] introPages;
 	
 	public Intro()
 	{
-		
+		actualNum = 0;
 		batch = new SpriteBatch();    
-        font = new BitmapFont();
-        font.setColor(Color.BLUE);
+		introPages = new Sprite[pageNum];
+		
+		for (int i = 0; i < pageNum; i++)
+		{
+			String fileName = "IntroText" + (i+1) + ".png";
+			Texture texture = new Texture(Gdx.files.internal(fileName));
+			
+			TextureRegion region = new TextureRegion(texture, 0, 0, 400, 240);
+			introPages[i] = new Sprite(region);
+		}
+//        font = new BitmapFont();
+//        font.setColor(Color.BLUE);
+		Texture texture = new Texture(Gdx.files.internal("Intro.png"));
+		TextureRegion region = new TextureRegion(texture, 0, 0, 400, 240);
+		Background = new Sprite(region);
+	}
+	
+	public boolean hasNextPage()
+	{
+		return (actualNum < pageNum);
+	}
+	
+	public boolean setNextPage()
+	{
+		actualNum++;
+		if (actualNum < pageNum)
+			return true;
+		else
+			return false;
 		
 	}
 	
@@ -51,8 +87,8 @@ public class Intro extends Actor
 //        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
         //batch.begin();
-		for (int i = 0; i < IntroTextLines.length; i++)
-        font.draw(batch, IntroTextLines[i], 20, 200 - 15*i);
+		Background.draw(batch);
+		introPages[actualNum].draw(batch);
         //batch.end();
     }
 }

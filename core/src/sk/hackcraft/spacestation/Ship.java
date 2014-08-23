@@ -1,10 +1,5 @@
 package sk.hackcraft.spacestation;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.swing.plaf.basic.BasicToolBarUI.DockingListener;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -13,23 +8,54 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 
-public class Ship extends Actor
+public class Ship extends Actor implements Selectable
 {
+	public enum State
+	{
+		DOCKING,
+		UNDOCKING,
+		IDLE;
+	}
+	
 	private Sprite sprite;
 
 	private Vector2 dockingPortPosition;
 	
 	private CargoContainer cargoContainer;
+
+	private DrawSelector drawSelector;
+	private SelectionBound selectionBound;
 	
-	public Ship(Sprite sprite, Vector2 dockingPortPosition, CargoContainer cargoContainer)
+	public Ship(Sprite sprite, Vector2 size, Vector2 dockingPortPosition, CargoContainer cargoContainer, SelectionBound selectionBound)
 	{
 		this.sprite = sprite;
 		
-		setSize(50, 20);
+		setSize(size.x, size.y);
 		this.dockingPortPosition = dockingPortPosition;
 		this.cargoContainer = cargoContainer;
+		
+		this.selectionBound = selectionBound;
+		
+		drawSelector = new DrawSelector()
+		{
+			@Override
+			public void drawUnselected(Batch batch)
+			{
+			}
+			
+			@Override
+			public void drawSelected(Batch batch)
+			{
+				Ship.this.selectionBound.draw(Ship.this, batch);
+			}
+		};
+	}
+	
+	@Override
+	public Selector getSelector()
+	{
+		return drawSelector;
 	}
 	
 	public Vector2 getDockingAdapterPosition()
@@ -63,6 +89,8 @@ public class Ship extends Actor
 	{
 		sprite.setCenter(getCenterX(), getCenterY());
 		sprite.draw(batch);
+		
+		drawSelector.draw(batch);
 	}
 	
 	@Override

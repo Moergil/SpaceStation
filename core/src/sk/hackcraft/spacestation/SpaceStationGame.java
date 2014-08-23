@@ -45,6 +45,28 @@ public class SpaceStationGame extends ApplicationAdapter
 	@Override
 	public void create()
 	{
+		
+		Intro intro = new Intro();
+		intro.setPosition(0, 0);
+		
+		stage.addActor(intro);
+		
+		stage = new Stage(new FitViewport(400, 240));
+		Gdx.input.setInputProcessor(stage);
+		
+		
+		stage.addListener(new InputListener()
+		{
+			@Override
+			public boolean keyDown(InputEvent event, int keycode)
+			{
+				createLater();
+				return true;
+			}
+		});
+	}
+	public void createLater()
+	{
 		random = new Random();
 		
 		// actual view of the player

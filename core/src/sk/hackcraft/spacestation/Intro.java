@@ -5,9 +5,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 
 
-public class Intro
+public class Intro extends Actor
 {
 	private String IntroText =  "Since the number of people start to expands to enormous size, they start to colony new planets. Due to limited resources of these planets an unlimited demands for new gods of its inhabitants a big galaxy war was upon the edge…  \n\n The only hope to save galaxy from destructive war was the global resource space station to delivery all needs to other planets. And they made you as the Captain...";
 	private SpriteBatch batch;
@@ -15,13 +20,11 @@ public class Intro
 	
 	public Intro()
 	{
-	}
-	
-	public void DisplayIntro()
-	{
-		SpriteBatch batch = new SpriteBatch();    
-        BitmapFont font = new BitmapFont();
+		
+		batch = new SpriteBatch();    
+        font = new BitmapFont();
         font.setColor(Color.RED);
+		
 	}
 	
 	public void dispose() 

@@ -58,14 +58,12 @@ nb-configuration.xml
 
 .gradle
 build/
-
-## OS Specific
-.DS_Store
-
-# libGDX
 build.gradle
-gradle.properties
 gradle
 gradlew
 gradlew.bat
 settings.gradle
+gradle.properties
+
+## OS Specific
+.DS_Store

@@ -38,8 +38,10 @@ public class SpaceStationGame extends ApplicationAdapter
 	private ShipsCreator shipsGenerator;
 	private Timer timer;
 
+
 	private List<Dock> docks = new ArrayList<Dock>();
 	private List<Planet> planets = new ArrayList<Planet>();
+
 	
 	private Dock selectedDock;
 	
@@ -50,12 +52,16 @@ public class SpaceStationGame extends ApplicationAdapter
 	private SelectionListener selectionListener = new SelectionListener();
 
 	private Music mp3Intro;
+	
+	private Station station;
 
 	@Override
 	public void create()
 	{
+		random = new Random();
+		timer = new Timer();
+
 		InputMultiplexer inputMultiplexer = new InputMultiplexer();
-		
 		// setting up graphics stages
 		gameStage = new Stage(new FitViewport(400, 240));
 		inputMultiplexer.addProcessor(gameStage);
@@ -65,6 +71,12 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		Gdx.input.setInputProcessor(inputMultiplexer);
 		
+		//runIntro();
+		runGame();
+	}
+	
+	private void runIntro()
+	{
 		// setting up intro
 		final Intro intro = new Intro();
 		intro.setPosition(0, 0);
@@ -72,39 +84,63 @@ public class SpaceStationGame extends ApplicationAdapter
 		mp3Intro = Gdx.audio.newMusic(Gdx.files.internal("sounds/intro.mp3"));
 		mp3Intro.play();
 			
-		gameStage.addActor(intro);
-		
-		timer = new Timer();
+		hudStage.addActor(intro);
+
 		timer.scheduleTask(new Timer.Task()
 		{
 			@Override
 			public void run()
 			{
-				mp3Intro.stop();
-				createGame();
+				cleanupIntro(intro);
 			}
 		}, 30);
 		
-		gameStage.addListener(new InputListener()
+		hudStage.addListener(new InputListener()
 		{
 			@Override
 			public boolean keyDown(InputEvent event, int keycode)
 			{
-				timer.clear();
-				mp3Intro.stop();
-				
-				intro.remove();
-				
-				createGame();
+				cleanupIntro(intro);
+				return true;
+			}
+			
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button)
+			{
+				cleanupIntro(intro);
 				return true;
 			}
 		});
 	}
 	
-	public void createGame()
+	private void cleanupIntro(Intro intro)
 	{
-		random = new Random();
-		timer = new Timer();
+		timer.clear();
+		mp3Intro.stop();
+		
+		intro = null;
+		
+		timer.scheduleTask(new Timer.Task()
+		{
+			@Override
+			public void run()
+			{
+				hudStage.clear();
+				runGame();
+			}
+		}, 0);
+		
+		runGame();
+	}
+	
+	public void runGame()
+	{
+		Texture stationTexture = new Texture(Gdx.files.internal("sprite/station.png"));
+		Sprite stationSprite = new Sprite(stationTexture);
+		station = new Station(stationSprite);
+		
+		station.setPosition(50, 20);
+		gameStage.addActor(station);
 		
 		Texture cornersAtlas = new Texture(Gdx.files.local("sprite/selector_corner.png"));
 		selectionBound = new SelectionBound(cornersAtlas);
@@ -125,7 +161,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				
 				if (keycode == Input.Keys.B)
 				{
-					for (Dock dock : docks)
+					for (Dock dock : station.getDocks())
 					{
 						if (dock.hasDockedShip())
 						{
@@ -163,13 +199,16 @@ public class SpaceStationGame extends ApplicationAdapter
 		setInstantGameView(GameView.DOCKS);
 		
 		// debugging
-		gameStage.setDebugAll(true);
+		//gameStage.setDebugAll(true);
+		
+		float positionY[] = {110, 84, 58, 32};
 		
 		for (int i = 0; i < 4; i++)
 		{
 			Dock dock = new Dock(selectionBound);
-			dock.setPosition(100, 50 + i * 50);
-			docks.add(dock);
+			dock.setPosition(113, positionY[i]);
+			
+			station.addDock(dock);
 			
 			registerSelectionListener(dock);
 			

@@ -23,8 +23,8 @@ public class Ship extends Actor implements Selectable
 	private Vector2 dockingPortPosition;
 	
 	private CargoContainer cargoContainer;
-	
-	private boolean selected;
+
+	private DrawSelector drawSelector;
 	private SelectionBound selectionBound;
 	
 	public Ship(Sprite sprite, Vector2 size, Vector2 dockingPortPosition, CargoContainer cargoContainer, SelectionBound selectionBound)
@@ -36,6 +36,26 @@ public class Ship extends Actor implements Selectable
 		this.cargoContainer = cargoContainer;
 		
 		this.selectionBound = selectionBound;
+		
+		drawSelector = new DrawSelector()
+		{
+			@Override
+			public void drawUnselected(Batch batch)
+			{
+			}
+			
+			@Override
+			public void drawSelected(Batch batch)
+			{
+				Ship.this.selectionBound.draw(Ship.this, batch);
+			}
+		};
+	}
+	
+	@Override
+	public Selector getSelector()
+	{
+		return drawSelector;
 	}
 	
 	public Vector2 getDockingAdapterPosition()
@@ -70,10 +90,7 @@ public class Ship extends Actor implements Selectable
 		sprite.setCenter(getCenterX(), getCenterY());
 		sprite.draw(batch);
 		
-		if (selected)
-		{
-			selectionBound.draw(this, batch);
-		}
+		drawSelector.draw(batch);
 	}
 	
 	@Override
@@ -84,18 +101,5 @@ public class Ship extends Actor implements Selectable
 		
 		shapes.setColor(Color.GREEN);
 		shapes.rect(getX(), getY(), getWidth(), getHeight());
-	}
-	
-	@Override
-	public void setSelected(boolean selected)
-	{
-		this.selected = selected;
-	}
-	
-	@Override
-	public boolean toggleSelected()
-	{
-		selected = !selected;
-		return selected;
 	}
 }

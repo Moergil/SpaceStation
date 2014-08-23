@@ -4,12 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import sk.hackcraft.spacestation.Selectable.Selector;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -21,13 +26,12 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.sun.media.jfxmedia.events.NewFrameEvent;
 
 public class SpaceStationGame extends ApplicationAdapter
 {
 	private Random random;
 	
-	private Stage stage;
+	private Stage gameStage, hudStage;
 	private GameView actualGameView;
 
 	private ShipsCreator shipsGenerator;
@@ -35,25 +39,38 @@ public class SpaceStationGame extends ApplicationAdapter
 
 	private List<Dock> docks = new ArrayList<Dock>();
 	
-	private Selectable selectionFrom, selectionTo;
+	private Dock selectedDock;
 	
 	private SelectionBound selectionBound;
 	
-	Music mp3Intro;
+	private ShipsQueueMenu shipsQueueMenu;
+	
+	private SelectionListener selectionListener = new SelectionListener();
+
+	private Music mp3Intro;
 
 	@Override
 	public void create()
 	{
+		InputMultiplexer inputMultiplexer = new InputMultiplexer();
 		
+		final Intro intro = new Intro();
+		gameStage = new Stage(new FitViewport(400, 240));
+		inputMultiplexer.addProcessor(gameStage);
+		
+		hudStage = new Stage(new FitViewport(400, 240));
+		inputMultiplexer.addProcessor(hudStage);
+		
+		Gdx.input.setInputProcessor(inputMultiplexer);
+		
+		// setting up intro
 		final Intro intro = new Intro();
 		intro.setPosition(0, 0);
 		
 		mp3Intro = Gdx.audio.newMusic(Gdx.files.internal("sounds/intro.mp3"));
 		mp3Intro.play();
 			
-		stage = new Stage(new FitViewport(400, 240));
-		Gdx.input.setInputProcessor(stage);
-		stage.addActor(intro);
+		gameStage.addActor(intro);
 		
 		timer = new Timer();
 		timer.scheduleTask(new Timer.Task()
@@ -74,7 +91,7 @@ public class SpaceStationGame extends ApplicationAdapter
 			}
 		}, 5);
 		
-		stage.addListener(new InputListener()
+		gameStage.addListener(new InputListener()
 		{
 			@Override
 			public boolean keyDown(InputEvent event, int keycode)
@@ -86,17 +103,20 @@ public class SpaceStationGame extends ApplicationAdapter
 				else
 				{
 					mp3Intro.stop();
+				
+				intro.remove();
+				
 					createGame();
 				}
 				return true;
 			}
 		});
-		
-		
 	}
+	
 	public void createGame()
 	{
 		random = new Random();
+		timer = new Timer();
 		
 		Texture cornersAtlas = new Texture(Gdx.files.local("sprite/selector_corner.png"));
 		selectionBound = new SelectionBound(cornersAtlas);
@@ -104,11 +124,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		// actual view of the player
 		actualGameView = GameView.DOCKS;
 
-		// setting up graphics stage
-		stage = new Stage(new FitViewport(400, 240));
-		Gdx.input.setInputProcessor(stage);
-
-		stage.addListener(new InputListener()
+		gameStage.addListener(new InputListener()
 		{
 			@Override
 			public boolean keyDown(InputEvent event, int keycode)
@@ -144,6 +160,13 @@ public class SpaceStationGame extends ApplicationAdapter
 	
 					return true;
 				}
+				
+				if (keycode == Input.Keys.S)
+				{
+					addShip();
+
+					return true;
+				}
 		
 				return false;
 			}
@@ -152,7 +175,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		setInstantGameView(GameView.DOCKS);
 		
 		// debugging
-		stage.setDebugAll(true);
+		gameStage.setDebugAll(true);
 		
 		for (int i = 0; i < 4; i++)
 		{
@@ -162,61 +185,60 @@ public class SpaceStationGame extends ApplicationAdapter
 			
 			registerSelectionListener(dock);
 			
-			stage.addActor(dock);
+			gameStage.addActor(dock);
 		}
 		
 		// ships generation		
 		shipsGenerator = new ShipsCreator(selectionBound);
 		
-		timer = new Timer();
-		timer.scheduleTask(new Timer.Task()
+		shipsQueueMenu = new ShipsQueueMenu()
 		{
 			@Override
-			public void run()
+			public void initiateDocking(Ship ship, Dock dock)
 			{
-				final Ship ship = shipsGenerator.createGeneric();
-				ship.setPosition(450, 0);
+				ship.remove();
 				
-				registerSelectionListener(ship);
+				gameStage.addActor(ship);
+				ship.setPosition(450, dock.getY());
 				
-				stage.addActor(ship);
-				
-				System.out.println("ship generated");
-				
-				final Dock dock = docks.get(random.nextInt(docks.size()));
-				
-				if (dock.hasDockedShip())
-				{
-					ship.remove();
-					return;
-				}
-				
-				ship.setCenterPosition(450, dock.getY());
-				
-				Vector2 position = dock.calculateShipDockingPosition(ship);
-				ship.arrive(position, 5);
-				
-				timer.scheduleTask(new Timer.Task()
-				{
-					@Override
-					public void run()
-					{
-						dock.dockShip(ship);
-					}
-				}, 6);
+				flyShipToDock(ship, dock);
 			}
-		}, 0, 5);
+		};
+
+		hudStage.addActor(shipsQueueMenu);
+		
+		{
+			float x = hudStage.getWidth() - shipsQueueMenu.getWidth();
+			shipsQueueMenu.setPosition(x, 0);
+			
+			shipsQueueMenu.matchHeightToStage();
+		}
+		
+		addShip();
+		addShip();
+		addShip();
 	}
 	
 	private void registerSelectionListener(final Actor actor)
 	{
-		actor.addListener(new SelectionListener(actor));
+		actor.addListener(selectionListener);
 	}
 
+	private void addShip()
+	{
+		final Ship ship = shipsGenerator.createGeneric();
+
+		hudStage.addActor(ship);
+		shipsQueueMenu.queueShip(ship);
+		
+		registerSelectionListener(ship);
+	}
+	
 	@Override
 	public void resize(int width, int height)
 	{
-		stage.getViewport().update(width, height, true);
+		gameStage.getViewport().update(width, height, true);
+		hudStage.getViewport().update(width, height, true);
 	}
 
 	@Override
@@ -224,9 +246,11 @@ public class SpaceStationGame extends ApplicationAdapter
 	{
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		stage.act(Gdx.graphics.getDeltaTime());
+		gameStage.act(Gdx.graphics.getDeltaTime());
+		hudStage.act(Gdx.graphics.getDeltaTime());
 		
-		stage.draw();
+		gameStage.draw();
+		hudStage.draw();
 	}
 
 	private enum GameView
@@ -273,7 +297,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		float duration = 0.3f;
 		System.out.println(gameView.getOffset());
 		MoveToAction action = Actions.moveTo(gameView.getOffset(), y, duration, Interpolation.exp5);
-		stage.addAction(action);
+		gameStage.addAction(action);
 		actualGameView = gameView;
 	}
 	
@@ -282,82 +306,85 @@ public class SpaceStationGame extends ApplicationAdapter
 		float y = 0;
 		float duration = 0.0f;
 		MoveToAction action = Actions.moveTo(gameView.getOffset(), y, duration);
-		stage.addAction(action);
+		gameStage.addAction(action);
 		actualGameView = gameView;
 	}
 	
-	private void flyShipToDock(Ship ship, Dock dock)
+	private void flyShipToDock(final Ship ship, final Dock dock)
 	{
-		Vector2 dockingPosition = dock.getDockingAdapterPosition();
+		Vector2 dockingPosition = dock.calculateShipDockingPosition(ship);
+	
+		float flyDuration = 5;
+		ship.arrive(dockingPosition, flyDuration);
 		
-		Action flyToDockAction = Actions.moveTo(dockingPosition.x, dockingPosition.y, 5, Interpolation.exp10);
-		ship.addAction(flyToDockAction);
+		timer.scheduleTask(new Timer.Task()
+		{
+			@Override
+			public void run()
+			{
+				dock.dockShip(ship);
+			}
+		}, 6);
 	}
 	
-	private void releaseShipFromDock(Dock dock)
+	private void releaseShipFromDock(final Dock dock)
 	{
-		Vector2 dockingPosition = dock.getDockingAdapterPosition();
-		
-		Action flyToDockAction = Actions.moveTo(dockingPosition.x + 300, dockingPosition.y, 5, Interpolation.exp10);
-		
-		Ship ship = dock.getDockedShip();
-		ship.addAction(flyToDockAction);
+		timer.scheduleTask(new Timer.Task()
+		{
+			@Override
+			public void run()
+			{
+				Ship ship = dock.getDockedShip();
+				dock.undockShip();
+				
+				Vector2 targetPosition = new Vector2(450, ship.getY());
+				ship.depart(targetPosition, 5);
+			}
+		}, 1);
 	}
 	
 	private class SelectionListener extends InputListener
 	{
-		private final Actor actor;
-		
-		public SelectionListener(Actor actor)
-		{
-			this.actor = actor;
-		}
-		
 		@Override
 		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button)
 		{
-			if (actor instanceof Selectable)
+			Actor target = event.getTarget();
+			
+			if (target instanceof Dock)
 			{
-				Selectable selectable = (Selectable)actor;
+				Dock dock = (Dock)target;
 				
-				boolean selected = selectable.toggleSelected();
+				if (selectedDock != null)
+				{
+					selectedDock.getSelector().setSelected(false);
+				}
 				
-				if (selected)
-				{
-					if (selectionFrom == null)
-					{
-						selectionFrom = selectable;
-					}
-					else
-					{
-						if (selectionTo != null)
-						{
-							selectionTo.setSelected(false);
-						}
-						
-						selectionTo = selectable;
-					}
-				}
-				else
-				{
-					if (selectable == selectionFrom)
-					{
-						selectionFrom = null;
-						
-						if (selectionTo != null)
-						{
-							selectionTo.setSelected(false);
-							selectionTo = null;
-						}
-					}
-				}
+				selectedDock = dock;
+				selectedDock.getSelector().setSelected(true);
 				
 				return true;
 			}
 			else
 			{
-				return false;
+				if (selectedDock == null)
+				{
+					return false;
+				}
+				
+				if (target instanceof Ship)
+				{
+					Ship ship = (Ship)target;
+					
+					if (shipsQueueMenu.contains(ship))
+					{
+						shipsQueueMenu.orderShipToDock(ship, selectedDock);
+						selectedDock.getSelector().setSelected(false);
+						selectedDock = null;
+					}
+				}
 			}
+			
+			return false;
 		}
 	};
 }

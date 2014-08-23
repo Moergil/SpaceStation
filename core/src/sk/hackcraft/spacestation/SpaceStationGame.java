@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import sk.hackcraft.spacestation.Selectable.Selector;
+import sk.hackcraft.spacestation.Planet;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -36,6 +37,11 @@ public class SpaceStationGame extends ApplicationAdapter
 
 	private ShipsCreator shipsGenerator;
 	private Timer timer;
+
+
+	private List<Dock> docks = new ArrayList<Dock>();
+	private List<Planet> planets = new ArrayList<Planet>();
+
 	
 	private Dock selectedDock;
 	
@@ -211,6 +217,13 @@ public class SpaceStationGame extends ApplicationAdapter
 			
 			gameStage.addActor(dock);
 		}
+		
+		//generating planets
+		planets.add(new Planet(GoodsType.FOOD));
+		planets.add(new Planet(GoodsType.ORE));
+		planets.add(new Planet(GoodsType.MEDICINE));
+		planets.add(new Planet(GoodsType.MATERIAL));
+		planets.add(new Planet(GoodsType.ELECTRONICS));
 		
 		// ships generation		
 		shipsGenerator = new ShipsCreator(selectionBound);

@@ -7,40 +7,36 @@ import java.util.Random;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.FloatAction;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
-import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.sun.media.jfxmedia.events.NewFrameEvent;
 
 public class SpaceStationGame extends ApplicationAdapter
 {
-
 	private Random random;
 	
 	private Stage stage;
 	private GameView actualGameView;
 
-	private ShipsGenerator shipsGenerator;
+	private ShipsCreator shipsGenerator;
 	private Timer timer;
 
 	private List<Dock> docks = new ArrayList<Dock>();
+	
+	private Selectable selectionFrom, selectionTo;
+	
+	private SelectionBound selectionBound;
 
 	@Override
 	public void create()
@@ -81,6 +77,9 @@ public class SpaceStationGame extends ApplicationAdapter
 	public void createGame()
 	{
 		random = new Random();
+		
+		Texture cornersAtlas = new Texture(Gdx.files.local("sprite/selector_corner.png"));
+		selectionBound = new SelectionBound(cornersAtlas);
 		
 		// actual view of the player
 		actualGameView = GameView.DOCKS;
@@ -137,15 +136,17 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		for (int i = 0; i < 4; i++)
 		{
-			Dock dock = new Dock();
+			Dock dock = new Dock(selectionBound);
 			dock.setPosition(100, 50 + i * 50);
 			docks.add(dock);
+			
+			registerSelectionListener(dock);
 			
 			stage.addActor(dock);
 		}
 		
-		// ships generation
-		shipsGenerator = new ShipsGenerator();
+		// ships generation		
+		shipsGenerator = new ShipsCreator(selectionBound);
 		
 		timer = new Timer();
 		timer.scheduleTask(new Timer.Task()
@@ -153,8 +154,10 @@ public class SpaceStationGame extends ApplicationAdapter
 			@Override
 			public void run()
 			{
-				final Ship ship = shipsGenerator.generate();
+				final Ship ship = shipsGenerator.createGeneric();
 				ship.setPosition(450, 0);
+				
+				registerSelectionListener(ship);
 				
 				stage.addActor(ship);
 				
@@ -183,6 +186,11 @@ public class SpaceStationGame extends ApplicationAdapter
 				}, 6);
 			}
 		}, 0, 5);
+	}
+	
+	private void registerSelectionListener(final Actor actor)
+	{
+		actor.addListener(new SelectionListener(actor));
 	}
 
 	@Override
@@ -275,4 +283,61 @@ public class SpaceStationGame extends ApplicationAdapter
 		Ship ship = dock.getDockedShip();
 		ship.addAction(flyToDockAction);
 	}
+	
+	private class SelectionListener extends InputListener
+	{
+		private final Actor actor;
+		
+		public SelectionListener(Actor actor)
+		{
+			this.actor = actor;
+		}
+		
+		@Override
+		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button)
+		{
+			if (actor instanceof Selectable)
+			{
+				Selectable selectable = (Selectable)actor;
+				
+				boolean selected = selectable.toggleSelected();
+				
+				if (selected)
+				{
+					if (selectionFrom == null)
+					{
+						selectionFrom = selectable;
+					}
+					else
+					{
+						if (selectionTo != null)
+						{
+							selectionTo.setSelected(false);
+						}
+						
+						selectionTo = selectable;
+					}
+				}
+				else
+				{
+					if (selectable == selectionFrom)
+					{
+						selectionFrom = null;
+						
+						if (selectionTo != null)
+						{
+							selectionTo.setSelected(false);
+							selectionTo = null;
+						}
+					}
+				}
+				
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	};
 }

@@ -2,8 +2,6 @@ package sk.hackcraft.spacestation;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 
 public class ShipsQueueMenu extends Actor
 {

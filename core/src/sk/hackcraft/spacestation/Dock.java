@@ -1,17 +1,23 @@
 package sk.hackcraft.spacestation;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-public class Dock extends Actor
+public class Dock extends Actor implements Selectable
 {
 	private Ship dockedShip;
 	private Vector2 dockingAdapterPosition;
 	
-	public Dock()
+	private boolean selected;
+	private SelectionBound selectionBound;
+	
+	public Dock(SelectionBound selectionBound)
 	{
+		this.selectionBound = selectionBound;
+		
 		setSize(75, 30);
 		
 		dockingAdapterPosition = new Vector2(15, 15);
@@ -66,5 +72,27 @@ public class Dock extends Actor
 		float dockX = getX() + dockingAdapterPosition.x;
 		float dockY = getY() + dockingAdapterPosition.y;
 		shapes.circle(dockX, dockY, 5);
+	}
+	
+	@Override
+	public void draw(Batch batch, float parentAlpha)
+	{
+		if (selected)
+		{
+			selectionBound.draw(this, batch);
+		}
+	}
+
+	@Override
+	public void setSelected(boolean selected)
+	{
+		this.selected = selected;
+	}
+
+	@Override
+	public boolean toggleSelected()
+	{
+		selected = !selected;
+		return selected;
 	}
 }

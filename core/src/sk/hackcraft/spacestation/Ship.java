@@ -22,7 +22,7 @@ public class Ship extends Actor
 	{
 		this.sprite = sprite;
 		
-		setSize(sprite.getWidth(), sprite.getHeight());
+		setSize(50, 20);
 		this.dockingPortPosition = dockingPortPosition;
 	}
 	
@@ -58,7 +58,7 @@ public class Ship extends Actor
 	public void drawDebug(ShapeRenderer shapes)
 	{
 		shapes.setColor(Color.ORANGE);
-		shapes.circle(getCenterX() + dockingPortPosition.x, getCenterY() + dockingPortPosition.y, 5);
+		shapes.circle(getX() + dockingPortPosition.x, getY() + dockingPortPosition.y, 5);
 		
 		shapes.setColor(Color.GREEN);
 		shapes.rect(getX(), getY(), getWidth(), getHeight());

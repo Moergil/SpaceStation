@@ -5,9 +5,9 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 
-public class ShipsQueue extends Actor
+public class ShipsQueueMenu extends Actor
 {
-	public ShipsQueue()
+	public ShipsQueueMenu()
 	{
 
 	}
@@ -26,5 +26,13 @@ public class ShipsQueue extends Actor
 		super.act(delta);
 	}
 	
+	public void queueShip(Ship ship)
+	{
+		
+	}
 	
+	public void orderShipToDock(Ship ship, Dock dock)
+	{
+		
+	}
 }

@@ -126,7 +126,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				
 				ship.setCenterPosition(450, dock.getCenterY());
 				
-				Vector2 position = dock.getDockingPosition().add(ship.getDockingAdapterPosition());
+				Vector2 position = dock.calculateShipDockingPosition(ship);
 				ship.arrive(position, 5);
 				
 				DockAction action = new DockAction();
@@ -210,7 +210,7 @@ public class SpaceStationGame extends ApplicationAdapter
 	
 	private void flyShipToDock(Ship ship, Dock dock)
 	{
-		Vector2 dockingPosition = dock.getDockingPosition();
+		Vector2 dockingPosition = dock.getDockingAdapterPosition();
 		
 		Action flyToDockAction = Actions.moveTo(dockingPosition.x, dockingPosition.y, 5, Interpolation.exp10);
 		ship.addAction(flyToDockAction);
@@ -218,7 +218,7 @@ public class SpaceStationGame extends ApplicationAdapter
 	
 	private void releaseShipFromDock(Dock dock)
 	{
-		Vector2 dockingPosition = dock.getDockingPosition();
+		Vector2 dockingPosition = dock.getDockingAdapterPosition();
 		
 		Action flyToDockAction = Actions.moveTo(dockingPosition.x + 300, dockingPosition.y, 5, Interpolation.exp10);
 		

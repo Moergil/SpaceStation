@@ -8,29 +8,35 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 public class Dock extends Actor
 {
 	private Ship dockedShip;
-	private float dockingRelX, dockingRelY;
+	private Vector2 dockingAdapterPosition;
 	
 	public Dock()
 	{
 		setSize(75, 30);
-		dockingRelX = 30;
+		
+		dockingAdapterPosition = new Vector2(15, 15);
 	}
 	
-	public Vector2 getDockingPosition()
+	public Vector2 getDockingAdapterPosition()
 	{
-		return new Vector2(getCenterX() + dockingRelX, getCenterY() + dockingRelY);
+		return dockingAdapterPosition;
 	}
 	
 	public void dockShip(Ship ship)
 	{
-		Vector2 shipDockingRelPos = ship.getDockingAdapterPosition();
-		
-		float newCX, newCY;
-		newCX = ship.getCenterX() + shipDockingRelPos.x;
-		newCY = ship.getCenterY() + shipDockingRelPos.y;
-		ship.setCenterPosition(newCX, newCY);
+		Vector2 shipPosition = calculateShipDockingPosition(ship);
+		ship.setPosition(shipPosition.x, shipPosition.y);
 		
 		dockedShip = ship;
+	}
+	
+	public Vector2 calculateShipDockingPosition(Ship ship)
+	{
+		/*Vector2 shipDockingAdapterPosition = ship.getDockingAdapterPosition();
+		Vector2 dockDockingAdapterPosition = getDockingAdapterPosition();
+		
+		return dockDockingAdapterPosition.add(shipDockingAdapterPosition);*/
+		return new Vector2(getX(), getY());
 	}
 	
 	public void undockShip()
@@ -54,8 +60,8 @@ public class Dock extends Actor
 		shapes.setColor(Color.BLUE);
 		shapes.rect(getX(), getY(), getWidth(), getHeight());
 		
-		float dockX = getCenterX() + dockingRelX;
-		float dockY = getCenterY() + dockingRelY;
+		float dockX = getX() + dockingAdapterPosition.x;
+		float dockY = getY() + dockingAdapterPosition.y;
 		shapes.circle(dockX, dockY, 5);
 	}
 }

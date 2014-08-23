@@ -15,8 +15,8 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class Intro extends Actor
 {
-//	private String IntroText =  "Since the number of people rapidly increase, they must start to colony new planets. Due to limited resources of these planets an unlimited demands for new gods of its inhabitants a big galaxy war was upon the edge…  \n\n The only hope to save galaxy from destructive war was the global resource space station to delivery all needs to other planets. And they made you as the Captain...";
-	private String IntroText =  "SpaceStation";
+	private String IntroTextLines[] =  {"Since the number of people rapidly increase",", they must start to colony new planets.","Due to limited resources of these planets","an unlimited demands for new gods of its inhabitants","a big galaxy war was upon the edge… ", "The only hope to save galaxy from destructive war","was the global resource space station to delivery"," all needs to other planets.","And they made you as the Captain..."};
+//	private String IntroText =  "SpaceStation";
 	private SpriteBatch batch;
     private BitmapFont font;
 	
@@ -36,6 +36,12 @@ public class Intro extends Actor
     }
 	
 	@Override
+	public void act(float delta) 
+	{
+		
+	};
+	
+	@Override
 	public void draw(Batch batch, float parentAlpha)
 	{        
 //		sprite.setCenter(getCenterX(), getCenterY());
@@ -45,7 +51,8 @@ public class Intro extends Actor
 //        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
         //batch.begin();
-        font.draw(batch, IntroText, 100, 200);
+		for (int i = 0; i < IntroTextLines.length; i++)
+        font.draw(batch, IntroTextLines[i], 20, 200 - 15*i);
         //batch.end();
     }
 }

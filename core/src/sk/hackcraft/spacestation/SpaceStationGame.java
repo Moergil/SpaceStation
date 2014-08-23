@@ -29,6 +29,7 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.sun.media.jfxmedia.events.NewFrameEvent;
 
 public class SpaceStationGame extends ApplicationAdapter
 {
@@ -49,24 +50,37 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		Intro intro = new Intro();
 		intro.setPosition(0, 0);
-		
-		stage.addActor(intro);
-		
+			
 		stage = new Stage(new FitViewport(400, 240));
 		Gdx.input.setInputProcessor(stage);
+		stage.addActor(intro);
 		
+		timer = new Timer();
+		timer.scheduleTask(new Timer.Task()
+		{
+			@Override
+			public void run()
+			{
+				System.out.println("tick");
+//				timer.stop();
+				createGame();
+			}
+		}, 5);
 		
 		stage.addListener(new InputListener()
 		{
 			@Override
 			public boolean keyDown(InputEvent event, int keycode)
 			{
-				createLater();
+				timer.stop();
+				createGame();
 				return true;
 			}
 		});
+		
+		
 	}
-	public void createLater()
+	public void createGame()
 	{
 		random = new Random();
 		

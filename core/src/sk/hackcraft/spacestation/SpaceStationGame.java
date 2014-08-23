@@ -7,6 +7,7 @@ import java.util.Random;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Interpolation;
@@ -37,6 +38,8 @@ public class SpaceStationGame extends ApplicationAdapter
 	private Selectable selectionFrom, selectionTo;
 	
 	private SelectionBound selectionBound;
+	
+	Music mp3Intro;
 
 	@Override
 	public void create()
@@ -44,6 +47,9 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		Intro intro = new Intro();
 		intro.setPosition(0, 0);
+		
+		mp3Intro = Gdx.audio.newMusic(Gdx.files.internal("sounds/intro.mp3"));
+		mp3Intro.play();
 			
 		stage = new Stage(new FitViewport(400, 240));
 		Gdx.input.setInputProcessor(stage);
@@ -57,9 +63,10 @@ public class SpaceStationGame extends ApplicationAdapter
 			{
 				System.out.println("tick");
 //				timer.stop();
+				mp3Intro.stop();
 				createGame();
 			}
-		}, 5);
+		}, 30);
 		
 		stage.addListener(new InputListener()
 		{
@@ -67,6 +74,7 @@ public class SpaceStationGame extends ApplicationAdapter
 			public boolean keyDown(InputEvent event, int keycode)
 			{
 				timer.stop();
+				mp3Intro.stop();
 				createGame();
 				return true;
 			}

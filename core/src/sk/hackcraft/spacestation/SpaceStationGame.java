@@ -32,6 +32,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class SpaceStationGame extends ApplicationAdapter
 {
+
 	private Random random;
 	
 	private Stage stage;

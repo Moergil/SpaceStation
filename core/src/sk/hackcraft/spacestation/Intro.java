@@ -52,14 +52,16 @@ public class Intro extends Actor
 	
 	public boolean hasNextPage()
 	{
-		return (actualNum < pageNum);
+		return (actualNum < pageNum-1);
 	}
 	
 	public boolean setNextPage()
 	{
-		actualNum++;
-		if (actualNum < pageNum)
+		if (hasNextPage())
+		{
+			actualNum++;
 			return true;
+		}
 		else
 			return false;
 		

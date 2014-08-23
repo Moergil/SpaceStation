@@ -64,8 +64,8 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		Gdx.input.setInputProcessor(inputMultiplexer);
 		
-		//runIntro();
-		runGame();
+		runIntro();
+//		runGame();
 	}
 	
 	private void runIntro()
@@ -85,15 +85,8 @@ public class SpaceStationGame extends ApplicationAdapter
 			public void run()
 			{
 				cleanupIntro(intro);
-				{
-					System.out.println("tick");
-				}
-				else
-				{
-				}
-				timer.scheduleTask(this, 5);
 			}
-		}, 5);
+		}, 5,5);
 		
 		hudStage.addListener(new InputListener()
 		{
@@ -115,9 +108,15 @@ public class SpaceStationGame extends ApplicationAdapter
 	
 	private void cleanupIntro(Intro intro)
 	{
+		if (intro.setNextPage())
+		{
+			return;
+		}
+		
 		timer.clear();
 		mp3Intro.stop();
 		
+		intro.clear();
 		intro = null;
 		
 		timer.scheduleTask(new Timer.Task()
@@ -129,8 +128,6 @@ public class SpaceStationGame extends ApplicationAdapter
 				runGame();
 			}
 		}, 0);
-		
-		runGame();
 	}
 	
 	public void runGame()

@@ -19,7 +19,7 @@ public abstract class ShipsQueueMenu extends Actor
 	
 	public ShipsQueueMenu()
 	{
-		texture = new Texture(Gdx.files.internal("sprite/ShipsQueueBg.png"));
+		texture = new Texture(Gdx.files.internal("sprite/shipsQueueBg.png"));
 		
 		setWidth(100);
 	}

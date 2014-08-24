@@ -36,8 +36,6 @@ public class SpaceStationGame extends ApplicationAdapter
 
 	private ShipsCreator shipsGenerator;
 	private Timer timer;
-
-	private List<Dock> docks = new ArrayList<Dock>();
 	
 	private Dock selectedDock;
 	
@@ -48,6 +46,8 @@ public class SpaceStationGame extends ApplicationAdapter
 	private SelectionListener selectionListener = new SelectionListener();
 
 	private Music mp3Intro;
+	
+	private Station station;
 
 	@Override
 	public void create()
@@ -65,8 +65,8 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		Gdx.input.setInputProcessor(inputMultiplexer);
 		
-		runIntro();
-		//runGame();
+		//runIntro();
+		runGame();
 	}
 	
 	private void runIntro()
@@ -128,7 +128,14 @@ public class SpaceStationGame extends ApplicationAdapter
 	}
 	
 	public void runGame()
-	{		
+	{
+		Texture stationTexture = new Texture(Gdx.files.internal("sprite/station.png"));
+		Sprite stationSprite = new Sprite(stationTexture);
+		station = new Station(stationSprite);
+		
+		station.setPosition(50, 20);
+		gameStage.addActor(station);
+		
 		Texture cornersAtlas = new Texture(Gdx.files.local("sprite/selector_corner.png"));
 		selectionBound = new SelectionBound(cornersAtlas);
 		
@@ -148,7 +155,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				
 				if (keycode == Input.Keys.B)
 				{
-					for (Dock dock : docks)
+					for (Dock dock : station.getDocks())
 					{
 						if (dock.hasDockedShip())
 						{
@@ -186,13 +193,16 @@ public class SpaceStationGame extends ApplicationAdapter
 		setInstantGameView(GameView.DOCKS);
 		
 		// debugging
-		gameStage.setDebugAll(true);
+		//gameStage.setDebugAll(true);
+		
+		float positionY[] = {110, 84, 58, 32};
 		
 		for (int i = 0; i < 4; i++)
 		{
 			Dock dock = new Dock(selectionBound);
-			dock.setPosition(100, 50 + i * 50);
-			docks.add(dock);
+			dock.setPosition(113, positionY[i]);
+			
+			station.addDock(dock);
 			
 			registerSelectionListener(dock);
 			

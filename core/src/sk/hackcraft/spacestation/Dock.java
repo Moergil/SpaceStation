@@ -18,9 +18,9 @@ public class Dock extends Actor implements Selectable
 	{
 		this.selectionBound = selectionBound;
 		
-		setSize(75, 30);
+		setSize(16, 16);
 		
-		dockingAdapterPosition = new Vector2(15, 15);
+		dockingAdapterPosition = new Vector2(8, 8);
 		
 		drawSelector = new DrawSelector()
 		{

@@ -10,9 +10,10 @@ public class Planet extends Actor
 	private Sprite sprite;
 	
 	private GoodsType type;
+	private double distance;
 	private int storedGoods; //in tons
 	
-	public Planet(Sprite sprite, Vector2 size, Vector2 position, GoodsType type)
+	public Planet(Sprite sprite, Vector2 size, Vector2 position, GoodsType type, double distance)
 	{
 		this.sprite = sprite;
 		setSize(size.x, size.y);
@@ -40,6 +41,11 @@ public class Planet extends Actor
 	public void setStoredGoods(int storedGoods)
 	{
 		this.storedGoods = storedGoods;
+	}
+	
+	public double getDistance()
+	{
+		return distance;
 	}
 	
 	@Override

@@ -40,9 +40,8 @@ public class Ship extends Actor implements Selectable
 	private CargoContainer cargoContainer;
 
 	private DrawSelector drawSelector;
-	private SelectionBound selectionBound;
 	
-	public Ship(Texture texture, Vector2 size, Vector2 dockingPortPosition, CargoContainer cargoContainer, SelectionBound selectionBound)
+	public Ship(Texture texture, Vector2 size, Vector2 dockingPortPosition, CargoContainer cargoContainer)
 	{
 		state = State.IDLE;
 		
@@ -51,22 +50,6 @@ public class Ship extends Actor implements Selectable
 		setSize(size.x, size.y);
 		this.dockingPortPosition = dockingPortPosition;
 		this.cargoContainer = cargoContainer;
-		
-		this.selectionBound = selectionBound;
-		
-		drawSelector = new DrawSelector()
-		{
-			@Override
-			public void drawUnselected(Batch batch)
-			{
-			}
-			
-			@Override
-			public void drawSelected(Batch batch)
-			{
-				Ship.this.selectionBound.draw(Ship.this, batch);
-			}
-		};
 	}
 	
 	@Override

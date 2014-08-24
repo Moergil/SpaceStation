@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 
 
 public class Intro extends Actor
@@ -18,19 +20,24 @@ public class Intro extends Actor
     private BitmapFont font;
     private int actualNum;
     final private int pageNum = 2;
+    final private int duration = 30;
+	private int backgroundX,backgroundY;
     
     private Sprite Background;
+    private Sprite introStation;
     private Sprite[] introPages;
 	
 	public Intro()
 	{
+		backgroundX = 0;
+		backgroundY = 0;
 		actualNum = 0;
 		batch = new SpriteBatch();    
 		introPages = new Sprite[pageNum];
 		
 		for (int i = 0; i < pageNum; i++)
 		{
-			String fileName = "IntroText" + (i+1) + ".png";
+			String fileName = "Intro/IntroText" + (i+1) + ".png";
 			Texture texture = new Texture(Gdx.files.internal(fileName));
 			
 			TextureRegion region = new TextureRegion(texture, 0, 0, 400, 240);
@@ -38,9 +45,15 @@ public class Intro extends Actor
 		}
 //        font = new BitmapFont();
 //        font.setColor(Color.BLUE);
-		Texture texture = new Texture(Gdx.files.internal("Intro.png"));
-		TextureRegion region = new TextureRegion(texture, 0, 0, 400, 240);
+		Texture texture = new Texture(Gdx.files.internal("Intro/Background.png"));
+		TextureRegion region = new TextureRegion(texture, 0, 0, 400, 720);
 		Background = new Sprite(region);
+		
+		
+		texture = new Texture(Gdx.files.internal("sprite/station.png"));
+		introStation = new Sprite(texture);
+////		Background.setRegion(backgroundX,backgroundY,400,240);
+		addAction(Actions.moveTo(0, 480, duration, Interpolation.sineIn));
 	}
 	
 	public boolean hasNextPage()
@@ -69,21 +82,18 @@ public class Intro extends Actor
 	@Override
 	public void act(float delta) 
 	{
-		
+		super.act(delta);
 	};
 	
 	@Override
 	public void draw(Batch batch, float parentAlpha)
 	{        
-//		sprite.setCenter(getCenterX(), getCenterY());
-//		sprite.draw(batch);
-//		
-//        Gdx.gl.glClearColor(1, 1, 1, 1);
-//        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        
-        //batch.begin();
-		Background.draw(batch);
-		introPages[actualNum].draw(batch);
-        //batch.end();
+		batch.draw(Background, getX(), getY(), getOriginX() , getOriginY()+240, 400, 240, 1, 3, 0);
+		batch.draw(introStation, getX() + 50, getY() - 460, getOriginX() , getOriginY(), introStation.getWidth(), introStation.getHeight(), 1, 1, 0);
+		
+		
+		for (int i = 0; i < pageNum; i++)
+			introPages[actualNum].draw(batch);
+//			batch.draw(introPages[actualNum], getX(), getY(), getOriginX() , getOriginY(), 400, 240, 1, 1, 0);
     }
 }

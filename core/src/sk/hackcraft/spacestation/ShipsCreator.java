@@ -22,7 +22,6 @@ public class ShipsCreator
 				texture,
 				new Vector2(48, 16),
 				new Vector2(10, 10),
-				new CargoContainer(new CargoType(){}, 20),
-				selectionBound);
+				new CargoContainer(new CargoType(){}, 20));
 	}
 }

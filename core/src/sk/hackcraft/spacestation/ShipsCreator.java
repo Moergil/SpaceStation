@@ -16,7 +16,7 @@ public class ShipsCreator
 	
 	public Ship createGeneric()
 	{
-		Texture texture = new Texture(Gdx.files.internal("sprite/ship1.png"));
+		Texture texture = new Texture(Gdx.files.internal("sprite/ship2.png"));
 
 		Ship ship = new Ship(
 				"S" + ++i,

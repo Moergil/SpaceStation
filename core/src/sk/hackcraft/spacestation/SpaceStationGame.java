@@ -49,6 +49,8 @@ public class SpaceStationGame extends ApplicationAdapter
 	
 	private Station station;
 	private StationViewMaster stationViewMaster;
+	
+	private Space space;
 
 	@Override
 	public void create()
@@ -215,12 +217,30 @@ public class SpaceStationGame extends ApplicationAdapter
 			gameStage.addActor(dock);
 		}
 		
+		//EPH Mala stanica
+		Texture smallStationTexture = new Texture(Gdx.files.internal("sprite/station_small.png"));
+		Sprite smallStationSprite = new Sprite(smallStationTexture);
+		
+		Texture stationSmallLightsTexture = new Texture(Gdx.files.internal("sprite/station_small_lights.png"));
+		
+		Vector2 stationSmallPosition = new Vector2(420, 15);
+		StationSmall smallStation = new StationSmall(smallStationSprite, stationSmallPosition);
+		smallStation.setLights(stationSmallLightsTexture);
+		gameStage.addActor(smallStation);
+		
+		//EPH: zatial jedina planeta, aby ju bolo aspon vidno
 		//generating planets
-		planets.add(new Planet(GoodsType.FOOD));
-		planets.add(new Planet(GoodsType.ORE));
+		Texture planetTexture = new Texture(Gdx.files.internal("sprite/planet1.png"));
+		Sprite planetSprite = new Sprite(planetTexture);
+		Vector2 position = new Vector2(430, 160);
+		Vector2 size = new Vector2(68, 68);
+		Planet planet = new Planet(planetSprite, size, position, GoodsType.FOOD);
+		planets.add(planet);
+		gameStage.addActor(planet);
+		/*planets.add(new Planet(GoodsType.ORE));
 		planets.add(new Planet(GoodsType.MEDICINE));
 		planets.add(new Planet(GoodsType.MATERIAL));
-		planets.add(new Planet(GoodsType.ELECTRONICS));
+		planets.add(new Planet(GoodsType.ELECTRONICS));*/
 		
 		// ships generation		
 		shipsGenerator = new ShipsCreator(selectionBound);

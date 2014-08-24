@@ -22,4 +22,9 @@ public enum GoodsType
 		return new Color(this.red,this.green, this.blue);	
 	}
 	
+	public static int getNumberOfAllTypes(){
+		
+		return 5;
+	}
+	
 }

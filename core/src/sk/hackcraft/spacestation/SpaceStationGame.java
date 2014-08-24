@@ -1,11 +1,11 @@
+
 package sk.hackcraft.spacestation;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import sk.hackcraft.spacestation.Selectable.Selector;
-import sk.hackcraft.spacestation.Planet;
+import sk.hackcraft.spacestation.StationView.StationViewListener;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -15,10 +15,8 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -38,11 +36,8 @@ public class SpaceStationGame extends ApplicationAdapter
 	private ShipsCreator shipsGenerator;
 	private Timer timer;
 
-
-	private List<Dock> docks = new ArrayList<Dock>();
 	private List<Planet> planets = new ArrayList<Planet>();
 
-	
 	private Dock selectedDock;
 	
 	private SelectionBound selectionBound;
@@ -51,15 +46,20 @@ public class SpaceStationGame extends ApplicationAdapter
 	
 	private SelectionListener selectionListener = new SelectionListener();
 
-	private Music mp3Intro;
+	private SoundMngr mngrSound;
 	
 	private Station station;
+	private StationViewMaster stationViewMaster;
+	
+	private Space space;
 
 	@Override
 	public void create()
 	{
 		random = new Random();
 		timer = new Timer();
+		
+		mngrSound = new SoundMngr();
 
 		InputMultiplexer inputMultiplexer = new InputMultiplexer();
 		gameStage = new Stage(new FitViewport(400, 240));
@@ -80,8 +80,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		final Intro intro = new Intro();
 		intro.setPosition(0, 0);
 		
-		mp3Intro = Gdx.audio.newMusic(Gdx.files.internal("sounds/intro.mp3"));
-		mp3Intro.play();
+		mngrSound.runIntro();
 			
 		hudStage.addActor(intro);
 
@@ -120,7 +119,8 @@ public class SpaceStationGame extends ApplicationAdapter
 		}
 		
 		timer.clear();
-		mp3Intro.stop();
+		mngrSound.stopIntro();
+		
 		
 		intro.clear();
 		intro = null;
@@ -142,14 +142,18 @@ public class SpaceStationGame extends ApplicationAdapter
 		Sprite stationSprite = new Sprite(stationTexture);
 		station = new Station(stationSprite);
 		
+		mngrSound.runMusicGame();
+		
 		station.setPosition(50, 20);
 		gameStage.addActor(station);
 		
-		Texture cornersAtlas = new Texture(Gdx.files.local("sprite/selector_corner.png"));
+		Texture cornersAtlas = new Texture(Gdx.files.local("sprite/active_selection.png"));
 		selectionBound = new SelectionBound(cornersAtlas);
 		
 		// actual view of the player
 		actualGameView = GameView.DOCKS;
+		
+		stationViewMaster = new StationViewMaster();
 
 		gameStage.addListener(new InputListener()
 		{
@@ -218,12 +222,34 @@ public class SpaceStationGame extends ApplicationAdapter
 			gameStage.addActor(dock);
 		}
 		
+		//EPH Mala stanica
+		Texture smallStationTexture = new Texture(Gdx.files.internal("sprite/station_small.png"));
+		Sprite smallStationSprite = new Sprite(smallStationTexture);
+		
+		Texture stationSmallLightsTexture = new Texture(Gdx.files.internal("sprite/station_small_lights.png"));
+		
+		Vector2 stationSmallPosition = new Vector2(420, 15);
+		StationSmall smallStation = new StationSmall(smallStationSprite, stationSmallPosition);
+		smallStation.setLights(stationSmallLightsTexture);
+		gameStage.addActor(smallStation);
+		
+		//EPH: zatial jedina planeta, aby ju bolo aspon vidno
 		//generating planets
-		planets.add(new Planet(GoodsType.FOOD));
-		planets.add(new Planet(GoodsType.ORE));
+		Texture planetTexture = new Texture(Gdx.files.internal("sprite/planet1.png"));
+		Sprite planetSprite = new Sprite(planetTexture);
+		Vector2 position = new Vector2(430, 160);
+		Vector2 size = new Vector2(68, 68);
+		Planet planet = new Planet(planetSprite, size, position, GoodsType.FOOD, 20);
+		planets.add(planet);
+		gameStage.addActor(planet);
+		/*planets.add(new Planet(GoodsType.ORE));
 		planets.add(new Planet(GoodsType.MEDICINE));
 		planets.add(new Planet(GoodsType.MATERIAL));
-		planets.add(new Planet(GoodsType.ELECTRONICS));
+		planets.add(new Planet(GoodsType.ELECTRONICS));*/
+		//planets.add(new Planet(GoodsType.ORE,20));
+		//planets.add(new Planet(GoodsType.MEDICINE,20));
+		//planets.add(new Planet(GoodsType.MATERIAL,20));
+		//planets.add(new Planet(GoodsType.ELECTRONICS,20));
 		
 		// ships generation		
 		shipsGenerator = new ShipsCreator(selectionBound);
@@ -251,6 +277,7 @@ public class SpaceStationGame extends ApplicationAdapter
 			shipsQueueMenu.matchHeightToStage();
 		}
 		
+		// TODO debug
 		addShip();
 		addShip();
 		addShip();
@@ -266,9 +293,10 @@ public class SpaceStationGame extends ApplicationAdapter
 		final Ship ship = shipsGenerator.createGeneric();
 
 		hudStage.addActor(ship);
-		shipsQueueMenu.queueShip(ship);
 		
 		registerSelectionListener(ship);
+		
+		stationViewMaster.shipArrived(ship);
 	}
 	
 	@Override
@@ -424,4 +452,27 @@ public class SpaceStationGame extends ApplicationAdapter
 			return false;
 		}
 	};
+	
+	private class StationViewMaster implements StationView
+	{
+		private StationViewListener listener;
+		
+		public void releaseShip(Ship ship)
+		{
+			listener.shipDeparted(ship);
+		}
+		
+		@Override
+		public void setListener(StationViewListener listener)
+		{
+			this.listener = listener;
+		}
+		
+		@Override
+		public void shipArrived(Ship ship)
+		{
+			shipsQueueMenu.queueShip(ship);
+		}
+	}
+
 }

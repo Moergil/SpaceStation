@@ -216,11 +216,11 @@ public class SpaceStationGame extends ApplicationAdapter
 		}
 		
 		//generating planets
-		planets.add(new Planet(GoodsType.FOOD));
-		planets.add(new Planet(GoodsType.ORE));
-		planets.add(new Planet(GoodsType.MEDICINE));
-		planets.add(new Planet(GoodsType.MATERIAL));
-		planets.add(new Planet(GoodsType.ELECTRONICS));
+		planets.add(new Planet(GoodsType.FOOD,20));
+		planets.add(new Planet(GoodsType.ORE,20));
+		planets.add(new Planet(GoodsType.MEDICINE,20));
+		planets.add(new Planet(GoodsType.MATERIAL,20));
+		planets.add(new Planet(GoodsType.ELECTRONICS,20));
 		
 		// ships generation		
 		shipsGenerator = new ShipsCreator(selectionBound);

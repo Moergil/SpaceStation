@@ -75,6 +75,11 @@ public class TimeGenerator
 		return durationOfTaskGenerator;
 	}
 
+	public Random getSeedGenerator()
+	{
+		return seedGenerator;
+	}
+
 	
 	
 	

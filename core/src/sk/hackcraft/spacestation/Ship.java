@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.utils.Timer;
 
 public class Ship extends Actor
 {
@@ -36,20 +37,23 @@ public class Ship extends Actor
 	private int frameCounter = 0;
 
 	private Vector2 dockingPortPosition;
-	
+
 	private CargoContainer cargoContainer;
 
-	
-	public Ship(Texture texture, Vector2 size, Vector2 dockingPortPosition, CargoContainer cargoContainer)
+	public Ship(String name, Texture texture, Vector2 size, Vector2 dockingPortPosition, CargoContainer cargoContainer)
 	{
+		setName("Ship " + name);
+		
 		state = State.IDLE;
 		
 		initTextures(texture);
 		
 		setSize(size.x, size.y);
 		this.dockingPortPosition = dockingPortPosition;
+
 		this.cargoContainer = cargoContainer;
 	}
+
 	public Vector2 getDockingAdapterPosition()
 	{
 		return dockingPortPosition;
@@ -59,12 +63,23 @@ public class Ship extends Actor
 	{
 		state = State.DOCKING;
 		addAction(Actions.moveTo(targetPosition.x, targetPosition.y, duration, Interpolation.exp5Out));
+		addAction(Actions.fadeIn(duration));
 	}
 
-	public void depart(Vector2 targetPosition, float duration)
+	public void depart(Vector2 targetPosition, float duration, Timer timer)
 	{
 		state = State.UNDOCKING;
 		addAction(Actions.moveTo(targetPosition.x, targetPosition.y, duration, Interpolation.exp5In));
+		
+		timer.scheduleTask(new Timer.Task()
+		{
+			@Override
+			public void run()
+			{
+				addAction(Actions.fadeOut(1));
+			}
+		}, duration - 1);
+		
 	}
 	
 	public void setIdle()
@@ -87,8 +102,15 @@ public class Ship extends Actor
 	public void draw(Batch batch, float parentAlpha)
 	{
 		incrementFrameCounter();
-		batch.draw(getTexture(SPRITE), getX(), getY());
 		
+		TextureRegion tr = getTexture(SPRITE);
+		
+		Color oc = batch.getColor();
+		
+		Color c = getColor();
+		batch.setColor(c.r, c.g, c.b, c.a);
+		batch.draw(tr, getX(), getY(), getX(), getY(), tr.getRegionWidth(), tr.getRegionHeight(), getScaleX(), getScaleY(), 0);
+
 		switch (state)
 		{
 		case DOCKING:
@@ -98,6 +120,8 @@ public class Ship extends Actor
 			batch.draw(getTexture(ENGINE_RVS), getX(), getY());
 			break;
 		}
+		
+		batch.setColor(oc);
 	}
 	
 	@Override

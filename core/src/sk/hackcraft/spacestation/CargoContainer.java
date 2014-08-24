@@ -3,15 +3,15 @@ package sk.hackcraft.spacestation;
 public class CargoContainer
 {
 	private int amount, capacity;
-	private CargoType type;
+	private GoodsType type;
 	
-	public CargoContainer(CargoType type, int capacity)
+	public CargoContainer(GoodsType type, int capacity)
 	{
 		this.type = type;
 		this.capacity = capacity;
 	}
 	
-	public CargoType getCargoType()
+	public GoodsType getCargoType()
 	{
 		return type;
 	}
@@ -39,5 +39,21 @@ public class CargoContainer
 	public void setCargoAmount(int amount)
 	{
 		this.amount = amount;
+	}
+	
+	public boolean transferUnit(CargoContainer target)
+	{
+		int capacity = target.getCargoCapacity();
+		
+		if (capacity > 0 && getCargoAmount() > 0)
+		{
+			modifyCargoAmount(-1);
+			target.modifyCargoAmount(1);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 }

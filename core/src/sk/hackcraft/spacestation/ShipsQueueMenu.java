@@ -1,6 +1,8 @@
 package sk.hackcraft.spacestation;
 
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,7 +13,8 @@ public abstract class ShipsQueueMenu extends Actor
 {
 	private Texture texture;
 	
-	private LinkedList<Ship> waitingShips = new LinkedList<Ship>();
+	private LinkedList<Ship> waitingShipsQueue = new LinkedList<Ship>();
+	private Set<Ship> waitingShipsSet = new HashSet<Ship>();
 	
 	public ShipsQueueMenu()
 	{
@@ -36,7 +39,7 @@ public abstract class ShipsQueueMenu extends Actor
 		float y = getY() + getHeight() - 30;
 		
 		int i = 0;
-		for (Ship avatar : waitingShips)
+		for (Ship avatar : waitingShipsQueue)
 		{
 			if (i > 10)
 			{
@@ -51,6 +54,11 @@ public abstract class ShipsQueueMenu extends Actor
 			i++;
 		}
 	}
+	
+	public Set<Ship> getWaitingShips()
+	{
+		return waitingShipsSet;
+	}
 
 	@Override
 	public void act(float delta)
@@ -61,19 +69,23 @@ public abstract class ShipsQueueMenu extends Actor
 
 	public void queueShip(Ship ship)
 	{
-		waitingShips.add(ship);
+		if (waitingShipsSet.add(ship))
+		{
+			waitingShipsQueue.add(ship);
+		}
 	}
 	
 	public void orderShipToDock(Ship ship, Dock dock)
 	{
-		waitingShips.remove(ship);
+		waitingShipsQueue.remove(ship);
+		waitingShipsSet.remove(ship);
 		
 		initiateDocking(ship, dock);
 	}
 	
 	public boolean contains(Ship ship)
 	{
-		return waitingShips.contains(ship);
+		return waitingShipsQueue.contains(ship);
 	}
 	
 	public abstract void initiateDocking(Ship ship, Dock dock);

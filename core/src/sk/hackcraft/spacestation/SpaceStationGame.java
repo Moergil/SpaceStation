@@ -57,8 +57,6 @@ public class SpaceStationGame extends ApplicationAdapter
 	@Override
 	public void create()
 	{
-		
- 
 		timer = new Timer();
 		
 		mngrSound = new SoundMngr();
@@ -93,7 +91,7 @@ public class SpaceStationGame extends ApplicationAdapter
 			{
 				cleanupIntro(intro);
 			}
-		}, 15,15);
+		}, 2,10);
 		
 		hudStage.addListener(new InputListener()
 		{

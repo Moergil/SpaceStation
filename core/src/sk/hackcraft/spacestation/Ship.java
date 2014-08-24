@@ -76,7 +76,7 @@ public class Ship extends Actor implements Selectable
 		sprite.setCenter(getCenterX(), getCenterY());
 		sprite.draw(batch);
 		
-		if (selected || true)
+		if (selected)
 		{
 			selectionBound.draw(this, batch);
 		}
@@ -96,5 +96,12 @@ public class Ship extends Actor implements Selectable
 	public void setSelected(boolean selected)
 	{
 		this.selected = selected;
+	}
+	
+	@Override
+	public boolean toggleSelected()
+	{
+		selected = !selected;
+		return selected;
 	}
 }

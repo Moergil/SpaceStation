@@ -10,11 +10,9 @@ public class ShipsCreator
 {
 	private SelectionBound selectionBound;
 	
-	public ShipsCreator()
+	public ShipsCreator(SelectionBound selectionBound)
 	{
-		Texture texture = new Texture(Gdx.files.local("sprite/"));
-		TextureRegion corner = new TextureRegion(texture, x, y, width, height);
-		selectionBound = new SelectionBound(corner);
+		this.selectionBound = selectionBound;
 	}
 	
 	public Ship createGeneric()

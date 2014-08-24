@@ -43,12 +43,17 @@ public class SpaceStationGame extends ApplicationAdapter
 
 	private List<Dock> docks = new ArrayList<Dock>();
 	
+	private Selectable selectionFrom, selectionTo;
 	
+	private SelectionBound selectionBound;
 
 	@Override
 	public void create()
 	{
 		random = new Random();
+		
+		Texture cornersAtlas = new Texture(Gdx.files.local("sprite/selector_corner.png"));
+		selectionBound = new SelectionBound(cornersAtlas);
 		
 		// actual view of the player
 		actualGameView = GameView.DOCKS;
@@ -105,15 +110,17 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		for (int i = 0; i < 4; i++)
 		{
-			Dock dock = new Dock();
+			Dock dock = new Dock(selectionBound);
 			dock.setPosition(100, 50 + i * 50);
 			docks.add(dock);
+			
+			registerSelectionListener(dock);
 			
 			stage.addActor(dock);
 		}
 		
-		// ships generation
-		shipsGenerator = new ShipsCreator();
+		// ships generation		
+		shipsGenerator = new ShipsCreator(selectionBound);
 		
 		timer = new Timer();
 		timer.scheduleTask(new Timer.Task()
@@ -123,6 +130,8 @@ public class SpaceStationGame extends ApplicationAdapter
 			{
 				final Ship ship = shipsGenerator.createGeneric();
 				ship.setPosition(450, 0);
+				
+				registerSelectionListener(ship);
 				
 				stage.addActor(ship);
 				
@@ -151,6 +160,11 @@ public class SpaceStationGame extends ApplicationAdapter
 				}, 6);
 			}
 		}, 0, 5);
+	}
+	
+	private void registerSelectionListener(final Actor actor)
+	{
+		actor.addListener(new SelectionListener(actor));
 	}
 
 	@Override
@@ -243,4 +257,61 @@ public class SpaceStationGame extends ApplicationAdapter
 		Ship ship = dock.getDockedShip();
 		ship.addAction(flyToDockAction);
 	}
+	
+	private class SelectionListener extends InputListener
+	{
+		private final Actor actor;
+		
+		public SelectionListener(Actor actor)
+		{
+			this.actor = actor;
+		}
+		
+		@Override
+		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button)
+		{
+			if (actor instanceof Selectable)
+			{
+				Selectable selectable = (Selectable)actor;
+				
+				boolean selected = selectable.toggleSelected();
+				
+				if (selected)
+				{
+					if (selectionFrom == null)
+					{
+						selectionFrom = selectable;
+					}
+					else
+					{
+						if (selectionTo != null)
+						{
+							selectionTo.setSelected(false);
+						}
+						
+						selectionTo = selectable;
+					}
+				}
+				else
+				{
+					if (selectable == selectionFrom)
+					{
+						selectionFrom = null;
+						
+						if (selectionTo != null)
+						{
+							selectionTo.setSelected(false);
+							selectionTo = null;
+						}
+					}
+				}
+				
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	};
 }

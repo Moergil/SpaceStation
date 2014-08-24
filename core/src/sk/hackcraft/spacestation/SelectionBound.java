@@ -1,59 +1,42 @@
 package sk.hackcraft.spacestation;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class SelectionBound
 {
-	private final TextureRegion corner;
+	private final TextureRegion corners[];
 	
-	public SelectionBound(TextureRegion corner)
+	public SelectionBound(Texture cornersAtlas)
 	{
-		this.corner = corner;
+		corners = new TextureRegion[]{
+				new TextureRegion(cornersAtlas, 0, 0, 4, 4),
+				new TextureRegion(cornersAtlas, 4, 0, 4, 4),
+				new TextureRegion(cornersAtlas, 8, 0, 4, 4),
+				new TextureRegion(cornersAtlas, 12, 0, 4, 4)
+		};
 	}
 	
 	public void draw(Actor actor, Batch batch)
 	{
-		float x[] = {
-				actor.getX(),
-				actor.getX() + actor.getWidth(),
-				actor.getX() + actor.getWidth(),
-				actor.getX()
-		};
+		float offset = 5;
 		
-		float y[] = {
-				actor.getY(),
-				actor.getY(),
-				actor.getY() + actor.getHeight(),
-				actor.getY() + actor.getHeight()
-		};
+		float x, y;
 		
-		boolean invertX[] = {
-				false,
-				true,
-				true,
-				false
-		};
+		x = actor.getX() - offset;
+		y = actor.getY() - offset;
 		
-		boolean invertY[] = {
-				true,
-				true,
-				false,
-				false
-		};
+		batch.draw(corners[0], x, y);
 		
-		float pX, pY;
-		float pInvertX, pInvertY;
+		x += actor.getWidth() + offset;
+		batch.draw(corners[1], x, y);
 		
-		for (int i = 0; i < 4; i++)
-		{
-			pX = x[i];
-			pY = y[i];
-			pInvertX = invertX[i] ? -1 : 1;
-			pInvertY = invertY[i] ? -1 : 1;
-			
-			batch.draw(corner, pX, pY, pX, pY, actor.getWidth(), actor.getHeight(), pInvertX, pInvertY, 0);
-		}
+		y += actor.getHeight() + offset;
+		batch.draw(corners[2], x, y);
+		
+		x -= actor.getWidth() + offset;
+		batch.draw(corners[3], x, y);
 	}
 }

@@ -3,12 +3,14 @@ package sk.hackcraft.spacestation;
 public class Planet 
 {
 	private GoodsType type;
+	private double distance;
 	private int storedGoods; //in tons
 	
-	public Planet(GoodsType type)
+	public Planet(GoodsType type, double distance)
 	{
 		this.type = type;
 		this.storedGoods = 0;
+		this.distance = distance;
 	}
 
 	public GoodsType getType()
@@ -30,6 +32,12 @@ public class Planet
 	{
 		this.storedGoods = storedGoods;
 	}
+
+	public double getDistance()
+	{
+		return distance;
+	}
+	
 	
 	
 }

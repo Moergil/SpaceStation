@@ -1,16 +1,20 @@
 package sk.hackcraft.spacestation;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 
-public class Station extends Group
+public class Station extends Actor
 {
-	private List<Dock> docks = new ArrayList<Dock>();
+	private Set<Dock> docks = new HashSet<Dock>();
+	private Set<Dock> freeDocks = new HashSet<Dock>();
+
+	private Set<StorageFacility> storageFacilities = new HashSet<StorageFacility>();
+	private Set<StorageFacility> freeStorageFacilities = new HashSet<StorageFacility>();
 	
 	private Sprite sprite;
 	
@@ -24,12 +28,54 @@ public class Station extends Group
 	public void addDock(Dock dock)
 	{
 		docks.add(dock);
-		addActor(dock);
 	}
 	
-	public List<Dock> getDocks()
+	public Set<Dock> getDocks()
 	{
 		return docks;
+	}
+	
+	public Set<Dock> getFreeDocks()
+	{
+		freeDocks.clear();
+		
+		for (Dock dock : docks)
+		{
+			if (dock.isFree())
+			{
+				freeDocks.add(dock);
+			}
+		}
+		
+		return freeDocks;
+	}
+	
+	public void addStorageFacility(StorageFacility storageFacility)
+	{
+		storageFacilities.add(storageFacility);
+	}
+	
+	public Set<StorageFacility> getStorageFacilities()
+	{
+		return storageFacilities;
+	}
+	
+	public Set<StorageFacility> getFreeStorageFacilities(GoodsType type)
+	{
+		freeStorageFacilities.clear();
+		
+		for (StorageFacility facility : storageFacilities)
+		{
+			if (!facility.isTransferringCargo())
+			{
+				if (facility.getCargoContainer().getCargoType().equals(type))
+				{
+					freeStorageFacilities.add(facility);
+				}
+			}
+		}
+		
+		return freeStorageFacilities;
 	}
 	
 	@Override

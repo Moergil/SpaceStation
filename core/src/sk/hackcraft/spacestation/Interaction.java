@@ -1,143 +1,214 @@
 package sk.hackcraft.spacestation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 
-public class Interaction
+public class Interaction extends Actor
 {
-	private Actor activeMaster, activeIntent;
-
-	private Map<Actor, Map<Actor, Set<Actor>>> data = new HashMap<Actor, Map<Actor, Set<Actor>>>();
+	private final Stage stage;
 	
-	private Map<Actor, InteractAction> interactActions = new HashMap<Actor, Interaction.InteractAction>();
+	private final SelectionBound selectedBound;
+	private final SelectionBound possibleSelectBound;
 	
-	public boolean isSelectable(Actor actor)
+	private Actor activeMaster;
+	private InteractAction activeAction;
+	
+	private Map<Actor, List<InteractAction>> actions = new HashMap<Actor, List<InteractAction>>();
+	private Map<Actor, ActiveCheck> checks = new HashMap<Actor, Interaction.ActiveCheck>();
+	
+	private final InputListener selectionListener = new InputListener()
 	{
-		if (activeMaster == null && data.containsKey(actor))
+		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button)
 		{
+			Actor target = event.getTarget();
+			
+			return actorTouched(target);
+		}
+	};
+	
+	public Interaction(Stage stage, SelectionBound selectedBound, SelectionBound possibleSelectBound)
+	{
+		this.stage = stage;
+		this.selectedBound = selectedBound;
+		this.possibleSelectBound = possibleSelectBound;
+	}
+	
+	public boolean actorTouched(Actor actor)
+	{
+		if (activeMaster == null && actions.containsKey(actor))
+		{
+			System.out.println("New master selection");
+			initiateSelection(actor);
 			return true;
 		}
-		else
+		else if (activeMaster == actor)
 		{
-			if (activeIntent == null && data.get(activeMaster).containsKey(actor))
+			System.out.println("Cancelled selection");
+			cancelSelection(false);
+			return true;
+		}
+		else if (activeMaster != null)
+		{
+			if (actions.get(activeMaster).contains(actor))
 			{
-				return true;
-			}
-			else
-			{
-				if (data.get(activeMaster).get(activeIntent).contains(actor))
+				InteractAction action = (InteractAction)actor;
+				
+				if (!action.isActive())
 				{
+					return false;
+				}
+				
+				System.out.println("Changed action: " + action.getName());
+				changeAction(action);
+				
+				if (action.execute())
+				{
+					System.out.println("Action immediate executed");
+					cancelSelection(true);
+					
 					return true;
 				}
 			}
+			else if (activeAction != null && activeAction.getTargets().contains(actor))
+			{
+				if (!activeAction.isActive())
+				{
+					return false;
+				}
+				
+				if (activeAction.executeWithTarget(actor))
+				{
+					System.out.println("Action executed with target " + actor.getName());
+					cancelSelection(true);
+					
+					return true;
+				}
+				
+				return false;
+			}
 		}
-
+		
 		return false;
 	}
 	
-	public void selectMaster(Actor actor)
+	public void addSelectionListener(Actor actor)
 	{
-		this.activeMaster = actor;
+		actor.addListener(selectionListener);
 	}
 	
-	public void selectIntent(Actor intent)
+	public void addMasterActor(Actor actor, ActiveCheck activeCheck)
 	{
-		this.activeIntent = intent;
+		actions.put(actor, new ArrayList<InteractAction>());
+		checks.put(actor, activeCheck);
+		addSelectionListener(actor);
 	}
 	
-	public void cancelSelection()
+	public void removeMasterActor(Actor actor)
 	{
-		activeMaster = null;
-		activeIntent = null;
+		actions.remove(actor);
+		actor.removeCaptureListener(selectionListener);
 	}
 	
-	public Actor getActiveMaster()
+	public void addInteractAction(Actor masterActor, String title, InteractAction action)
 	{
-		return activeMaster;
+		actions.get(masterActor).add(action);
+		
+		action.prepare(title);
+		action.setVisible(false);
+		
+		addSelectionListener(action);
+		
+		stage.addActor(action);
 	}
 	
-	public boolean hasActiveMaster()
+	@Override
+	public void draw(Batch batch, float parentAlpha)
 	{
-		return activeMaster != null;
-	}
-	
-	public Actor getActiveIntent()
-	{
-		return activeIntent;
-	}
-	
-	public boolean hasActiveIntent()
-	{
-		return activeIntent != null;
-	}
-	
-	public void addMaster(Actor master)
-	{
-		data.put(master, new HashMap<Actor, Set<Actor>>());
-	}
-	
-	public void setIntentInteractAction(Actor intent, InteractAction action)
-	{
-		interactActions.put(intent, action);
-	}
-	
-	public void setSlavesSet(Actor master, Actor intent, Set<Actor> slavesSet)
-	{
-		data.get(master).put(intent, slavesSet);
-	}
-	
-	public Set<Actor> getIntentsSet(Actor master)
-	{
-		return data.get(master).keySet();
-	}
-	
-	public Set<Actor> getSlavesSet(Actor master, Actor intent)
-	{
-		return data.get(master).get(intent);
-	}
-	
-	public Set<? extends Actor> getSelectableActors()
-	{
-		if (activeMaster == null)
+		if (activeMaster != null)
 		{
-			return data.keySet();
+			selectedBound.draw(activeMaster, batch);
 		}
 		else
 		{
-			if (activeIntent == null)
+			for (Actor actor : actions.keySet())
 			{
-				return data.get(activeMaster).keySet();
+				if (checks.get(actor).isActive())
+				{
+					possibleSelectBound.draw(actor, batch);
+				}
 			}
-			else
+		}
+		
+		if (activeAction != null)
+		{
+			for (Actor actor : activeAction.getTargets())
 			{
-				return data.get(activeMaster).get(activeIntent);
+				possibleSelectBound.draw(actor, batch);
 			}
 		}
 	}
 	
-	public void selectActor(Actor actor)
+	private void initiateSelection(Actor masterActor)
 	{
-		if (data.containsKey(actor))
+		this.activeMaster = masterActor;
+		
+		float x = 0;
+		float y = 0;
+		float verticalOffset = 5;
+		
+		/*if (actions.get(masterActor).size() == 1)
 		{
-			cancelSelection();
-			activeMaster = actor;
+			if (actions.get(masterActor).iterator().next().execute())
+			{
+				cancelSelection();
+			}
 		}
-		else if (activeMaster != null && data.get(activeMaster).containsKey(actor))
-		{
-			activeIntent = actor;
-		}
-		else if (activeMaster != null && activeIntent != null && data.get(activeMaster).get(activeIntent).contains(actor))
-		{
-			interactActions.get(activeIntent).interact(activeMaster, actor);
-		}
+		else
+		{*/
+			for (InteractAction action : actions.get(masterActor))
+			{
+				action.setPosition(x, y);
+				action.setVisible(true);
+				
+				y += verticalOffset + action.getHeight();
+			}
+		//}
 	}
 	
-	public interface InteractAction
+	private void cancelSelection(boolean actionExecuted)
 	{
-		void interact(Actor master, Actor slave);
+		if (activeMaster != null && actions.containsKey(activeMaster))
+		{
+			for (InteractAction action : actions.get(activeMaster))
+			{
+				action.setVisible(false);
+			}
+		}
+		
+		if (actionExecuted && activeAction != null && activeAction.isOneTime())
+		{
+			removeMasterActor(activeMaster);
+		}
+		
+		activeMaster = null;
+		activeAction = null;
+	}
+	
+	private void changeAction(InteractAction action)
+	{
+		this.activeAction = action;
+	}
+	
+	public interface ActiveCheck
+	{
+		boolean isActive();
 	}
 }

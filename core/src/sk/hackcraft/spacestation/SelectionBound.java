@@ -7,6 +7,9 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class SelectionBound
 {
+	private int tick;
+	private int wobble;
+
 	private final TextureRegion corners[];
 	
 	public SelectionBound(Texture cornersAtlas)
@@ -21,22 +24,33 @@ public class SelectionBound
 	
 	public void draw(Actor actor, Batch batch)
 	{
-		float offset = 5;
+		tick++;
 		
+		if (tick % 30 == 0)
+		{
+			wobble--;
+			
+			if (wobble < 0)
+			{
+				wobble = 3;
+			}
+		}
+		
+		float offset = 5;
 		float x, y;
 		
 		x = actor.getX() - offset;
 		y = actor.getY() - offset;
 		
-		batch.draw(corners[0], x, y);
+		batch.draw(corners[0], x - wobble, y);
 		
 		x += actor.getWidth() + offset;
-		batch.draw(corners[1], x, y);
+		batch.draw(corners[1], x + wobble, y);
 		
 		y += actor.getHeight() + offset;
-		batch.draw(corners[2], x, y);
+		batch.draw(corners[2], x + wobble, y);
 		
 		x -= actor.getWidth() + offset;
-		batch.draw(corners[3], x, y);
+		batch.draw(corners[3], x - wobble, y);
 	}
 }

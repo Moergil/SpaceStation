@@ -56,6 +56,8 @@ public class SpaceStationGame extends ApplicationAdapter
 	@Override
 	public void create()
 	{
+		
+ 
 		random = new Random();
 		timer = new Timer();
 		
@@ -91,7 +93,7 @@ public class SpaceStationGame extends ApplicationAdapter
 			{
 				cleanupIntro(intro);
 			}
-		}, 15,15);
+		}, 16,16);
 		
 		hudStage.addListener(new InputListener()
 		{

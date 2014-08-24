@@ -70,8 +70,8 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		Gdx.input.setInputProcessor(inputMultiplexer);
 		
-//		runIntro();
-		runGame();
+		runIntro();
+//		runGame();
 	}
 	
 	private void runIntro()
@@ -91,7 +91,7 @@ public class SpaceStationGame extends ApplicationAdapter
 			{
 				cleanupIntro(intro);
 			}
-		}, 5,5);
+		}, 15,15);
 		
 		hudStage.addListener(new InputListener()
 		{
@@ -401,6 +401,7 @@ public class SpaceStationGame extends ApplicationAdapter
 			public void run()
 			{
 				dock.dockShip(ship);
+				ship.setIdle();
 			}
 		}, 6);
 	}

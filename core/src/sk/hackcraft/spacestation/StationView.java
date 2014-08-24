@@ -13,6 +13,6 @@ public interface StationView
 
 	public interface StationViewListener
 	{
-		void shipUndocked(Ship ship);
+		void shipDeparted(Ship ship);
 	}
 }

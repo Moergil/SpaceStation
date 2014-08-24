@@ -1,7 +1,9 @@
 package sk.hackcraft.spacestation;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -10,7 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 
 public class Station extends Group
 {
-	private List<Dock> docks = new ArrayList<Dock>();
+	private Set<Dock> docks = new HashSet<Dock>();
+	private Set<StorageFacility> storageFacilities = new HashSet<StorageFacility>();
 	
 	private Sprite sprite;
 	
@@ -27,9 +30,14 @@ public class Station extends Group
 		addActor(dock);
 	}
 	
-	public List<Dock> getDocks()
+	public Set<Dock> getDocks()
 	{
 		return docks;
+	}
+	
+	public Set<StorageFacility> getStorageFacilities()
+	{
+		return storageFacilities;
 	}
 	
 	@Override

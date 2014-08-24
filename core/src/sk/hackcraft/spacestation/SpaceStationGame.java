@@ -13,6 +13,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
@@ -39,16 +40,16 @@ public class SpaceStationGame extends ApplicationAdapter
 
 	private Dock selectedDock;
 	
-	private SelectionBound selectionBound;
+	private SelectionBound activeSelectionBound, targetSelectionBound;
 	
 	private ShipsQueueMenu shipsQueueMenu;
-	
-	private SelectionListener selectionListener = new SelectionListener();
 
 	private Music mp3Intro;
 	
 	private Station station;
 	private StationViewMaster stationViewMaster;
+	
+	private Interaction interaction;
 
 	@Override
 	public void create()
@@ -140,8 +141,10 @@ public class SpaceStationGame extends ApplicationAdapter
 		station.setPosition(50, 20);
 		gameStage.addActor(station);
 		
-		Texture cornersAtlas = new Texture(Gdx.files.local("sprite/active_selection.png"));
-		selectionBound = new SelectionBound(cornersAtlas);
+		Texture activeSelectionAtlas = new Texture(Gdx.files.local("sprite/active_selection.png"));
+		Texture targetSelectionAtlas = new Texture(Gdx.files.local("sprite/target_selection.png"));
+		activeSelectionBound = new SelectionBound(activeSelectionAtlas);
+		targetSelectionBound = new SelectionBound(targetSelectionAtlas);
 		
 		// actual view of the player
 		actualGameView = GameView.DOCKS;
@@ -201,16 +204,14 @@ public class SpaceStationGame extends ApplicationAdapter
 		// debugging
 		//gameStage.setDebugAll(true);
 		
-		float positionY[] = {110, 84, 58, 32};
+		float positionY[] = {117, 91, 65, 39};
 		
 		for (int i = 0; i < 4; i++)
 		{
-			Dock dock = new Dock(selectionBound);
-			dock.setPosition(113, positionY[i]);
+			Dock dock = new Dock(activeSelectionBound);
+			dock.setPosition(121, positionY[i]);
 			
 			station.addDock(dock);
-			
-			registerSelectionListener(dock);
 			
 			gameStage.addActor(dock);
 		}
@@ -223,7 +224,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		planets.add(new Planet(GoodsType.ELECTRONICS));
 		
 		// ships generation		
-		shipsGenerator = new ShipsCreator(selectionBound);
+		shipsGenerator = new ShipsCreator(activeSelectionBound);
 		
 		shipsQueueMenu = new ShipsQueueMenu()
 		{
@@ -248,15 +249,72 @@ public class SpaceStationGame extends ApplicationAdapter
 			shipsQueueMenu.matchHeightToStage();
 		}
 		
+		setupInteractions();
+		
 		// TODO debug
 		addShip();
 		addShip();
 		addShip();
 	}
 	
-	private void registerSelectionListener(final Actor actor)
+	private void setupInteractions()
 	{
-		actor.addListener(selectionListener);
+		BitmapFont font = new BitmapFont(false);
+		interaction = new Interaction(activeSelectionBound, targetSelectionBound, font);
+		gameStage.addActor(interaction);
+		
+		for (final Dock dock : station.getDocks())
+		{
+			interaction.addMasterActor(dock);
+			
+			interaction.addInteractAction(dock, new Interaction.InteractAction("Undock")
+			{
+				@Override
+				public boolean isActive()
+				{
+					return dock.hasDockedShip();
+				}
+				
+				@Override
+				public boolean execute()
+				{
+					dock.undockShip();
+					return true;
+				}
+			});
+			
+			interaction.addInteractAction(dock, new Interaction.InteractAction("Load")
+			{
+				@Override
+				public boolean isActive()
+				{
+					return dock.hasDockedShip();
+				}
+				
+				@Override
+				public boolean execute()
+				{
+					//dock.undockShip();
+					return true;
+				}
+			});
+			
+			interaction.addInteractAction(dock, new Interaction.InteractAction("Unload")
+			{
+				@Override
+				public boolean isActive()
+				{
+					return dock.hasDockedShip();
+				}
+				
+				@Override
+				public boolean execute()
+				{
+					//dock.undockShip();
+					return true;
+				}
+			});
+		}
 	}
 
 	private void addShip()
@@ -265,9 +323,9 @@ public class SpaceStationGame extends ApplicationAdapter
 
 		hudStage.addActor(ship);
 		
-		registerSelectionListener(ship);
-		
 		stationViewMaster.shipArrived(ship);
+		
+		interaction.addSelectionListener(ship);
 	}
 	
 	@Override
@@ -378,51 +436,6 @@ public class SpaceStationGame extends ApplicationAdapter
 			}
 		}, 1);
 	}
-	
-	private class SelectionListener extends InputListener
-	{
-		@Override
-		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button)
-		{
-			Actor target = event.getTarget();
-			
-			if (target instanceof Dock)
-			{
-				Dock dock = (Dock)target;
-				
-				if (selectedDock != null)
-				{
-					selectedDock.getSelector().setSelected(false);
-				}
-				
-				selectedDock = dock;
-				selectedDock.getSelector().setSelected(true);
-				
-				return true;
-			}
-			else
-			{
-				if (selectedDock == null)
-				{
-					return false;
-				}
-				
-				if (target instanceof Ship)
-				{
-					Ship ship = (Ship)target;
-					
-					if (shipsQueueMenu.contains(ship))
-					{
-						shipsQueueMenu.orderShipToDock(ship, selectedDock);
-						selectedDock.getSelector().setSelected(false);
-						selectedDock = null;
-					}
-				}
-			}
-			
-			return false;
-		}
-	};
 	
 	private class StationViewMaster implements StationView
 	{

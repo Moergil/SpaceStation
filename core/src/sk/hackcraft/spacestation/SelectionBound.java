@@ -7,6 +7,11 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class SelectionBound
 {
+	private final int MAX_OFFSET = 5;
+	
+	private int tick;
+	private int actualOffset = MAX_OFFSET;
+
 	private final TextureRegion corners[];
 	
 	public SelectionBound(Texture cornersAtlas)
@@ -21,22 +26,32 @@ public class SelectionBound
 	
 	public void draw(Actor actor, Batch batch)
 	{
-		float offset = 5;
+		tick++;
+		
+		if (tick % 30 == 0)
+		{
+			actualOffset--;
+			
+			if (actualOffset < 4)
+			{
+				actualOffset = MAX_OFFSET;
+			}
+		}
 		
 		float x, y;
 		
-		x = actor.getX() - offset;
-		y = actor.getY() - offset;
+		x = actor.getX() - actualOffset;
+		y = actor.getY() - actualOffset;
 		
 		batch.draw(corners[0], x, y);
 		
-		x += actor.getWidth() + offset;
+		x += actor.getWidth() + actualOffset;
 		batch.draw(corners[1], x, y);
 		
-		y += actor.getHeight() + offset;
+		y += actor.getHeight() + actualOffset;
 		batch.draw(corners[2], x, y);
 		
-		x -= actor.getWidth() + offset;
+		x -= actor.getWidth() + actualOffset;
 		batch.draw(corners[3], x, y);
 	}
 }

@@ -1,143 +1,180 @@
 package sk.hackcraft.spacestation;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.sun.javafx.tk.quantum.MasterTimer;
 
-public class Interaction
+public class Interaction extends Actor
 {
-	private Actor activeMaster, activeIntent;
-
-	private Map<Actor, Map<Actor, Set<Actor>>> data = new HashMap<Actor, Map<Actor, Set<Actor>>>();
+	private final SelectionBound selectedBound;
+	private final SelectionBound possibleSelectBound;
+	private final BitmapFont font;
 	
-	private Map<Actor, InteractAction> interactActions = new HashMap<Actor, Interaction.InteractAction>();
+	private Actor activeMaster;
+	private InteractAction activeAction;
 	
-	public boolean isSelectable(Actor actor)
+	private Map<Actor, Set<InteractAction>> actions = new HashMap<Actor, Set<Interaction.InteractAction>>();
+	
+	private final InputListener selectionListener = new InputListener()
 	{
-		if (activeMaster == null && data.containsKey(actor))
+		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button)
 		{
+			Actor target = event.getTarget();
+			
+			return actorTouched(target);
+		}
+	};
+	
+	public Interaction(SelectionBound selectedBound, SelectionBound possibleSelectBound, BitmapFont font)
+	{
+		this.selectedBound = selectedBound;
+		this.possibleSelectBound = possibleSelectBound;
+		this.font = font;
+	}
+	
+	public boolean actorTouched(Actor actor)
+	{
+		System.out.println("Touched");
+		
+		if (activeMaster == null && actions.containsKey(actor))
+		{
+			initiateSelection(actor);
 			return true;
 		}
-		else
+		else if (activeMaster == actor)
 		{
-			if (activeIntent == null && data.get(activeMaster).containsKey(actor))
+			cancelSelection();
+			return true;
+		}
+		else if (actions.containsKey(actor))
+		{
+			cancelSelection();
+			initiateSelection(actor);
+			return true;
+		}
+		else if (activeMaster != null)
+		{
+			if (actions.get(activeMaster).contains(actor))
 			{
-				return true;
-			}
-			else
-			{
-				if (data.get(activeMaster).get(activeIntent).contains(actor))
+				InteractAction action = (InteractAction)actor;
+				
+				changeAction(action);
+				
+				if (action.execute())
 				{
+					cancelSelection();
 					return true;
 				}
 			}
+			else if (activeAction != null && activeAction.getTargets().contains(actor))
+			{
+				activeAction.executeWithTarget(actor);
+				cancelSelection();
+				return true;
+			}
 		}
-
+		
 		return false;
 	}
 	
-	public void selectMaster(Actor actor)
+	public void addSelectionListener(Actor actor)
 	{
-		this.activeMaster = actor;
+		actor.addListener(selectionListener);
 	}
 	
-	public void selectIntent(Actor intent)
+	public void addMasterActor(Actor actor)
 	{
-		this.activeIntent = intent;
+		actions.put(actor, new HashSet<Interaction.InteractAction>());
+		addSelectionListener(actor);
 	}
 	
-	public void cancelSelection()
+	public void addInteractAction(Actor masterActor, InteractAction action)
 	{
-		activeMaster = null;
-		activeIntent = null;
+		actions.get(masterActor).add(action);
+		addSelectionListener(action);
 	}
 	
-	public Actor getActiveMaster()
+	@Override
+	public void draw(Batch batch, float parentAlpha)
 	{
-		return activeMaster;
-	}
-	
-	public boolean hasActiveMaster()
-	{
-		return activeMaster != null;
-	}
-	
-	public Actor getActiveIntent()
-	{
-		return activeIntent;
-	}
-	
-	public boolean hasActiveIntent()
-	{
-		return activeIntent != null;
-	}
-	
-	public void addMaster(Actor master)
-	{
-		data.put(master, new HashMap<Actor, Set<Actor>>());
-	}
-	
-	public void setIntentInteractAction(Actor intent, InteractAction action)
-	{
-		interactActions.put(intent, action);
-	}
-	
-	public void setSlavesSet(Actor master, Actor intent, Set<Actor> slavesSet)
-	{
-		data.get(master).put(intent, slavesSet);
-	}
-	
-	public Set<Actor> getIntentsSet(Actor master)
-	{
-		return data.get(master).keySet();
-	}
-	
-	public Set<Actor> getSlavesSet(Actor master, Actor intent)
-	{
-		return data.get(master).get(intent);
-	}
-	
-	public Set<? extends Actor> getSelectableActors()
-	{
-		if (activeMaster == null)
+		if (activeMaster != null)
 		{
-			return data.keySet();
+			selectedBound.draw(activeMaster, batch);
+			
+			float x = activeMaster.getX() + 30;
+			float y = activeMaster.getY() - 10;
+			float verticalOffset = font.getCapHeight() + 3;
+			for (InteractAction action : actions.get(activeMaster))
+			{
+				font.draw(batch, action.getName(), x, y);
+				y += verticalOffset;
+			}
 		}
 		else
 		{
-			if (activeIntent == null)
+			for (Actor actor : actions.keySet())
 			{
-				return data.get(activeMaster).keySet();
+				possibleSelectBound.draw(actor, batch);
 			}
-			else
+		}
+		
+		if (activeAction != null)
+		{
+			for (Actor actor : activeAction.getTargets())
 			{
-				return data.get(activeMaster).get(activeIntent);
+				possibleSelectBound.draw(actor, batch);
 			}
 		}
 	}
 	
-	public void selectActor(Actor actor)
+	private void initiateSelection(Actor masterActor)
 	{
-		if (data.containsKey(actor))
-		{
-			cancelSelection();
-			activeMaster = actor;
-		}
-		else if (activeMaster != null && data.get(activeMaster).containsKey(actor))
-		{
-			activeIntent = actor;
-		}
-		else if (activeMaster != null && activeIntent != null && data.get(activeMaster).get(activeIntent).contains(actor))
-		{
-			interactActions.get(activeIntent).interact(activeMaster, actor);
-		}
+		this.activeMaster = masterActor;
 	}
 	
-	public interface InteractAction
+	private void cancelSelection()
 	{
-		void interact(Actor master, Actor slave);
+		activeMaster = null;
+		activeAction = null;
+	}
+	
+	private void changeAction(InteractAction action)
+	{
+		this.activeAction = action;
+	}
+	
+	public static abstract class InteractAction extends Actor
+	{
+		private Set<Actor> targets;
+		
+		public InteractAction(String name)
+		{
+			this(name, new HashSet<Actor>());
+		}
+		
+		public InteractAction(String name, Set<Actor> targets)
+		{
+			setName(name);
+			this.targets = targets;
+		}
+		
+		public abstract boolean isActive();
+		
+		public boolean execute() { return false; }
+		public void executeWithTarget(Actor target) {}
+		
+		public Set<Actor> getTargets()
+		{
+			return targets;
+		}
 	}
 }

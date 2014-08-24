@@ -9,7 +9,7 @@ public interface StationView
 {
 	void shipArrived(Ship ship);
 
-	void setListener();
+	void setListener(StationViewListener listener);
 
 	public interface StationViewListener
 	{

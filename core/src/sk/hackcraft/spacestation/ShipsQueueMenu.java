@@ -17,7 +17,7 @@ public abstract class ShipsQueueMenu extends Actor
 	{
 		texture = new Texture(Gdx.files.internal("sprite/shipsQueueBg.png"));
 		
-		setWidth(100);
+		setWidth(texture.getWidth());
 	}
 	
 	public void matchHeightToStage()

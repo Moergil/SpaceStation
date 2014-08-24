@@ -65,8 +65,8 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		Gdx.input.setInputProcessor(inputMultiplexer);
 		
-		runIntro();
-//		runGame();
+//		runIntro();
+		runGame();
 	}
 	
 	private void runIntro()
@@ -140,7 +140,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		station.setPosition(50, 20);
 		gameStage.addActor(station);
 		
-		Texture cornersAtlas = new Texture(Gdx.files.local("sprite/selector_corner.png"));
+		Texture cornersAtlas = new Texture(Gdx.files.local("sprite/active_selection.png"));
 		selectionBound = new SelectionBound(cornersAtlas);
 		
 		// actual view of the player
@@ -264,7 +264,6 @@ public class SpaceStationGame extends ApplicationAdapter
 		final Ship ship = shipsGenerator.createGeneric();
 
 		hudStage.addActor(ship);
-		shipsQueueMenu.queueShip(ship);
 		
 		registerSelectionListener(ship);
 		

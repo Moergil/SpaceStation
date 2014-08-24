@@ -10,8 +10,8 @@ public class Dock extends Actor implements Selectable
 {
 	private Ship dockedShip;
 	private Vector2 dockingAdapterPosition;
-	
-	private boolean selected;
+
+	private DrawSelector drawSelector;
 	private SelectionBound selectionBound;
 	
 	public Dock(SelectionBound selectionBound)
@@ -21,8 +21,22 @@ public class Dock extends Actor implements Selectable
 		setSize(75, 30);
 		
 		dockingAdapterPosition = new Vector2(15, 15);
+		
+		drawSelector = new DrawSelector()
+		{
+			@Override
+			public void drawUnselected(Batch batch)
+			{
+			}
+			
+			@Override
+			public void drawSelected(Batch batch)
+			{
+				Dock.this.selectionBound.draw(Dock.this, batch);
+			}
+		};
 	}
-	
+
 	public Vector2 getDockingAdapterPosition()
 	{
 		return dockingAdapterPosition;
@@ -77,22 +91,12 @@ public class Dock extends Actor implements Selectable
 	@Override
 	public void draw(Batch batch, float parentAlpha)
 	{
-		if (selected)
-		{
-			selectionBound.draw(this, batch);
-		}
+		drawSelector.draw(batch);
 	}
 
 	@Override
-	public void setSelected(boolean selected)
+	public Selector getSelector()
 	{
-		this.selected = selected;
-	}
-
-	@Override
-	public boolean toggleSelected()
-	{
-		selected = !selected;
-		return selected;
+		return drawSelector;
 	}
 }

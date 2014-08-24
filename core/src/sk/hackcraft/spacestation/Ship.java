@@ -27,6 +27,8 @@ public class Ship extends Actor implements Selectable
 	private DrawSelector drawSelector;
 	private SelectionBound selectionBound;
 	
+	private int backgroundX,backgroundY;
+	
 	public Ship(Sprite sprite, Vector2 size, Vector2 dockingPortPosition, CargoContainer cargoContainer, SelectionBound selectionBound)
 	{
 		this.sprite = sprite;

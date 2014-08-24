@@ -92,7 +92,7 @@ public class SpaceStationGame extends ApplicationAdapter
 			{
 				cleanupIntro(intro);
 			}
-		}, 5,5);
+		}, 15,15);
 		
 		hudStage.addListener(new InputListener()
 		{

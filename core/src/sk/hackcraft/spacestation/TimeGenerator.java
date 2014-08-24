@@ -42,7 +42,7 @@ public class TimeGenerator
 	public static double getDelayOfTask(int numberOfTasks, int numberOfPlanets,int numberOfShips){
 		double value = ((double)numberOfPlanets/(double) numberOfShips)*numberOfTasks*4;
 		
-		return getValueOfExponencialDistribution(value, getInstance().getDelayOfTaskGenerator());
+		return getValueOfExponencialDistribution(1.0/value, getInstance().getDelayOfTaskGenerator());
 	}
 	
 	public static double getDurationOfTask(int numberOfTasks,int numberOfCargo, double distance){

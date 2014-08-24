@@ -32,9 +32,10 @@ public class TaskStarter extends Timer.Task
 		System.out.println(cas.toString()+" Planeta " + newTask.getPlanet().getType()+" typ "+newTask.getType()+" mnozstvo "+newTask.getAmount());
 		
 		if(manager.isGenerateTasks()){
-			float secondsOfDelay = (float)TimeGenerator.getDelayOfTask(manager.getPlanetTasks().size(), manager.getGame().getPlanets().size(), numberOfShips)*10;
+			float secondsOfDelay = (float)TimeGenerator.getDelayOfTask(manager.getPlanetTasks().size(), manager.getGame().getPlanets().size(), numberOfShips);
 			System.out.println("Seconds of delay"+secondsOfDelay);
-			manager.getGame().getTimer().scheduleTask(new TaskStarter(this.manager), secondsOfDelay);
+			// manager.getGame().getTimer().scheduleTask(new TaskStarter(this.manager), secondsOfDelay);
+			manager.getGame().getTimer().scheduleTask(this, secondsOfDelay);
 		}
 		
 		

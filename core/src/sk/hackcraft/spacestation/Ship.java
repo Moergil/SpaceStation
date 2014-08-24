@@ -1,7 +1,5 @@
 package sk.hackcraft.spacestation;
 
-import java.util.TimerTask;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -39,7 +37,7 @@ public class Ship extends Actor
 	private int frameCounter = 0;
 
 	private Vector2 dockingPortPosition;
-	
+
 	private CargoContainer cargoContainer;
 
 	public Ship(String name, Texture texture, Vector2 size, Vector2 dockingPortPosition, CargoContainer cargoContainer)
@@ -55,7 +53,7 @@ public class Ship extends Actor
 
 		this.cargoContainer = cargoContainer;
 	}
-	
+
 	public Vector2 getDockingAdapterPosition()
 	{
 		return dockingPortPosition;

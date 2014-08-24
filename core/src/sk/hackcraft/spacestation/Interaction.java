@@ -7,22 +7,25 @@ import java.util.Map;
 import java.util.Set;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.sun.javafx.tk.quantum.MasterTimer;
 
 public class Interaction extends Actor
 {
+	private final Stage stage;
+	
 	private final SelectionBound selectedBound;
 	private final SelectionBound possibleSelectBound;
-	private final BitmapFont font;
 	
 	private Actor activeMaster;
 	private InteractAction activeAction;
 	
-	private Map<Actor, Set<InteractAction>> actions = new HashMap<Actor, Set<Interaction.InteractAction>>();
+	private Map<Actor, Set<InteractAction>> actions = new HashMap<Actor, Set<InteractAction>>();
+	private Map<Actor, ActiveCheck> checks = new HashMap<Actor, Interaction.ActiveCheck>();
 	
 	private final InputListener selectionListener = new InputListener()
 	{
@@ -34,31 +37,25 @@ public class Interaction extends Actor
 		}
 	};
 	
-	public Interaction(SelectionBound selectedBound, SelectionBound possibleSelectBound, BitmapFont font)
+	public Interaction(Stage stage, SelectionBound selectedBound, SelectionBound possibleSelectBound)
 	{
+		this.stage = stage;
 		this.selectedBound = selectedBound;
 		this.possibleSelectBound = possibleSelectBound;
-		this.font = font;
 	}
 	
 	public boolean actorTouched(Actor actor)
 	{
-		System.out.println("Touched");
-		
 		if (activeMaster == null && actions.containsKey(actor))
 		{
+			System.out.println("New master selection");
 			initiateSelection(actor);
 			return true;
 		}
 		else if (activeMaster == actor)
 		{
-			cancelSelection();
-			return true;
-		}
-		else if (actions.containsKey(actor))
-		{
-			cancelSelection();
-			initiateSelection(actor);
+			System.out.println("Cancelled selection");
+			cancelSelection(false);
 			return true;
 		}
 		else if (activeMaster != null)
@@ -67,19 +64,38 @@ public class Interaction extends Actor
 			{
 				InteractAction action = (InteractAction)actor;
 				
+				if (!action.isActive())
+				{
+					return false;
+				}
+				
+				System.out.println("Changed action: " + action.getName());
 				changeAction(action);
 				
 				if (action.execute())
 				{
-					cancelSelection();
+					System.out.println("Action immediate executed");
+					cancelSelection(true);
+					
 					return true;
 				}
 			}
 			else if (activeAction != null && activeAction.getTargets().contains(actor))
 			{
-				activeAction.executeWithTarget(actor);
-				cancelSelection();
-				return true;
+				if (!activeAction.isActive())
+				{
+					return false;
+				}
+				
+				if (activeAction.executeWithTarget(actor))
+				{
+					System.out.println("Action executed with target " + actor.getName());
+					cancelSelection(true);
+					
+					return true;
+				}
+				
+				return false;
 			}
 		}
 		
@@ -91,16 +107,29 @@ public class Interaction extends Actor
 		actor.addListener(selectionListener);
 	}
 	
-	public void addMasterActor(Actor actor)
+	public void addMasterActor(Actor actor, ActiveCheck activeCheck)
 	{
-		actions.put(actor, new HashSet<Interaction.InteractAction>());
+		actions.put(actor, new HashSet<InteractAction>());
+		checks.put(actor, activeCheck);
 		addSelectionListener(actor);
 	}
 	
-	public void addInteractAction(Actor masterActor, InteractAction action)
+	public void removeMasterActor(Actor actor)
+	{
+		actions.remove(actor);
+		actor.removeCaptureListener(selectionListener);
+	}
+	
+	public void addInteractAction(Actor masterActor, String title, InteractAction action)
 	{
 		actions.get(masterActor).add(action);
+		
+		action.prepare(title);
+		action.setVisible(false);
+		
 		addSelectionListener(action);
+		
+		stage.addActor(action);
 	}
 	
 	@Override
@@ -109,21 +138,15 @@ public class Interaction extends Actor
 		if (activeMaster != null)
 		{
 			selectedBound.draw(activeMaster, batch);
-			
-			float x = activeMaster.getX() + 30;
-			float y = activeMaster.getY() - 10;
-			float verticalOffset = font.getCapHeight() + 3;
-			for (InteractAction action : actions.get(activeMaster))
-			{
-				font.draw(batch, action.getName(), x, y);
-				y += verticalOffset;
-			}
 		}
 		else
 		{
 			for (Actor actor : actions.keySet())
 			{
-				possibleSelectBound.draw(actor, batch);
+				if (checks.get(actor).isActive())
+				{
+					possibleSelectBound.draw(actor, batch);
+				}
 			}
 		}
 		
@@ -139,10 +162,45 @@ public class Interaction extends Actor
 	private void initiateSelection(Actor masterActor)
 	{
 		this.activeMaster = masterActor;
+		
+		float x = 0;
+		float y = 0;
+		float verticalOffset = 5;
+		
+		/*if (actions.get(masterActor).size() == 1)
+		{
+			if (actions.get(masterActor).iterator().next().execute())
+			{
+				cancelSelection();
+			}
+		}
+		else
+		{*/
+			for (InteractAction action : actions.get(masterActor))
+			{
+				action.setPosition(x, y);
+				action.setVisible(true);
+				
+				y += verticalOffset + action.getHeight();
+			}
+		//}
 	}
 	
-	private void cancelSelection()
+	private void cancelSelection(boolean actionExecuted)
 	{
+		if (activeMaster != null && actions.containsKey(activeMaster))
+		{
+			for (InteractAction action : actions.get(activeMaster))
+			{
+				action.setVisible(false);
+			}
+		}
+		
+		if (actionExecuted && activeAction != null && activeAction.isOneTime())
+		{
+			removeMasterActor(activeMaster);
+		}
+		
 		activeMaster = null;
 		activeAction = null;
 	}
@@ -152,29 +210,8 @@ public class Interaction extends Actor
 		this.activeAction = action;
 	}
 	
-	public static abstract class InteractAction extends Actor
+	public interface ActiveCheck
 	{
-		private Set<Actor> targets;
-		
-		public InteractAction(String name)
-		{
-			this(name, new HashSet<Actor>());
-		}
-		
-		public InteractAction(String name, Set<Actor> targets)
-		{
-			setName(name);
-			this.targets = targets;
-		}
-		
-		public abstract boolean isActive();
-		
-		public boolean execute() { return false; }
-		public void executeWithTarget(Actor target) {}
-		
-		public Set<Actor> getTargets()
-		{
-			return targets;
-		}
+		boolean isActive();
 	}
 }

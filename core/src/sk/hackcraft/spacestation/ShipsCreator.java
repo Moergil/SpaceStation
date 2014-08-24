@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 public class ShipsCreator
 {
 	private SelectionBound selectionBound;
+	private int i = 0;
 	
 	public ShipsCreator(SelectionBound selectionBound)
 	{
@@ -21,11 +22,14 @@ public class ShipsCreator
 		
 		TextureRegion region = new TextureRegion(texture, 0, 0, 54, 20);
 		Sprite sprite = new Sprite(region);
-		return new Ship(
+		Ship ship = new Ship(
+				"S" + ++i,
 				sprite,
 				new Vector2(48, 16),
 				new Vector2(10, 10),
 				new CargoContainer(new CargoType(){}, 20),
 				selectionBound);
+		
+		return ship;
 	}
 }

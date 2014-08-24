@@ -8,11 +8,13 @@ import java.util.Set;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 
-public class Station extends Group
+public class Station extends Actor
 {
 	private Set<Dock> docks = new HashSet<Dock>();
+	private Set<Dock> freeDocks = new HashSet<Dock>();
 	private Set<StorageFacility> storageFacilities = new HashSet<StorageFacility>();
 	
 	private Sprite sprite;
@@ -27,12 +29,26 @@ public class Station extends Group
 	public void addDock(Dock dock)
 	{
 		docks.add(dock);
-		addActor(dock);
 	}
 	
 	public Set<Dock> getDocks()
 	{
 		return docks;
+	}
+	
+	public Set<Dock> getFreeDocks()
+	{
+		freeDocks.clear();
+		
+		for (Dock dock : docks)
+		{
+			if (dock.isFree())
+			{
+				freeDocks.add(dock);
+			}
+		}
+		
+		return freeDocks;
 	}
 	
 	public Set<StorageFacility> getStorageFacilities()

@@ -79,9 +79,4 @@ public class TimeGenerator
 	{
 		return seedGenerator;
 	}
-
-	
-	
-	
-	
 }

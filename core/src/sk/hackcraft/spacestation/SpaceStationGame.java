@@ -4,6 +4,7 @@ package sk.hackcraft.spacestation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import sk.hackcraft.spacestation.StationView.StationViewListener;
 
@@ -31,7 +32,7 @@ public class SpaceStationGame extends ApplicationAdapter
 {
 	private Random random;
 	
-	private Stage gameStage, hudStage;
+	private Stage gameStage;
 	private GameView actualGameView;
 
 	private ShipsCreator shipsGenerator;
@@ -51,6 +52,9 @@ public class SpaceStationGame extends ApplicationAdapter
 	private StationViewMaster stationViewMaster;
 	
 	private Interaction interaction;
+	private Space space;
+	
+	private BitmapFont mainFont;
 
 	@Override
 	public void create()
@@ -60,14 +64,13 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		mngrSound = new SoundMngr();
 
-		InputMultiplexer inputMultiplexer = new InputMultiplexer();
 		gameStage = new Stage(new FitViewport(400, 240));
-		inputMultiplexer.addProcessor(gameStage);
+		Gdx.input.setInputProcessor(gameStage);
 		
-		hudStage = new Stage(new FitViewport(400, 240));
-		inputMultiplexer.addProcessor(hudStage);
+		// debugging
+		gameStage.setDebugAll(false);
 		
-		Gdx.input.setInputProcessor(inputMultiplexer);
+		mainFont = new BitmapFont(false);
 		
 //		runIntro();
 		runGame();
@@ -81,7 +84,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		mngrSound.runIntro();
 			
-		hudStage.addActor(intro);
+		gameStage.addActor(intro);
 
 		timer.scheduleTask(new Timer.Task()
 		{
@@ -92,7 +95,7 @@ public class SpaceStationGame extends ApplicationAdapter
 			}
 		}, 5,5);
 		
-		hudStage.addListener(new InputListener()
+		gameStage.addListener(new InputListener()
 		{
 			@Override
 			public boolean keyDown(InputEvent event, int keycode)
@@ -129,7 +132,7 @@ public class SpaceStationGame extends ApplicationAdapter
 			@Override
 			public void run()
 			{
-				hudStage.clear();
+				gameStage.clear();
 				runGame();
 			}
 		}, 0);
@@ -167,32 +170,6 @@ public class SpaceStationGame extends ApplicationAdapter
 					return true;
 				}
 				
-				if (keycode == Input.Keys.B)
-				{
-					for (Dock dock : station.getDocks())
-					{
-						if (dock.hasDockedShip())
-						{
-							final Ship ship = dock.getDockedShip();
-							
-							dock.undockShip();
-							
-							ship.depart(new Vector2(450, dock.getY()), 5);
-							
-							timer.scheduleTask(new Timer.Task()
-							{
-								@Override
-								public void run()
-								{
-									ship.remove();
-								}
-							}, 5);
-						}
-					}
-	
-					return true;
-				}
-				
 				if (keycode == Input.Keys.S)
 				{
 					addShip();
@@ -206,14 +183,11 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		setInstantGameView(GameView.DOCKS);
 		
-		// debugging
-		//gameStage.setDebugAll(true);
-		
 		float positionY[] = {117, 91, 65, 39};
 		
 		for (int i = 0; i < 4; i++)
 		{
-			Dock dock = new Dock(activeSelectionBound);
+			Dock dock = new Dock(i, activeSelectionBound);
 			dock.setPosition(121, positionY[i]);
 			
 			station.addDock(dock);
@@ -221,12 +195,34 @@ public class SpaceStationGame extends ApplicationAdapter
 			gameStage.addActor(dock);
 		}
 		
+		//EPH Mala stanica
+		Texture smallStationTexture = new Texture(Gdx.files.internal("sprite/station_small.png"));
+		Sprite smallStationSprite = new Sprite(smallStationTexture);
+		
+		Texture stationSmallLightsTexture = new Texture(Gdx.files.internal("sprite/station_small_lights.png"));
+		
+		Vector2 stationSmallPosition = new Vector2(420, 15);
+		StationSmall smallStation = new StationSmall(smallStationSprite, stationSmallPosition);
+		smallStation.setLights(stationSmallLightsTexture);
+		gameStage.addActor(smallStation);
+		
+		//EPH: zatial jedina planeta, aby ju bolo aspon vidno
 		//generating planets
-				planets.add(new Planet(GoodsType.FOOD,20));
-				planets.add(new Planet(GoodsType.ORE,20));
-				planets.add(new Planet(GoodsType.MEDICINE,20));
-				planets.add(new Planet(GoodsType.MATERIAL,20));
-				planets.add(new Planet(GoodsType.ELECTRONICS,20));
+		Texture planetTexture = new Texture(Gdx.files.internal("sprite/planet1.png"));
+		Sprite planetSprite = new Sprite(planetTexture);
+		Vector2 position = new Vector2(430, 160);
+		Vector2 size = new Vector2(68, 68);
+		Planet planet = new Planet(planetSprite, size, position, GoodsType.FOOD, 20);
+		planets.add(planet);
+		gameStage.addActor(planet);
+		/*planets.add(new Planet(GoodsType.ORE));
+		planets.add(new Planet(GoodsType.MEDICINE));
+		planets.add(new Planet(GoodsType.MATERIAL));
+		planets.add(new Planet(GoodsType.ELECTRONICS));*/
+		//planets.add(new Planet(GoodsType.ORE,20));
+		//planets.add(new Planet(GoodsType.MEDICINE,20));
+		//planets.add(new Planet(GoodsType.MATERIAL,20));
+		//planets.add(new Planet(GoodsType.ELECTRONICS,20));
 		
 		// ships generation		
 		shipsGenerator = new ShipsCreator(activeSelectionBound);
@@ -236,19 +232,16 @@ public class SpaceStationGame extends ApplicationAdapter
 			@Override
 			public void initiateDocking(Ship ship, Dock dock)
 			{
-				ship.remove();
-				
-				gameStage.addActor(ship);
 				ship.setPosition(450, dock.getY());
 				
 				flyShipToDock(ship, dock);
 			}
 		};
 
-		hudStage.addActor(shipsQueueMenu);
+		gameStage.addActor(shipsQueueMenu);
 		
 		{
-			float x = hudStage.getWidth() - shipsQueueMenu.getWidth();
+			float x = gameStage.getWidth() - shipsQueueMenu.getWidth();
 			shipsQueueMenu.setPosition(x, 0);
 			
 			shipsQueueMenu.matchHeightToStage();
@@ -264,31 +257,22 @@ public class SpaceStationGame extends ApplicationAdapter
 	
 	private void setupInteractions()
 	{
-		BitmapFont font = new BitmapFont(false);
-		interaction = new Interaction(activeSelectionBound, targetSelectionBound, font);
+		
+		interaction = new Interaction(gameStage, activeSelectionBound, targetSelectionBound);
 		gameStage.addActor(interaction);
 		
 		for (final Dock dock : station.getDocks())
 		{
-			interaction.addMasterActor(dock);
-			
-			interaction.addInteractAction(dock, new Interaction.InteractAction("Undock")
+			interaction.addMasterActor(dock, new Interaction.ActiveCheck()
 			{
 				@Override
 				public boolean isActive()
 				{
 					return dock.hasDockedShip();
-				}
-				
-				@Override
-				public boolean execute()
-				{
-					dock.undockShip();
-					return true;
 				}
 			});
 			
-			interaction.addInteractAction(dock, new Interaction.InteractAction("Load")
+			interaction.addInteractAction(dock, "Undock", new InteractAction()
 			{
 				@Override
 				public boolean isActive()
@@ -299,23 +283,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				@Override
 				public boolean execute()
 				{
-					//dock.undockShip();
-					return true;
-				}
-			});
-			
-			interaction.addInteractAction(dock, new Interaction.InteractAction("Unload")
-			{
-				@Override
-				public boolean isActive()
-				{
-					return dock.hasDockedShip();
-				}
-				
-				@Override
-				public boolean execute()
-				{
-					//dock.undockShip();
+					releaseShipFromDock(dock);
 					return true;
 				}
 			});
@@ -326,7 +294,7 @@ public class SpaceStationGame extends ApplicationAdapter
 	{
 		final Ship ship = shipsGenerator.createGeneric();
 
-		hudStage.addActor(ship);
+		gameStage.addActor(ship);
 		
 		stationViewMaster.shipArrived(ship);
 		
@@ -337,7 +305,6 @@ public class SpaceStationGame extends ApplicationAdapter
 	public void resize(int width, int height)
 	{
 		gameStage.getViewport().update(width, height, true);
-		hudStage.getViewport().update(width, height, true);
 	}
 
 	@Override
@@ -346,10 +313,8 @@ public class SpaceStationGame extends ApplicationAdapter
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		gameStage.act(Gdx.graphics.getDeltaTime());
-		hudStage.act(Gdx.graphics.getDeltaTime());
 		
 		gameStage.draw();
-		hudStage.draw();
 	}
 
 	private enum GameView
@@ -428,16 +393,16 @@ public class SpaceStationGame extends ApplicationAdapter
 	
 	private void releaseShipFromDock(final Dock dock)
 	{
+		final Ship ship = dock.getDockedShip();
+		dock.undockShip();
+		
 		timer.scheduleTask(new Timer.Task()
 		{
 			@Override
 			public void run()
 			{
-				Ship ship = dock.getDockedShip();
-				dock.undockShip();
-				
-				Vector2 targetPosition = new Vector2(450, ship.getY());
-				ship.depart(targetPosition, 5);
+				Vector2 targetPosition = new Vector2(350, ship.getY());
+				ship.depart(targetPosition, 5, timer);
 			}
 		}, 1);
 	}
@@ -458,9 +423,54 @@ public class SpaceStationGame extends ApplicationAdapter
 		}
 		
 		@Override
-		public void shipArrived(Ship ship)
+		public void shipArrived(final Ship ship)
 		{
 			shipsQueueMenu.queueShip(ship);
+			
+			interaction.addMasterActor(ship, new Interaction.ActiveCheck()
+			{
+				@Override
+				public boolean isActive()
+				{
+					return shipsQueueMenu.contains(ship);
+				}
+			});
+			
+			interaction.addInteractAction(ship, "Dock", new InteractAction()
+			{
+				@Override
+				public boolean isActive()
+				{
+					return !station.getFreeDocks().isEmpty();
+				}
+				
+				@Override
+				public Set<? extends Actor> getTargets()
+				{
+					return station.getFreeDocks();
+				}
+				
+				@Override
+				public boolean isOneTime()
+				{
+					return true;
+				}
+				
+				@Override
+				public boolean executeWithTarget(Actor target)
+				{
+					if (target instanceof Dock)
+					{						
+						Dock dock = (Dock)target;
+						dock.setReserved();
+						shipsQueueMenu.orderShipToDock(ship, dock);
+						
+						return true;
+					}
+					
+					return false;
+				}
+			});
 		}
 	}
 

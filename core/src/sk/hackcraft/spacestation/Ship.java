@@ -1,5 +1,7 @@
 package sk.hackcraft.spacestation;
 
+import java.util.TimerTask;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -8,8 +10,9 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.utils.Timer;
 
-public class Ship extends Actor implements Selectable
+public class Ship extends Actor
 {
 	public enum State
 	{
@@ -24,11 +27,12 @@ public class Ship extends Actor implements Selectable
 	
 	private CargoContainer cargoContainer;
 
-	private DrawSelector drawSelector;
 	private SelectionBound selectionBound;
 	
-	public Ship(Sprite sprite, Vector2 size, Vector2 dockingPortPosition, CargoContainer cargoContainer, SelectionBound selectionBound)
+	public Ship(String name, Sprite sprite, Vector2 size, Vector2 dockingPortPosition, CargoContainer cargoContainer, SelectionBound selectionBound)
 	{
+		setName("Ship " + name);
+		
 		this.sprite = sprite;
 		
 		setSize(size.x, size.y);
@@ -36,26 +40,6 @@ public class Ship extends Actor implements Selectable
 		this.cargoContainer = cargoContainer;
 		
 		this.selectionBound = selectionBound;
-		
-		drawSelector = new DrawSelector()
-		{
-			@Override
-			public void drawUnselected(Batch batch)
-			{
-			}
-			
-			@Override
-			public void drawSelected(Batch batch)
-			{
-				Ship.this.selectionBound.draw(Ship.this, batch);
-			}
-		};
-	}
-	
-	@Override
-	public Selector getSelector()
-	{
-		return drawSelector;
 	}
 	
 	public Vector2 getDockingAdapterPosition()
@@ -66,11 +50,22 @@ public class Ship extends Actor implements Selectable
 	public void arrive(Vector2 targetPosition, float duration)
 	{
 		addAction(Actions.moveTo(targetPosition.x, targetPosition.y, duration, Interpolation.exp5Out));
+		addAction(Actions.fadeIn(duration));
 	}
 
-	public void depart(Vector2 targetPosition, float duration)
+	public void depart(Vector2 targetPosition, float duration, Timer timer)
 	{
 		addAction(Actions.moveTo(targetPosition.x, targetPosition.y, duration, Interpolation.exp5In));
+		
+		timer.scheduleTask(new Timer.Task()
+		{
+			@Override
+			public void run()
+			{
+				addAction(Actions.fadeOut(1));
+			}
+		}, duration - 1);
+		
 	}
 	
 	public CargoContainer getCargoContainer()
@@ -88,9 +83,9 @@ public class Ship extends Actor implements Selectable
 	public void draw(Batch batch, float parentAlpha)
 	{
 		sprite.setCenter(getCenterX(), getCenterY());
+		sprite.setScale(getScaleX(), getScaleY());
+		sprite.setAlpha(getColor().a);
 		sprite.draw(batch);
-		
-		drawSelector.draw(batch);
 	}
 	
 	@Override

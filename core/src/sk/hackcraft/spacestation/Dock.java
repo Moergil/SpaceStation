@@ -6,35 +6,24 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-public class Dock extends Actor implements Selectable
+public class Dock extends Actor
 {
 	private Ship dockedShip;
 	private Vector2 dockingAdapterPosition;
 
-	private DrawSelector drawSelector;
 	private SelectionBound selectionBound;
 	
-	public Dock(SelectionBound selectionBound)
+	private boolean reserved;
+	
+	public Dock(int dockIndex, SelectionBound selectionBound)
 	{
+		setName("Dock no" + dockIndex);
+		
 		this.selectionBound = selectionBound;
 		
 		setSize(16, 16);
 		
 		dockingAdapterPosition = new Vector2(8, 8);
-		
-		drawSelector = new DrawSelector()
-		{
-			@Override
-			public void drawUnselected(Batch batch)
-			{
-			}
-			
-			@Override
-			public void drawSelected(Batch batch)
-			{
-				Dock.this.selectionBound.draw(Dock.this, batch);
-			}
-		};
 	}
 
 	public Vector2 getDockingAdapterPosition()
@@ -48,6 +37,8 @@ public class Dock extends Actor implements Selectable
 		ship.setPosition(shipPosition.x, shipPosition.y);
 		
 		dockedShip = ship;
+		
+		toFront();
 	}
 	
 	public Vector2 calculateShipDockingPosition(Ship ship)
@@ -62,9 +53,15 @@ public class Dock extends Actor implements Selectable
 		return position;
 	}
 	
+	public void setReserved()
+	{
+		reserved = true;
+	}
+	
 	public void undockShip()
 	{
 		dockedShip = null;
+		reserved = false;
 	}
 	
 	public Ship getDockedShip()
@@ -77,6 +74,11 @@ public class Dock extends Actor implements Selectable
 		return dockedShip != null;
 	}
 	
+	public boolean isFree()
+	{
+		return !reserved;
+	}
+	
 	@Override
 	public void drawDebug(ShapeRenderer shapes)
 	{
@@ -86,17 +88,5 @@ public class Dock extends Actor implements Selectable
 		float dockX = getX() + dockingAdapterPosition.x;
 		float dockY = getY() + dockingAdapterPosition.y;
 		shapes.circle(dockX, dockY, 5);
-	}
-	
-	@Override
-	public void draw(Batch batch, float parentAlpha)
-	{
-		drawSelector.draw(batch);
-	}
-
-	@Override
-	public Selector getSelector()
-	{
-		return drawSelector;
 	}
 }

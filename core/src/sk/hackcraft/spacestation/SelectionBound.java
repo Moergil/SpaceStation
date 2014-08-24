@@ -7,10 +7,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class SelectionBound
 {
-	private final int MAX_OFFSET = 5;
-	
 	private int tick;
-	private int actualOffset = MAX_OFFSET;
+	private int wobble;
 
 	private final TextureRegion corners[];
 	
@@ -30,28 +28,29 @@ public class SelectionBound
 		
 		if (tick % 30 == 0)
 		{
-			actualOffset--;
+			wobble--;
 			
-			if (actualOffset < 4)
+			if (wobble < 0)
 			{
-				actualOffset = MAX_OFFSET;
+				wobble = 3;
 			}
 		}
 		
+		float offset = 5;
 		float x, y;
 		
-		x = actor.getX() - actualOffset;
-		y = actor.getY() - actualOffset;
+		x = actor.getX() - offset;
+		y = actor.getY() - offset;
 		
-		batch.draw(corners[0], x, y);
+		batch.draw(corners[0], x - wobble, y);
 		
-		x += actor.getWidth() + actualOffset;
-		batch.draw(corners[1], x, y);
+		x += actor.getWidth() + offset;
+		batch.draw(corners[1], x + wobble, y);
 		
-		y += actor.getHeight() + actualOffset;
-		batch.draw(corners[2], x, y);
+		y += actor.getHeight() + offset;
+		batch.draw(corners[2], x + wobble, y);
 		
-		x -= actor.getWidth() + actualOffset;
-		batch.draw(corners[3], x, y);
+		x -= actor.getWidth() + offset;
+		batch.draw(corners[3], x - wobble, y);
 	}
 }

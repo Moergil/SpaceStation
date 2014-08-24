@@ -1,10 +1,5 @@
 package sk.hackcraft.spacestation;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.swing.plaf.basic.BasicToolBarUI.DockingListener;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -13,7 +8,6 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 
 public class Ship extends Actor implements Selectable
 {

@@ -45,7 +45,7 @@ public class SpaceStationGame extends ApplicationAdapter
 	
 	private SelectionListener selectionListener = new SelectionListener();
 
-	private Music mp3Intro;
+	private SoundMngr mngrSound;
 	
 	private Station station;
 	private StationViewMaster stationViewMaster;
@@ -55,6 +55,8 @@ public class SpaceStationGame extends ApplicationAdapter
 	{
 		random = new Random();
 		timer = new Timer();
+		
+		mngrSound = new SoundMngr();
 
 		InputMultiplexer inputMultiplexer = new InputMultiplexer();
 		gameStage = new Stage(new FitViewport(400, 240));
@@ -75,8 +77,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		final Intro intro = new Intro();
 		intro.setPosition(0, 0);
 		
-		mp3Intro = Gdx.audio.newMusic(Gdx.files.internal("sounds/intro.mp3"));
-		mp3Intro.play();
+		mngrSound.runIntro();
 			
 		hudStage.addActor(intro);
 
@@ -115,7 +116,8 @@ public class SpaceStationGame extends ApplicationAdapter
 		}
 		
 		timer.clear();
-		mp3Intro.stop();
+		mngrSound.stopIntro();
+		
 		
 		intro.clear();
 		intro = null;
@@ -136,6 +138,8 @@ public class SpaceStationGame extends ApplicationAdapter
 		Texture stationTexture = new Texture(Gdx.files.internal("sprite/station.png"));
 		Sprite stationSprite = new Sprite(stationTexture);
 		station = new Station(stationSprite);
+		
+		mngrSound.runMusicGame();
 		
 		station.setPosition(50, 20);
 		gameStage.addActor(station);

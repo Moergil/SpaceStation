@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -72,8 +73,8 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		mainFont = new BitmapFont(false);
 		
-//		runIntro();
-		runGame();
+		runIntro();
+//		runGame();
 	}
 	
 	private void runIntro()
@@ -93,7 +94,7 @@ public class SpaceStationGame extends ApplicationAdapter
 			{
 				cleanupIntro(intro);
 			}
-		}, 5,5);
+		}, 15,15);
 		
 		gameStage.addListener(new InputListener()
 		{
@@ -140,13 +141,24 @@ public class SpaceStationGame extends ApplicationAdapter
 	
 	public void runGame()
 	{
+		// TODO debug
+		gameStage.addListener(new InputListener()
+		{
+			@Override
+			public boolean mouseMoved(InputEvent event, float x, float y)
+			{
+				//System.out.printf("%.2f %.2f%n", x, y);
+				return false;
+			}
+		});
+		
 		Texture stationTexture = new Texture(Gdx.files.internal("sprite/station.png"));
 		Sprite stationSprite = new Sprite(stationTexture);
 		station = new Station(stationSprite);
 		
 		mngrSound.runMusicGame();
 		
-		station.setPosition(50, 20);
+		station.setPosition(50, 10);
 		gameStage.addActor(station);
 		
 		Texture activeSelectionAtlas = new Texture(Gdx.files.local("sprite/active_selection.png"));
@@ -183,17 +195,8 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		setInstantGameView(GameView.DOCKS);
 		
-		float positionY[] = {117, 91, 65, 39};
-		
-		for (int i = 0; i < 4; i++)
-		{
-			Dock dock = new Dock(i, activeSelectionBound);
-			dock.setPosition(121, positionY[i]);
-			
-			station.addDock(dock);
-			
-			gameStage.addActor(dock);
-		}
+		createDocks();
+		createStorageFacilities();
 		
 		//EPH Mala stanica
 		Texture smallStationTexture = new Texture(Gdx.files.internal("sprite/station_small.png"));
@@ -255,6 +258,60 @@ public class SpaceStationGame extends ApplicationAdapter
 		addShip();
 	}
 	
+	private void createDocks()
+	{
+		float positionY[] = {107, 81, 55, 29};
+		
+		for (int i = 0; i < 4; i++)
+		{
+			Dock dock = new Dock(i, activeSelectionBound);
+			dock.setPosition(121, positionY[i]);
+			
+			station.addDock(dock);
+			
+			gameStage.addActor(dock);
+		}
+	}
+	
+	private void createStorageFacilities()
+	{
+		CargoContainer containers[] = {
+			new CargoContainer(GoodsType.ELECTRONICS, 100),
+			new CargoContainer(GoodsType.FOOD, 100),
+			new CargoContainer(GoodsType.MATERIAL, 100),
+			new CargoContainer(GoodsType.MEDICINE, 100),
+			new CargoContainer(GoodsType.ORE, 100),
+		};
+		
+		float positionX[] = {
+			120,
+			73,
+			70,
+			61,
+			80
+		};
+		
+		float positionY[] = {
+			140,
+			83,
+			33,
+			140,
+			208
+		};
+		
+		for (int i = 0; i < 5; i++)
+		{
+			CargoContainer container = containers[i];
+			StorageFacility sf = new StorageFacility(container);
+			
+			sf.setPosition(positionX[i], positionY[i]);
+			
+			station.addStorageFacility(sf);
+			
+			gameStage.addActor(sf);
+		}
+	}
+	
 	private void setupInteractions()
 	{
 		
@@ -268,7 +325,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				@Override
 				public boolean isActive()
 				{
-					return dock.hasDockedShip();
+					return dock.hasDockedShip() && !dock.isTransferringCargo();
 				}
 			});
 			
@@ -287,6 +344,77 @@ public class SpaceStationGame extends ApplicationAdapter
 					return true;
 				}
 			});
+			
+			interaction.addInteractAction(dock, "Unload", new InteractAction()
+			{
+				@Override
+				public boolean isActive()
+				{
+					return dock.hasDockedShip();
+				}
+				
+				@Override
+				public boolean executeWithTarget(Actor target)
+				{
+					if (target instanceof StorageFacility)
+					{
+						final StorageFacility sf = (StorageFacility)target;
+						
+						if (!sf.canTransferCargo(dock))
+						{
+							return false;
+						}
+						
+						final CargoContainer facilityCC = sf.getCargoContainer();
+						final CargoContainer shipCC = dock.getDockedShip().getCargoContainer();
+						
+						dock.setCargoTransfer(true);
+						sf.setCargoTransfer(true);
+						
+						timer.scheduleTask(new Timer.Task()
+						{
+							private int transferred;
+							
+							@Override
+							public void run()
+							{
+								if (shipCC.transferUnit(facilityCC))
+								{
+									timer.scheduleTask(this, 0.1f);
+									System.out.println("Transferring from " + dock.getName());
+									
+									transferred++;
+								}
+								else
+								{
+									dock.setCargoTransfer(false);
+									sf.setCargoTransfer(false);
+									System.out.println("Completed, transferred " + transferred);
+									
+									System.out.printf("Storage facility: %d/%d", facilityCC.getCargoAmount(), facilityCC.getCargoCapacity());
+									System.out.printf("Ship: %d/%d", shipCC.getCargoAmount(), shipCC.getCargoCapacity());
+								}
+							}
+						}, 0.1f);
+						
+						return true;
+					}
+					
+					return false;
+				}
+				
+				@Override
+				public Set<? extends Actor> getTargets()
+				{
+					GoodsType type = dock.getDockedShip().getCargoContainer().getCargoType();
+					return station.getFreeStorageFacilities(type);
+				}
+			});
+		}
+		
+		for (StorageFacility sf : station.getStorageFacilities())
+		{
+			interaction.addSelectionListener(sf);
 		}
 	}
 
@@ -387,6 +515,7 @@ public class SpaceStationGame extends ApplicationAdapter
 			public void run()
 			{
 				dock.dockShip(ship);
+				ship.setIdle();
 			}
 		}, 6);
 	}

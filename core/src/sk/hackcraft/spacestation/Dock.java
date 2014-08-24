@@ -14,6 +14,7 @@ public class Dock extends Actor
 	private SelectionBound selectionBound;
 	
 	private boolean reserved;
+	private boolean cargoTransfer;
 	
 	public Dock(int dockIndex, SelectionBound selectionBound)
 	{
@@ -77,6 +78,30 @@ public class Dock extends Actor
 	public boolean isFree()
 	{
 		return !reserved;
+	}
+	
+	public void setCargoTransfer(boolean cargoTransfer)
+	{
+		this.cargoTransfer = cargoTransfer;
+	}
+	
+	public boolean isTransferringCargo()
+	{
+		return cargoTransfer;
+	}
+	
+	@Override
+	public void draw(Batch batch, float parentAlpha)
+	{
+		if (hasDockedShip())
+		{
+			drawLoadGauge(batch);
+		}
+	}
+	
+	private void drawLoadGauge(Batch batch)
+	{
+		
 	}
 	
 	@Override

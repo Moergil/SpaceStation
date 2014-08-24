@@ -15,7 +15,9 @@ public class Station extends Actor
 {
 	private Set<Dock> docks = new HashSet<Dock>();
 	private Set<Dock> freeDocks = new HashSet<Dock>();
+
 	private Set<StorageFacility> storageFacilities = new HashSet<StorageFacility>();
+	private Set<StorageFacility> freeStorageFacilities = new HashSet<StorageFacility>();
 	
 	private Sprite sprite;
 	
@@ -51,9 +53,32 @@ public class Station extends Actor
 		return freeDocks;
 	}
 	
+	public void addStorageFacility(StorageFacility storageFacility)
+	{
+		storageFacilities.add(storageFacility);
+	}
+	
 	public Set<StorageFacility> getStorageFacilities()
 	{
 		return storageFacilities;
+	}
+	
+	public Set<StorageFacility> getFreeStorageFacilities(GoodsType type)
+	{
+		freeStorageFacilities.clear();
+		
+		for (StorageFacility facility : storageFacilities)
+		{
+			if (!facility.isTransferringCargo())
+			{
+				if (facility.getCargoContainer().getCargoType().equals(type))
+				{
+					freeStorageFacilities.add(facility);
+				}
+			}
+		}
+		
+		return freeStorageFacilities;
 	}
 	
 	@Override

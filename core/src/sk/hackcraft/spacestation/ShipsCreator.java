@@ -19,16 +19,15 @@ public class ShipsCreator
 	public Ship createGeneric()
 	{
 		Texture texture = new Texture(Gdx.files.internal("sprite/ship1.png"));
-		
-		TextureRegion region = new TextureRegion(texture, 0, 0, 54, 20);
-		Sprite sprite = new Sprite(region);
+
 		Ship ship = new Ship(
 				"S" + ++i,
-				sprite,
+				texture,
 				new Vector2(48, 16),
 				new Vector2(10, 10),
-				new CargoContainer(new CargoType(){}, 20),
-				selectionBound);
+				new CargoContainer(GoodsType.FOOD, 20));
+		
+		ship.getCargoContainer().setCargoAmount(10);
 		
 		return ship;
 	}

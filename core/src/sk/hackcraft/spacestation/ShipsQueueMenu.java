@@ -1,14 +1,10 @@
 package sk.hackcraft.spacestation;
 
 import java.util.LinkedList;
-import java.util.List;
-
-import sk.hackcraft.spacestation.Selectable.Selector;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public abstract class ShipsQueueMenu extends Actor

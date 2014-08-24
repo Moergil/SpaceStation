@@ -101,6 +101,8 @@ public class TaskGenerator
 		double value = getInstance().getChoosingPlanetGenerator().nextDouble();
 		
 		for(int i = 0 ; i < numberOfPlanets-1; i++){
+			double iterator = i * (1.0 / (double) numberOfPlanets);
+			
 			if(value < i * (1.0 / (double) numberOfPlanets) ){
 				
 				return planetsList.get(i);

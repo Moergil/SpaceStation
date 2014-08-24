@@ -52,6 +52,7 @@ public class Ship extends Actor
 		
 		setSize(size.x, size.y);
 		this.dockingPortPosition = dockingPortPosition;
+
 		this.cargoContainer = cargoContainer;
 	}
 	

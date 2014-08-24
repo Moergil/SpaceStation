@@ -388,6 +388,7 @@ public class SpaceStationGame extends ApplicationAdapter
 			public void run()
 			{
 				dock.dockShip(ship);
+				ship.setIdle();
 			}
 		}, 6);
 	}

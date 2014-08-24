@@ -43,7 +43,7 @@ public class Interaction extends Actor
 	
 	public boolean actorTouched(Actor actor)
 	{
-		if (activeMaster == null && actions.containsKey(actor))
+		if (activeMaster == null && actions.containsKey(actor) && checks.get(actor).isActive())
 		{
 			System.out.println("New master selection");
 			initiateSelection(actor);

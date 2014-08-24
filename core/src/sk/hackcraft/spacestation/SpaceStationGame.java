@@ -45,7 +45,6 @@ public class SpaceStationGame extends ApplicationAdapter
 	private StationViewMaster stationViewMaster;
 	
 	private Interaction interaction;
-	private Space space;
 
 	private BitmapFont mainFont;
 	private TaskAndPointsManager tpManager;
@@ -147,6 +146,10 @@ public class SpaceStationGame extends ApplicationAdapter
 		Texture stationTexture = new Texture(Gdx.files.internal("sprite/station.png"));
 		Sprite stationSprite = new Sprite(stationTexture);
 		station = new Station(stationSprite);
+		Texture stationLightsTexture = new Texture(Gdx.files.internal("sprite/station_lights.png"));
+		station.setTextures(stationLightsTexture, 40);
+		Texture stationDoorsTexture = new Texture(Gdx.files.internal("sprite/station_doors.png"));
+		station.setTextures(stationDoorsTexture, 55);
 		
 		mngrSound.runMusicGame();
 		

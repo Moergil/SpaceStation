@@ -18,7 +18,6 @@ public class ShipsCreator
 	{
 		Texture texture = new Texture(Gdx.files.internal("sprite/ship5.png"));
 
-
 		Ship ship = new Ship(
 				"S" + ++i,
 				texture,

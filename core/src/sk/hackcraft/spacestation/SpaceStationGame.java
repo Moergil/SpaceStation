@@ -86,7 +86,7 @@ public class SpaceStationGame extends ApplicationAdapter
 			{
 				cleanupIntro(intro);
 			}
-		}, 15,15);
+		}, 2,10);
 		
 		gameStage.addListener(new InputListener()
 		{

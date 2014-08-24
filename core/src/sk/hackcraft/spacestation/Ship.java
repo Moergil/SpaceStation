@@ -110,9 +110,7 @@ public class Ship extends Actor
 		Color c = getColor();
 		batch.setColor(c.r, c.g, c.b, c.a);
 		batch.draw(tr, getX(), getY(), getX(), getY(), tr.getRegionWidth(), tr.getRegionHeight(), getScaleX(), getScaleY(), 0);
-		
-		batch.setColor(oc);
-		
+
 		switch (state)
 		{
 		case DOCKING:
@@ -122,6 +120,8 @@ public class Ship extends Actor
 			batch.draw(getTexture(ENGINE_RVS), getX(), getY());
 			break;
 		}
+		
+		batch.setColor(oc);
 	}
 	
 	@Override

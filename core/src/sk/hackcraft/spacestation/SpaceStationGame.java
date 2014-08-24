@@ -10,6 +10,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -46,18 +47,11 @@ public class SpaceStationGame extends ApplicationAdapter
 	
 	private SelectionListener selectionListener = new SelectionListener();
 
+	private Music mp3Intro;
+
 	@Override
 	public void create()
 	{
-		random = new Random();
-		timer = new Timer();
-		
-		Texture cornersAtlas = new Texture(Gdx.files.local("sprite/selector_corner.png"));
-		selectionBound = new SelectionBound(cornersAtlas);
-		
-		// actual view of the player
-		actualGameView = GameView.DOCKS;
-
 		InputMultiplexer inputMultiplexer = new InputMultiplexer();
 		
 		// setting up graphics stages
@@ -68,6 +62,53 @@ public class SpaceStationGame extends ApplicationAdapter
 		inputMultiplexer.addProcessor(hudStage);
 		
 		Gdx.input.setInputProcessor(inputMultiplexer);
+		
+		// setting up intro
+		final Intro intro = new Intro();
+		intro.setPosition(0, 0);
+		
+		mp3Intro = Gdx.audio.newMusic(Gdx.files.internal("sounds/intro.mp3"));
+		mp3Intro.play();
+			
+		gameStage.addActor(intro);
+		
+		timer = new Timer();
+		timer.scheduleTask(new Timer.Task()
+		{
+			@Override
+			public void run()
+			{
+				mp3Intro.stop();
+				createGame();
+			}
+		}, 30);
+		
+		gameStage.addListener(new InputListener()
+		{
+			@Override
+			public boolean keyDown(InputEvent event, int keycode)
+			{
+				timer.clear();
+				mp3Intro.stop();
+				
+				intro.remove();
+				
+				createGame();
+				return true;
+			}
+		});
+	}
+	
+	public void createGame()
+	{
+		random = new Random();
+		timer = new Timer();
+		
+		Texture cornersAtlas = new Texture(Gdx.files.local("sprite/selector_corner.png"));
+		selectionBound = new SelectionBound(cornersAtlas);
+		
+		// actual view of the player
+		actualGameView = GameView.DOCKS;
 
 		gameStage.addListener(new InputListener()
 		{

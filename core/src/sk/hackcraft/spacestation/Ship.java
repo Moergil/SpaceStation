@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 
-public class Ship extends Actor implements Selectable
+public class Ship extends Actor
 {
 	public static final int SPRITE = 0;
 	public static final int ENGINE_FWD = 1;
@@ -38,8 +38,6 @@ public class Ship extends Actor implements Selectable
 	private Vector2 dockingPortPosition;
 	
 	private CargoContainer cargoContainer;
-
-	private DrawSelector drawSelector;
 	
 	public Ship(Texture texture, Vector2 size, Vector2 dockingPortPosition, CargoContainer cargoContainer)
 	{
@@ -50,12 +48,6 @@ public class Ship extends Actor implements Selectable
 		setSize(size.x, size.y);
 		this.dockingPortPosition = dockingPortPosition;
 		this.cargoContainer = cargoContainer;
-	}
-	
-	@Override
-	public Selector getSelector()
-	{
-		return drawSelector;
 	}
 	
 	public Vector2 getDockingAdapterPosition()
@@ -106,8 +98,6 @@ public class Ship extends Actor implements Selectable
 			batch.draw(getTexture(ENGINE_RVS), getX(), getY());
 			break;
 		}
-		
-		drawSelector.draw(batch);
 	}
 	
 	@Override

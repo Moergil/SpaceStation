@@ -387,71 +387,8 @@ public class SpaceStationGame extends ApplicationAdapter
 				}
 			});
 			
-			interaction.addInteractAction(dock, "Unload", new InteractAction()
-			{
-				@Override
-				public boolean isActive()
-				{
-					return dock.hasDockedShip();
-				}
-				
-				@Override
-				public boolean executeWithTarget(Actor target)
-				{
-					if (target instanceof StorageFacility)
-					{
-						final StorageFacility sf = (StorageFacility)target;
-						
-						if (!sf.canTransferCargo(dock))
-						{
-							return false;
-						}
-						
-						final CargoContainer facilityCC = sf.getCargoContainer();
-						final CargoContainer shipCC = dock.getDockedShip().getCargoContainer();
-						
-						dock.setCargoTransfer(true);
-						sf.setCargoTransfer(true);
-						
-						timer.scheduleTask(new Timer.Task()
-						{
-							private int transferred;
-							
-							@Override
-							public void run()
-							{
-								if (shipCC.transferUnit(facilityCC))
-								{
-									timer.scheduleTask(this, 0.1f);
-									System.out.println("Transferring from " + dock.getName());
-									
-									transferred++;
-								}
-								else
-								{
-									dock.setCargoTransfer(false);
-									sf.setCargoTransfer(false);
-									System.out.println("Completed, transferred " + transferred);
-									
-									System.out.printf("Storage facility: %d/%d", facilityCC.getCargoAmount(), facilityCC.getCargoCapacity());
-									System.out.printf("Ship: %d/%d", shipCC.getCargoAmount(), shipCC.getCargoCapacity());
-								}
-							}
-						}, 0.1f);
-						
-						return true;
-					}
-					
-					return false;
-				}
-				
-				@Override
-				public Set<? extends Actor> getTargets()
-				{
-					GoodsType type = dock.getDockedShip().getCargoContainer().getCargoType();
-					return station.getFreeStorageFacilities(type);
-				}
-			});
+			interaction.addInteractAction(dock, "Unload", new TransferCargoInteraction(dock, TransferDirection.TO_STORAGE_FACILITY));
+			interaction.addInteractAction(dock, "Load", new TransferCargoInteraction(dock, TransferDirection.TO_SHIP_IN_DOCK));
 		}
 		
 		for (StorageFacility sf : station.getStorageFacilities())
@@ -644,5 +581,98 @@ public class SpaceStationGame extends ApplicationAdapter
 			});
 		}
 	}
+	
+	public enum TransferDirection
+	{
+		TO_STORAGE_FACILITY,
+		TO_SHIP_IN_DOCK;
+	}
 
+	private class TransferCargoInteraction extends InteractAction
+	{
+		private final Dock dock;
+		private final TransferDirection direction;
+		
+		public TransferCargoInteraction(Dock dock, TransferDirection direction)
+		{
+			this.dock = dock;
+			this.direction = direction;
+		}
+		
+		@Override
+		public boolean isActive()
+		{
+			return dock.hasDockedShip();
+		}
+		
+		@Override
+		public boolean executeWithTarget(Actor target)
+		{
+			if (!(target instanceof StorageFacility))
+			{
+				return false;
+			}
+			
+			final StorageFacility sf = (StorageFacility)target;
+			
+			if (!sf.canTransferCargo(dock))
+			{
+				return false;
+			}
+			
+			final CargoContainer from, to;
+			
+			switch (direction)
+			{
+				case TO_STORAGE_FACILITY:
+					from = dock.getDockedShip().getCargoContainer();
+					to = sf.getCargoContainer();
+					break;
+				case TO_SHIP_IN_DOCK:
+					from = sf.getCargoContainer();
+					to = dock.getDockedShip().getCargoContainer();
+					break;
+				default:
+					return false;
+			}
+
+			dock.setCargoTransfer(true);
+			sf.setCargoTransfer(true);
+			
+			timer.scheduleTask(new Timer.Task()
+			{
+				private int transferred;
+				
+				@Override
+				public void run()
+				{
+					if (from.transferUnit(to))
+					{
+						timer.scheduleTask(this, 0.1f);
+						System.out.println("Transferring from " + dock.getName());
+						
+						transferred++;
+					}
+					else
+					{
+						dock.setCargoTransfer(false);
+						sf.setCargoTransfer(false);
+						System.out.println("Completed transfer " + direction + ", transferred " + transferred);
+
+						System.out.printf("From: %d/%d%n", from.getCargoAmount(), from.getCargoCapacity());
+						System.out.printf("To: %d/%d%n", to.getCargoAmount(), to.getCargoCapacity());
+					}
+				}
+			}, 0.1f);
+			
+			return true;
+		}
+		
+		@Override
+		public Set<? extends Actor> getTargets()
+		{
+			GoodsType type = dock.getDockedShip().getCargoContainer().getCargoType();
+			return station.getFreeStorageFacilities(type);
+		}
+	}
 }

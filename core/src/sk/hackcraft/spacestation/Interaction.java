@@ -1,10 +1,12 @@
 package sk.hackcraft.spacestation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
@@ -24,7 +26,7 @@ public class Interaction extends Actor
 	private Actor activeMaster;
 	private InteractAction activeAction;
 	
-	private Map<Actor, Set<InteractAction>> actions = new HashMap<Actor, Set<InteractAction>>();
+	private Map<Actor, List<InteractAction>> actions = new HashMap<Actor, List<InteractAction>>();
 	private Map<Actor, ActiveCheck> checks = new HashMap<Actor, Interaction.ActiveCheck>();
 	
 	private final InputListener selectionListener = new InputListener()
@@ -109,7 +111,7 @@ public class Interaction extends Actor
 	
 	public void addMasterActor(Actor actor, ActiveCheck activeCheck)
 	{
-		actions.put(actor, new HashSet<InteractAction>());
+		actions.put(actor, new ArrayList<InteractAction>());
 		checks.put(actor, activeCheck);
 		addSelectionListener(actor);
 	}

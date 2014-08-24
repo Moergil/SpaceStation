@@ -28,7 +28,6 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class SpaceStationGame extends ApplicationAdapter
 {
-	private Random random;
 	
 	private Stage gameStage, hudStage;
 	private GameView actualGameView;
@@ -36,7 +35,7 @@ public class SpaceStationGame extends ApplicationAdapter
 	private ShipsCreator shipsGenerator;
 	private Timer timer;
 
-	private List<Planet> planets = new ArrayList<Planet>();
+	private ArrayList<Planet> planets = new ArrayList<Planet>();
 
 	private Dock selectedDock;
 	
@@ -52,13 +51,14 @@ public class SpaceStationGame extends ApplicationAdapter
 	private StationViewMaster stationViewMaster;
 	
 	private Space space;
+	
+	private TaskAndPointsManager tpManager;
 
 	@Override
 	public void create()
 	{
 		
  
-		random = new Random();
 		timer = new Timer();
 		
 		mngrSound = new SoundMngr();
@@ -283,6 +283,19 @@ public class SpaceStationGame extends ApplicationAdapter
 		addShip();
 		addShip();
 		addShip();
+		
+		//testovanie
+		this.tpManager = new TaskAndPointsManager(this);
+		this.tpManager.startGeneratingTasks();
+	}
+	
+	public Timer getTimer(){
+		
+		return this.timer;
+	}
+	
+	public ArrayList<Planet> getPlanets(){
+		return this.planets;
 	}
 	
 	private void registerSelectionListener(final Actor actor)
@@ -390,6 +403,7 @@ public class SpaceStationGame extends ApplicationAdapter
 			public void run()
 			{
 				dock.dockShip(ship);
+				ship.setIdle();
 			}
 		}, 6);
 	}

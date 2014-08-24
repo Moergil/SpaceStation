@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import sk.hackcraft.spacestation.StationView.StationViewListener;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -46,6 +48,7 @@ public class SpaceStationGame extends ApplicationAdapter
 	private Music mp3Intro;
 	
 	private Station station;
+	private StationViewMaster stationViewMaster;
 
 	@Override
 	public void create()
@@ -142,6 +145,8 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		// actual view of the player
 		actualGameView = GameView.DOCKS;
+		
+		stationViewMaster = new StationViewMaster();
 
 		gameStage.addListener(new InputListener()
 		{
@@ -262,6 +267,8 @@ public class SpaceStationGame extends ApplicationAdapter
 		shipsQueueMenu.queueShip(ship);
 		
 		registerSelectionListener(ship);
+		
+		stationViewMaster.shipArrived(ship);
 	}
 	
 	@Override
@@ -417,4 +424,26 @@ public class SpaceStationGame extends ApplicationAdapter
 			return false;
 		}
 	};
+	
+	private class StationViewMaster implements StationView
+	{
+		private StationViewListener listener;
+		
+		public void releaseShip(Ship ship)
+		{
+			listener.shipDeparted(ship);
+		}
+		
+		@Override
+		public void setListener(StationViewListener listener)
+		{
+			this.listener = listener;
+		}
+		
+		@Override
+		public void shipArrived(Ship ship)
+		{
+			shipsQueueMenu.queueShip(ship);
+		}
+	}
 }

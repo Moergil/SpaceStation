@@ -1,3 +1,4 @@
+
 package sk.hackcraft.spacestation;
 
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class SpaceStationGame extends ApplicationAdapter
 	
 	private SelectionListener selectionListener = new SelectionListener();
 
-	private Music mp3Intro;
+	private SoundMngr mngrSound;
 	
 	private Station station;
 	private StationViewMaster stationViewMaster;
@@ -55,6 +56,8 @@ public class SpaceStationGame extends ApplicationAdapter
 	{
 		random = new Random();
 		timer = new Timer();
+		
+		mngrSound = new SoundMngr();
 
 		InputMultiplexer inputMultiplexer = new InputMultiplexer();
 		gameStage = new Stage(new FitViewport(400, 240));
@@ -65,8 +68,8 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		Gdx.input.setInputProcessor(inputMultiplexer);
 		
-		runIntro();
-//		runGame();
+//		runIntro();
+		runGame();
 	}
 	
 	private void runIntro()
@@ -75,8 +78,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		final Intro intro = new Intro();
 		intro.setPosition(0, 0);
 		
-		mp3Intro = Gdx.audio.newMusic(Gdx.files.internal("sounds/intro.mp3"));
-		mp3Intro.play();
+		mngrSound.runIntro();
 			
 		hudStage.addActor(intro);
 
@@ -115,7 +117,8 @@ public class SpaceStationGame extends ApplicationAdapter
 		}
 		
 		timer.clear();
-		mp3Intro.stop();
+		mngrSound.stopIntro();
+		
 		
 		intro.clear();
 		intro = null;
@@ -137,10 +140,12 @@ public class SpaceStationGame extends ApplicationAdapter
 		Sprite stationSprite = new Sprite(stationTexture);
 		station = new Station(stationSprite);
 		
+		mngrSound.runMusicGame();
+		
 		station.setPosition(50, 20);
 		gameStage.addActor(station);
 		
-		Texture cornersAtlas = new Texture(Gdx.files.local("sprite/selector_corner.png"));
+		Texture cornersAtlas = new Texture(Gdx.files.local("sprite/active_selection.png"));
 		selectionBound = new SelectionBound(cornersAtlas);
 		
 		// actual view of the player
@@ -216,11 +221,11 @@ public class SpaceStationGame extends ApplicationAdapter
 		}
 		
 		//generating planets
-		planets.add(new Planet(GoodsType.FOOD,20));
-		planets.add(new Planet(GoodsType.ORE,20));
-		planets.add(new Planet(GoodsType.MEDICINE,20));
-		planets.add(new Planet(GoodsType.MATERIAL,20));
-		planets.add(new Planet(GoodsType.ELECTRONICS,20));
+				planets.add(new Planet(GoodsType.FOOD,20));
+				planets.add(new Planet(GoodsType.ORE,20));
+				planets.add(new Planet(GoodsType.MEDICINE,20));
+				planets.add(new Planet(GoodsType.MATERIAL,20));
+				planets.add(new Planet(GoodsType.ELECTRONICS,20));
 		
 		// ships generation		
 		shipsGenerator = new ShipsCreator(selectionBound);
@@ -264,7 +269,6 @@ public class SpaceStationGame extends ApplicationAdapter
 		final Ship ship = shipsGenerator.createGeneric();
 
 		hudStage.addActor(ship);
-		shipsQueueMenu.queueShip(ship);
 		
 		registerSelectionListener(ship);
 		
@@ -446,4 +450,5 @@ public class SpaceStationGame extends ApplicationAdapter
 			shipsQueueMenu.queueShip(ship);
 		}
 	}
+
 }

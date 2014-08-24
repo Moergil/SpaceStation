@@ -233,24 +233,54 @@ public class SpaceStationGame extends ApplicationAdapter
 		smallStation.setLights(stationSmallLightsTexture);
 		gameStage.addActor(smallStation);
 		
-		//EPH: zatial jedina planeta, aby ju bolo aspon vidno
 		//generating planets
-		Texture planetTexture = new Texture(Gdx.files.internal("sprite/planet1.png"));
-		Sprite planetSprite = new Sprite(planetTexture);
-		Vector2 position = new Vector2(430, 160);
-		Vector2 size = new Vector2(68, 68);
-		Planet planet = new Planet(planetSprite, size, position, GoodsType.FOOD, 20);
-		planets.add(planet);
-		gameStage.addActor(planet);
-		/*planets.add(new Planet(GoodsType.ORE));
-		planets.add(new Planet(GoodsType.MEDICINE));
-		planets.add(new Planet(GoodsType.MATERIAL));
-		planets.add(new Planet(GoodsType.ELECTRONICS));*/
-		//planets.add(new Planet(GoodsType.ORE,20));
-		//planets.add(new Planet(GoodsType.MEDICINE,20));
-		//planets.add(new Planet(GoodsType.MATERIAL,20));
-		//planets.add(new Planet(GoodsType.ELECTRONICS,20));
 		
+		//Food
+				Texture planetTextureFood = new Texture(Gdx.files.internal("sprite/planet1.png"));
+				Sprite planetSpriteFood = new Sprite(planetTextureFood);
+				Vector2 positionFood = new Vector2(460, 160);
+				Vector2 sizeFood = new Vector2(68, 68);
+				Planet planetFood = new Planet(planetSpriteFood, sizeFood, positionFood, GoodsType.FOOD, 20);
+				planets.add(planetFood);
+				gameStage.addActor(planetFood);
+				
+		//Ore
+				Texture planetTextureOre = new Texture(Gdx.files.internal("sprite/planet1.png"));
+				Sprite planetSpriteOre = new Sprite(planetTextureOre);
+				Vector2 positionOre = new Vector2(630, 0);
+				Vector2 sizeOre = new Vector2(68, 68);
+				Planet planetOre = new Planet(planetSpriteOre, sizeOre, positionOre, GoodsType.ORE, 20);
+				planets.add(planetOre);
+				gameStage.addActor(planetOre);
+				
+		//Medicine
+				Texture planetTextureMedi = new Texture(Gdx.files.internal("sprite/planet1.png"));
+				Sprite planetSpriteMedi = new Sprite(planetTextureMedi);
+				Vector2 positionMedi = new Vector2(550,150);
+				Vector2 sizeMedi = new Vector2(68, 68);
+				Planet planetMedi = new Planet(planetSpriteMedi, sizeMedi, positionMedi, GoodsType.MEDICINE, 20);
+				planets.add(planetMedi);
+				gameStage.addActor(planetMedi);
+				
+		//Material
+				Texture planetTextureMate = new Texture(Gdx.files.internal("sprite/planet1.png"));
+				Sprite planetSpriteMate = new Sprite(planetTextureMate);
+				Vector2 positionMate = new Vector2(500,60);
+				Vector2 sizeMate = new Vector2(68, 68);
+				Planet planetMate = new Planet(planetSpriteMate, sizeMate, positionMate, GoodsType.MATERIAL, 20);
+				planets.add(planetMate);
+				gameStage.addActor(planetMate);
+				
+		//Electronics
+				Texture planetTextureElec = new Texture(Gdx.files.internal("sprite/planet1.png"));
+				Sprite planetSpriteElec = new Sprite(planetTextureElec);
+				Vector2 positionElec = new Vector2(630,100);
+				Vector2 sizeElec = new Vector2(68, 68);
+				Planet planetElec = new Planet(planetSpriteElec, sizeElec, positionElec, GoodsType.MATERIAL, 20);
+				planets.add(planetElec);
+				gameStage.addActor(planetElec);
+		
+
 		// ships generation		
 		shipsGenerator = new ShipsCreator(selectionBound);
 		

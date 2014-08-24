@@ -38,6 +38,7 @@ public class Ship extends Actor
 	private Vector2 dockingPortPosition;
 	
 	private CargoContainer cargoContainer;
+
 	
 	public Ship(Texture texture, Vector2 size, Vector2 dockingPortPosition, CargoContainer cargoContainer)
 	{
@@ -49,7 +50,6 @@ public class Ship extends Actor
 		this.dockingPortPosition = dockingPortPosition;
 		this.cargoContainer = cargoContainer;
 	}
-	
 	public Vector2 getDockingAdapterPosition()
 	{
 		return dockingPortPosition;

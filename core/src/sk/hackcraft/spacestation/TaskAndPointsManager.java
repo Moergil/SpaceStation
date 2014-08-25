@@ -11,8 +11,7 @@ public class TaskAndPointsManager
 	public TaskAndPointsManager(SpaceStationGame game){
 		this.game = game;
 		this.generateTasks = true;
-		this.pointsCounter = 0;
-		
+		this.pointsCounter = 0;		
 	}
 	
 	
@@ -59,6 +58,21 @@ public class TaskAndPointsManager
 	public void addPoints(int points){
 		
 		this.pointsCounter+=points;
+	}
+	
+	public boolean checkGameOver(){
+		
+		for(Planet planet:this.getGame().getPlanets()){
+			
+			if(planet.isDestroyed()) {
+				
+				this.generateTasks =false;
+				System.out.println("GAME OVER");
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 }

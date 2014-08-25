@@ -57,6 +57,8 @@ public class ConsumptionTask extends Timer.Task
 			
 		}
 		
+		this.manager.checkGameOver();
+		
 		if(manager.isGenerateTasks()){
 
 			 manager.getGame().getTimer().scheduleTask(new ConsumptionTask(this.manager), SECONDS_BETWEEN_CONSUMPTION);

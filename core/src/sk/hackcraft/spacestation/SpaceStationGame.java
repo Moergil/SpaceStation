@@ -403,6 +403,13 @@ public class SpaceStationGame extends ApplicationAdapter
 		return this.planets;
 	}
 	
+	
+	
+	public ScoreLabel getScorelabel()
+	{
+		return scorelabel;
+	}
+
 	private void createDocks()
 	{
 		float positionY[] = {107, 81, 55, 29};
@@ -907,4 +914,5 @@ public class SpaceStationGame extends ApplicationAdapter
 		}
 	}
 
+	
 }

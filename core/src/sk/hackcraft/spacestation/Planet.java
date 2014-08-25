@@ -51,6 +51,8 @@ public class Planet extends Actor
 		}
 		
 		this.setInitialGoods();
+		
+		this.distance = distance;
 	}
 
 	public CargoContainer getCargoContainer(GoodsType goodsType)

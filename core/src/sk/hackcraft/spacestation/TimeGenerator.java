@@ -5,14 +5,14 @@ import java.util.Random;
 public class TimeGenerator
 {
 	//time in sec. 
-	
-	public static final double TIME_OF_LANDING = 1.5;
-	public static final double TIME_OF_DOCKING = 0.5;
+	public static final float TIME_OF_LANDING = 1.5f;
+	public static final float TIME_OF_DOCKING = 1f;
+	public static final float TIME_OF_DOCKING_APPROACH = 5f;
+	public static final float TIME_OF_COMPLETE_DOCKING = TIME_OF_DOCKING + TIME_OF_DOCKING_APPROACH;
 	
 	//time to load or unload 100 ton of cargo
-	public static final double TIME_OF_LOADING = 2.0;
-	public static final double TIME_ON_PLANET = 4.0;
-	
+	public static final float TIME_OF_LOADING = 2.0f;
+	public static final float TIME_ON_PLANET = 4.0f;
 	
 	private static TimeGenerator instance = null;
 	

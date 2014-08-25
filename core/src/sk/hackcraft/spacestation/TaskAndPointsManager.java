@@ -1,6 +1,5 @@
 package sk.hackcraft.spacestation;
 
-
 public class TaskAndPointsManager
 {
 	private SpaceStationGame game;
@@ -9,43 +8,48 @@ public class TaskAndPointsManager
 	private int pointsCounter;
 	private int tasksCounter ;
 	
-	public TaskAndPointsManager(SpaceStationGame game){
+	private Runnable gameOverListener;
+
+	public TaskAndPointsManager(SpaceStationGame game)
+	{
 		this.game = game;
 		this.generateTasks = true;
+
 		this.pointsCounter = 0;	
 		this.tasksCounter = 0;
+
+
 	}
 	
-	
-	
+	public void setGameOverListener(Runnable gameOverListener)
+	{
+		this.gameOverListener = gameOverListener;
+	}
+
 	public int getPointsCounter()
 	{
 		return pointsCounter;
 	}
-
-
 
 	public void setPointsCounter(int pointsCounter)
 	{
 		this.pointsCounter = pointsCounter;
 	}
 
-
-
-	public void startGeneratingTasks(){
+	public void startGeneratingTasks()
+	{
 		TaskStarter starter = new TaskStarter(this);
 		starter.run();
-		
+
 		ProductionTask production = new ProductionTask(this);
 		production.run();
-		
+
 		ConsumptionTask consumption = new ConsumptionTask(this);
 		consumption.run();
-	
+
 		PointsCountingTask countingPoints = new PointsCountingTask(this);
 		countingPoints.run();
 	}
-	
 
 	public SpaceStationGame getGame()
 	{
@@ -57,25 +61,35 @@ public class TaskAndPointsManager
 		return generateTasks;
 	}
 
-	public void addPoints(int points){
-		
-		this.pointsCounter+=points;
+	public void addPoints(int points)
+	{
+
+		this.pointsCounter += points;
 	}
-	
-	public boolean checkGameOver(){
-		
-		for(Planet planet:this.getGame().getPlanets()){
-			
-			if(planet.isDestroyed()) {
-				
-				this.generateTasks =false;
+
+	public boolean checkGameOver()
+	{
+
+		for (Planet planet : this.getGame().getPlanets())
+		{
+
+			if (planet.isDestroyed())
+			{
+				this.generateTasks = false;
 				System.out.println("GAME OVER");
+				
+				if (gameOverListener != null)
+				{
+					gameOverListener.run();
+				}
+				
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
+
 
 
 
@@ -92,4 +106,5 @@ public class TaskAndPointsManager
 	}
 	
 	
+
 }

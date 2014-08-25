@@ -67,7 +67,9 @@ public class SpaceStationGame extends ApplicationAdapter
 
 	private BackgroundStars backgroundStars;
 	
-	
+	private GameOverScreen gameOverScreen;
+	private GameHint gameHint;
+
 	private Music introMusic;
 	private Music mainMusic;
 
@@ -190,8 +192,9 @@ public class SpaceStationGame extends ApplicationAdapter
 		Texture stationDoorsTexture = new Texture(Gdx.files.internal("sprite/station_doors.png"));
 		station.setTextures(stationDoorsTexture, 55);
 
-		gameElapsedTimeLabel = new GameElapsedTimeLabel(System.currentTimeMillis(), mainFont);
+		gameElapsedTimeLabel = new GameElapsedTimeLabel(mainFont);
 		gameElapsedTimeLabel.setPosition(5, gameStage.getHeight() - 5);
+		gameElapsedTimeLabel.start();
 		hudStage.addActor(gameElapsedTimeLabel);
 
 		scorelabel = new ScoreLabel(mainFont);
@@ -220,6 +223,15 @@ public class SpaceStationGame extends ApplicationAdapter
 			@Override
 			public boolean keyDown(InputEvent event, int keycode)
 			{
+				if (keycode == Input.Keys.SPACE)
+				{
+					if (gameHint != null)
+					{
+						gameHint.remove();
+						gameHint = null;
+					}
+				}
+				
 				if (keycode == Input.Keys.TAB)
 				{
 					nextGameView();
@@ -262,57 +274,62 @@ public class SpaceStationGame extends ApplicationAdapter
 
 		// Fertilizers
 
-				Texture planetTextureFood = new Texture(Gdx.files.internal("sprite/planet1.png"));
-				Sprite planetSpriteFood = new Sprite(planetTextureFood);
-				Vector2 positionFood = new Vector2(460, 160);
-				Vector2 sizeFood = new Vector2(planetSpriteFood.getWidth(), planetSpriteFood.getHeight());
-				Planet planetFood = new Planet(planetSpriteFood, sizeFood, positionFood, 20);
-				planets.add(planetFood);
-				gameStage.addActor(planetFood);
-				interaction.addSelectionListener(planetFood);
+		Texture planetTextureFood = new Texture(Gdx.files.internal("sprite/planet1.png"));
+		Sprite planetSpriteFood = new Sprite(planetTextureFood);
+		Vector2 positionFood = new Vector2(460, 160);
+		Vector2 sizeFood = new Vector2(planetSpriteFood.getWidth(), planetSpriteFood.getHeight());
+		Planet planetFood = new Planet(planetSpriteFood, sizeFood, positionFood, 10);
+		planets.add(planetFood);
+		gameStage.addActor(planetFood);
+		interaction.addSelectionListener(planetFood);
 
 		// Hydrogen
-				Texture planetTextureOre = new Texture(Gdx.files.internal("sprite/planet3.png"));
-				Sprite planetSpriteOre = new Sprite(planetTextureOre);
-				Vector2 positionOre = new Vector2(630, 40);
-				Vector2 sizeOre = new Vector2(planetSpriteOre.getWidth(), planetSpriteOre.getHeight());
-				Planet planetOre = new Planet(planetSpriteOre, sizeOre, positionOre, 20);
-				planets.add(planetOre);
-				gameStage.addActor(planetOre);
-				interaction.addSelectionListener(planetOre);
+		Texture planetTextureOre = new Texture(Gdx.files.internal("sprite/planet3.png"));
+		Sprite planetSpriteOre = new Sprite(planetTextureOre);
+		Vector2 positionOre = new Vector2(630, 40);
+		Vector2 sizeOre = new Vector2(planetSpriteOre.getWidth(), planetSpriteOre.getHeight());
+		Planet planetOre = new Planet(planetSpriteOre, sizeOre, positionOre, 10);
+		planets.add(planetOre);
+		gameStage.addActor(planetOre);
+		interaction.addSelectionListener(planetOre);
+
+
+
 				
-		// Water
-				Texture planetTextureMedi = new Texture(Gdx.files.internal("sprite/planet5.png"));
-				Sprite planetSpriteMedi = new Sprite(planetTextureMedi);
-				Vector2 positionMedi = new Vector2(550,150);
-				Vector2 sizeMedi = new Vector2(planetSpriteMedi.getWidth(), planetSpriteMedi.getHeight());
-				Planet planetMedi = new Planet(planetSpriteMedi, sizeMedi, positionMedi, 20);
-				planets.add(planetMedi);
-				gameStage.addActor(planetMedi);
-				interaction.addSelectionListener(planetMedi);
-				
-		// Metal
-				Texture planetTextureMate = new Texture(Gdx.files.internal("sprite/planet4.png"));
-				Sprite planetSpriteMate = new Sprite(planetTextureMate);
-				Vector2 positionMate = new Vector2(500,60);
-				Vector2 sizeMate = new Vector2(planetSpriteMate.getWidth(), planetSpriteMate.getHeight());
-				Planet planetMate = new Planet(planetSpriteMate, sizeMate, positionMate, 20);
-				planets.add(planetMate);
-				gameStage.addActor(planetMate);
-				interaction.addSelectionListener(planetMate);
-				
-		// Goods
-				Texture planetTextureElec = new Texture(Gdx.files.internal("sprite/planet2.png"));
-				Sprite planetSpriteElec = new Sprite(planetTextureElec);
-				Vector2 positionElec = new Vector2(630,120);
-				Vector2 sizeElec = new Vector2(planetSpriteElec.getWidth(), planetSpriteElec.getHeight());
-				Planet planetElec = new Planet(planetSpriteElec, sizeElec, positionElec, 20);
-				planets.add(planetElec);
-				gameStage.addActor(planetElec);
-				interaction.addSelectionListener(planetElec);
+		
 		
 
 		
+
+
+		Texture planetTextureMedi = new Texture(Gdx.files.internal("sprite/planet5.png"));
+		Sprite planetSpriteMedi = new Sprite(planetTextureMedi);
+		Vector2 positionMedi = new Vector2(550, 150);
+		Vector2 sizeMedi = new Vector2(planetSpriteMedi.getWidth(), planetSpriteMedi.getHeight());
+		Planet planetMedi = new Planet(planetSpriteMedi, sizeMedi, positionMedi, 10);
+		planets.add(planetMedi);
+		gameStage.addActor(planetMedi);
+		interaction.addSelectionListener(planetMedi);
+
+		// Metal
+		Texture planetTextureMate = new Texture(Gdx.files.internal("sprite/planet4.png"));
+		Sprite planetSpriteMate = new Sprite(planetTextureMate);
+		Vector2 positionMate = new Vector2(500, 60);
+		Vector2 sizeMate = new Vector2(planetSpriteMate.getWidth(), planetSpriteMate.getHeight());
+		Planet planetMate = new Planet(planetSpriteMate, sizeMate, positionMate, 10);
+		planets.add(planetMate);
+		gameStage.addActor(planetMate);
+		interaction.addSelectionListener(planetMate);
+
+		// Goods
+		Texture planetTextureElec = new Texture(Gdx.files.internal("sprite/planet2.png"));
+		Sprite planetSpriteElec = new Sprite(planetTextureElec);
+		Vector2 positionElec = new Vector2(630, 120);
+		Vector2 sizeElec = new Vector2(planetSpriteElec.getWidth(), planetSpriteElec.getHeight());
+		Planet planetElec = new Planet(planetSpriteElec, sizeElec, positionElec, 10);
+		planets.add(planetElec);
+		gameStage.addActor(planetElec);
+		interaction.addSelectionListener(planetElec);
 
 
 		// ships generation
@@ -361,7 +378,8 @@ public class SpaceStationGame extends ApplicationAdapter
 
 				final DistantShip dShip = distantShips.get(ship);
 
-				final float flyTimeThere = 5, flyTimeBack = 5;
+				float distance = (float)planet.getDistance();
+				final float flyTimeThere = distance, flyTimeBack = distance;
 
 				flyDistantShipTo(dShip, planet, flyTimeThere);
 
@@ -405,6 +423,25 @@ public class SpaceStationGame extends ApplicationAdapter
 
 		this.tpManager = new TaskAndPointsManager(this);
 		this.tpManager.startGeneratingTasks();
+		
+		gameOverScreen = new GameOverScreen();
+		gameOverScreen.setVisible(false);
+		hudStage.addActor(gameOverScreen);
+
+		tpManager.setGameOverListener(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				gameOverScreen.setVisible(true);
+				
+				interaction.gameEnded();
+			}
+		});
+		
+		gameHint = new GameHint();
+		gameHint.setPosition(160, 200);
+		hudStage.addActor(gameHint);
 
 		setGameView(GameView.DOCKS, 0);
 
@@ -438,7 +475,7 @@ public class SpaceStationGame extends ApplicationAdapter
 
 			station.addDock(dock);
 
-			gameStage.addActor(dock);
+			interActions.addActor(dock);
 		}
 	}
 
@@ -608,7 +645,7 @@ public class SpaceStationGame extends ApplicationAdapter
 	{
 		Vector2 dockingPosition = dock.calculateShipDockingPosition(ship);
 
-		float flyDuration = 5;
+		float flyDuration = TimeGenerator.TIME_OF_DOCKING_APPROACH;
 		ship.arrive(dockingPosition, flyDuration);
 
 		timer.scheduleTask(new Timer.Task()
@@ -619,7 +656,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				dock.dockShip(ship);
 				ship.setIdle();
 			}
-		}, 6);
+		}, TimeGenerator.TIME_OF_COMPLETE_DOCKING);
 	}
 
 	private void releaseShipFromDock(final Dock dock)
@@ -633,9 +670,9 @@ public class SpaceStationGame extends ApplicationAdapter
 			public void run()
 			{
 				Vector2 targetPosition = new Vector2(350, ship.getY());
-				ship.depart(targetPosition, 5, timer);
+				ship.depart(targetPosition, TimeGenerator.TIME_OF_DOCKING_APPROACH, timer);
 			}
-		}, 1);
+		}, TimeGenerator.TIME_OF_DOCKING);
 
 		timer.scheduleTask(new Timer.Task()
 		{
@@ -644,7 +681,7 @@ public class SpaceStationGame extends ApplicationAdapter
 			{
 				shipsQueueMenu.queueShip(ship);
 			}
-		}, 6);
+		}, TimeGenerator.TIME_OF_COMPLETE_DOCKING);
 	}
 
 	private class StationViewMaster implements StationView

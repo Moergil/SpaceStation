@@ -36,8 +36,6 @@ public class Dock extends Actor
 		ship.showCargoGauge(true);
 		
 		dockedShip = ship;
-		
-		setZIndex(Scene.Z_SELECTION);
 	}
 	
 	public Vector2 calculateShipDockingPosition(Ship ship)

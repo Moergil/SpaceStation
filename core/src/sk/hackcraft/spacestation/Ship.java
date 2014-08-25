@@ -67,8 +67,6 @@ public class Ship extends Actor
 				return cargoContainer.getCargoAmount();
 			}
 		});
-		
-		setZIndex(Scene.Z_GAME);
 	}
 
 	public Vector2 getDockingAdapterPosition()

@@ -330,7 +330,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		addShip(GoodsType.METALS);
 		addShip(GoodsType.GOODS);
 		
-		//testovanie
+		
 		this.tpManager = new TaskAndPointsManager(this);
 		this.tpManager.startGeneratingTasks();
 	}

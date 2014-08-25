@@ -27,7 +27,7 @@ public class TaskStarter extends Timer.Task
 
 		PlanetTask newTask = TaskGenerator.generateNewTask(manager.getGame().getPlanets());
 		
-		newTask.getPlanet().reduceAmountofGoods(newTask.getType(), newTask.getAmount());
+		newTask.getPlanet().reduceAmountOfGoods(newTask.getType(), newTask.getAmount());
 		
 
 		

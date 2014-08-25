@@ -16,6 +16,9 @@ public class TaskAndPointsManager
 	public void startGeneratingTasks(){
 		TaskStarter starter = new TaskStarter(this);
 		starter.run();
+		
+		ProductionTask production = new ProductionTask(this);
+		production.run();
 	
 	}
 	

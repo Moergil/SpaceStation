@@ -66,7 +66,17 @@ public class Planet extends Actor
 				
 	}
 	
-	public void reduceAmountofGoods(GoodsType type, int amount){
+	public void increaseAmountOfGoods(GoodsType type, int amount){
+		int originAmount = this.cargoContainers.get(type).getCargoAmount();
+		
+		if((originAmount+amount) < this.cargoContainers.get(type).getCargoCapacity()){
+			this.cargoContainers.get(type).setCargoAmount((originAmount+amount));
+		}else{
+			this.cargoContainers.get(type).setCargoAmount( this.cargoContainers.get(type).getCargoCapacity());
+		}
+	}
+	
+	public void reduceAmountOfGoods(GoodsType type, int amount){
 		
 		int originAmount = this.cargoContainers.get(type).getCargoAmount();
 		

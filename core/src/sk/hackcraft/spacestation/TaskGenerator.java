@@ -41,7 +41,7 @@ public class TaskGenerator
 	public static PlanetTask generateNewTask(ArrayList<Planet> planetList){
 		
 		Planet planet = chooseRandomPlanet(planetList);
-		GoodsType type = chooseRandomGoods(planet);
+		GoodsType type = chooseRandomGoods();
 		int amount = chooseRandomAmountOfGoods();
 
 		return new PlanetTask(planet,type,amount);
@@ -63,49 +63,26 @@ public class TaskGenerator
 		return 400;
 	}
 	
-	public static GoodsType chooseRandomGoods(Planet planet){
+	public static GoodsType chooseRandomGoods(){
+		int value = getInstance().getChoosingGoodsGenerator().nextInt(GoodsType.getNumberOfAllTypes());
 		
-		//GoodsType forbidenType = planet.getType();
-		// TODO hack poriesit neskor
-		GoodsType forbidenType = GoodsType.FERTILIZERS;
-		while(true){
-			int value = getInstance().getChoosingGoodsGenerator().nextInt(GoodsType.getNumberOfAllTypes());
-			switch(value){
-				case 0:
-					if(forbidenType != GoodsType.FERTILIZERS)
-						return GoodsType.FERTILIZERS;
-				case 1:
-					if(forbidenType != GoodsType.HYDROGEN)
-						return GoodsType.HYDROGEN;	
-				case 2:
-					if(forbidenType != GoodsType.WATER)
-						return GoodsType.WATER;
-				case 3:
-					if(forbidenType != GoodsType.METALS)
-						return GoodsType.METALS;
-				case 4:
-					if(forbidenType != GoodsType.GOODS)
-						return GoodsType.GOODS;	
-			}// switch
-			
-		}//while
+		switch(value){
+			case 0:return GoodsType.FERTILIZERS;
+			case 1:return GoodsType.GOODS;
+			case 2:return GoodsType.HYDROGEN;
+			case 3:return GoodsType.METALS;
+			default:return GoodsType.WATER;	
+		}
+		
 		
 	}
 	
 	public static Planet chooseRandomPlanet(ArrayList<Planet> planetsList){
 		int numberOfPlanets = planetsList.size();
 		
-		double value = getInstance().getChoosingPlanetGenerator().nextDouble();
+		int value = getInstance().getChoosingPlanetGenerator().nextInt(numberOfPlanets);
 		
-		for(int i = 0 ; i < numberOfPlanets-1; i++){
-			
-			if(value < i * (1.0 / (double) numberOfPlanets) ){
-				
-				return planetsList.get(i);
-			}
-		}
-		
-		return planetsList.get(numberOfPlanets-1);
+		return planetsList.get(value);
 	}
 
 	

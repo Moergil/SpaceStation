@@ -217,14 +217,8 @@ public class SpaceStationGame extends ApplicationAdapter
 				planets.add(planetFood);
 				gameStage.addActor(planetFood);
 				interaction.addSelectionListener(planetFood);
-				
-<<<<<<< HEAD
-				
-				
-		//Ore
-=======
+
 		// Hydrogen
->>>>>>> db53df0c753acd9f15c14d60c95dd8d5b31b2c54
 				Texture planetTextureOre = new Texture(Gdx.files.internal("sprite/planet1.png"));
 				Sprite planetSpriteOre = new Sprite(planetTextureOre);
 				Vector2 positionOre = new Vector2(630, 0);
@@ -262,13 +256,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				Planet planetElec = new Planet(planetSpriteElec, sizeElec, positionElec, 20);
 				planets.add(planetElec);
 				gameStage.addActor(planetElec);
-<<<<<<< HEAD
-				
-	
-		
-=======
 				interaction.addSelectionListener(planetElec);
->>>>>>> 16cc826586199dc345c17419fbbabaa2d28597e6
 		
 
 		// ships generation		

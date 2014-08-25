@@ -1,13 +1,10 @@
 package sk.hackcraft.spacestation;
 
-<<<<<<< HEAD
-import java.util.HashMap;
-=======
+
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
->>>>>>> db53df0c753acd9f15c14d60c95dd8d5b31b2c54
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -19,11 +16,9 @@ public class Planet extends Actor
 	private Sprite sprite;
 
 	private double distance;
-<<<<<<< HEAD
-	private HashMap<GoodsType,CargoContainer> storage;
+
 	private boolean isDestroyed;
-=======
->>>>>>> db53df0c753acd9f15c14d60c95dd8d5b31b2c54
+
 	
 	private Map<GoodsType, CargoContainer> cargoContainers = new EnumMap<GoodsType, CargoContainer>(GoodsType.class);
 	private List<Gauge> gaugesList = new ArrayList<Gauge>();
@@ -35,46 +30,6 @@ public class Planet extends Actor
 		setPosition(position.x, position.y);
 		this.isDestroyed = false;
 		
-<<<<<<< HEAD
-		this.type = type;
-		
-		this.storage = new HashMap<GoodsType,CargoContainer>();
-		this.storage.put(GoodsType.FOOD, new CargoContainer(GoodsType.FOOD,1200));
-		this.storage.put(GoodsType.ORE, new CargoContainer(GoodsType.ORE,1200));
-		this.storage.put(GoodsType.MEDICINE, new CargoContainer(GoodsType.MEDICINE,1200));
-		this.storage.put(GoodsType.MATERIAL, new CargoContainer(GoodsType.MATERIAL,1200));
-		this.storage.put(GoodsType.ELECTRONICS, new CargoContainer(GoodsType.ELECTRONICS,1200));
-		
-	}
-	
-	public void setAmountOfGoods(GoodsType type, int amount){
-		
-		this.storage.get(type).setCargoAmount(amount);
-	}
-	
-	public void  reduceAmountofGoods(GoodsType type, int amount){
-		int original = this.storage.get(type).getCargoAmount();
-		if(original > amount){
-			this.setAmountOfGoods(type, (original - amount));
-		}else{
-			this.setAmountOfGoods(type, 0);
-			this.isDestroyed = true;
-		}
-	}
-	
-	public void setAmountOfGoods(int food, int ore, int medicine, int material, int electronics){
-		this.setAmountOfGoods(GoodsType.FOOD, food);
-		this.setAmountOfGoods(GoodsType.ORE, ore);
-		this.setAmountOfGoods(GoodsType.MEDICINE, medicine);
-		this.setAmountOfGoods(GoodsType.MATERIAL, material);
-		this.setAmountOfGoods(GoodsType.ELECTRONICS, electronics);
-		
-	}
-
-	public GoodsType getType()
-	{
-		return type;
-=======
 		for (GoodsType goodsType : GoodsType.values())
 		{
 			final CargoContainer container = new CargoContainer(goodsType, 100);
@@ -92,27 +47,40 @@ public class Planet extends Actor
 			});
 			gaugesList.add(gauge);
 		}
->>>>>>> db53df0c753acd9f15c14d60c95dd8d5b31b2c54
 	}
 
 	public CargoContainer getCargoContainer(GoodsType goodsType)
 	{
-<<<<<<< HEAD
-		this.type = type;
+		return cargoContainers.get(goodsType);
 	}
 
-	
-	
-	public HashMap<GoodsType, CargoContainer> getStorage()
+	public double getDistance()
 	{
-		return storage;
+		return distance;
 	}
-
-	public void setStorage(HashMap<GoodsType, CargoContainer> storage)
+	
+	@Override
+	public void act(float delta)
 	{
-		this.storage = storage;
+		super.act(delta);
+				
 	}
-
+	
+	public void reduceAmountofGoods(GoodsType type, int amount){
+		
+		int originAmount = this.cargoContainers.get(type).getCargoAmount();
+		
+		if(originAmount > amount){
+			this.cargoContainers.get(type).setCargoAmount(originAmount - amount);
+			
+		}else{
+			this.cargoContainers.get(type).setCargoAmount(0);
+			this.setDestroyed(true);
+		}
+		
+		
+	}
+	
 	public boolean isDestroyed()
 	{
 		return isDestroyed;
@@ -123,29 +91,21 @@ public class Planet extends Actor
 		this.isDestroyed = isDestroyed;
 	}
 
+	public Map<GoodsType, CargoContainer> getCargoContainers()
+	{
+		return cargoContainers;
+	}
+
+	public List<Gauge> getGaugesList()
+	{
+		return gaugesList;
+	}
+
 	public void setDistance(double distance)
 	{
 		this.distance = distance;
 	}
 
-=======
-		return cargoContainers.get(goodsType);
-	}
-	
->>>>>>> db53df0c753acd9f15c14d60c95dd8d5b31b2c54
-	public double getDistance()
-	{
-		return distance;
-	}
-	
-	@Override
-	public void act(float delta)
-	{
-		super.act(delta);
-		
-		
-	}
-	
 	@Override
 	public void draw(Batch batch, float parentAlpha)
 	{

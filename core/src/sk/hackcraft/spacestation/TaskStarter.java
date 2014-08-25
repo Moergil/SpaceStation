@@ -27,27 +27,14 @@ public class TaskStarter extends Timer.Task
 
 		PlanetTask newTask = TaskGenerator.generateNewTask(manager.getGame().getPlanets());
 		
-		int index = 0;
-		switch(newTask.getPlanet().getType()){
-			case FOOD:index = 0;
-				break;
-			case ORE: index = 1;
-				break;
-			case MEDICINE:index =2;
-				break;
-			case MATERIAL:index =3;
-				break;
-			case ELECTRONICS:index=4;
-				break;
-		}
-		this.manager.getGame().getPlanets().get(index).reduceAmountofGoods(newTask.getType(), newTask.getAmount());
+		newTask.getPlanet().reduceAmountofGoods(newTask.getType(), newTask.getAmount());
 		
 
 		
 		//testovanie a debugg
 		System.out.println("test TaskStarter-run");
 		Date cas = new Date();
-		System.out.println(cas.toString()+" Planeta " + newTask.getPlanet().getType()+" typ "+newTask.getType()+" mnozstvo "+newTask.getAmount());
+		System.out.println(cas.toString()+" Planeta " + newTask.getPlanet()+" typ "+newTask.getType()+" mnozstvo "+newTask.getAmount());
 		
 		if(manager.isGenerateTasks()){
 

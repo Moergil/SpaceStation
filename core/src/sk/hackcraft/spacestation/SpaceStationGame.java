@@ -66,6 +66,10 @@ public class SpaceStationGame extends ApplicationAdapter
 	private ScoreLabel scorelabel;
 
 	private BackgroundStars backgroundStars;
+	
+	
+	private Music introMusic;
+	private Music mainMusic;
 
 	@Override
 	public void create()
@@ -84,12 +88,15 @@ public class SpaceStationGame extends ApplicationAdapter
 
 		mainFont = new BitmapFont(false);
 
-		Music music = Gdx.audio.newMusic(Gdx.files.internal("sounds/SpaceStationAmol.ogg"));
+		introMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/SpaceStationAmol.ogg"));
 		mainFont = new BitmapFont(Gdx.files.internal("font/main.fnt"));
-
-		music.setLooping(true);
-
-		music.play();
+		introMusic.setLooping(false);
+		mainMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/SpaceStationAmolNormal.ogg"));
+		mainMusic.setLooping(true);
+		
+		
+		
+		introMusic.play();
 		
 		
 		runIntro();
@@ -143,6 +150,7 @@ public class SpaceStationGame extends ApplicationAdapter
 			@Override
 			public void run()
 			{
+				introMusic.stop();
 				gameStage.clear();
 				runGame();
 			}
@@ -151,6 +159,8 @@ public class SpaceStationGame extends ApplicationAdapter
 
 	public void runGame()
 	{
+		mainMusic.play();
+		
 		// TODO debug
 		gameStage.addListener(new InputListener()
 		{

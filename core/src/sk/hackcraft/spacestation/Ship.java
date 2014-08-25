@@ -92,6 +92,7 @@ public class Ship extends Actor
 			public void run()
 			{
 				addAction(Actions.fadeOut(1));
+				state = State.IDLE;
 			}
 		}, duration - 1);
 		

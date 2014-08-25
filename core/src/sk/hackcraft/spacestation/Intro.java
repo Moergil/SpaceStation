@@ -110,7 +110,7 @@ public class Intro extends Actor
 	public void draw(Batch batch, float parentAlpha)
 	{        
 		batch.draw(Background, getX(), getY(), getOriginX() , getOriginY()+240, 400, 240, 1, 3, 0);
-		batch.draw(introStation, getX() + 50, getY() - 460, getOriginX() , getOriginY(), introStation.getWidth(), introStation.getHeight(), 1, 1, 0);
+		batch.draw(introStation, getX() + 50, getY() - 470, getOriginX() , getOriginY(), introStation.getWidth(), introStation.getHeight(), 1, 1, 0);
 		
 		if (showText)
 			introPages[actualNum].draw(batch);

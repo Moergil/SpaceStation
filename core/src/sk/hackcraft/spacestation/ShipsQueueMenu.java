@@ -78,6 +78,8 @@ public abstract class ShipsQueueMenu extends Actor
 			ship.showCargoGauge(true);
 			ship.setIdle();
 			waitingShipsQueue.add(ship);
+			
+			System.out.println("Ship " + ship + " queued.");
 		}
 	}
 	
@@ -88,6 +90,8 @@ public abstract class ShipsQueueMenu extends Actor
 		
 		ship.showCargoGauge(false);
 		ship.addAction(Actions.fadeOut(0.3f));
+		
+		System.out.println("Ship " + ship + " dequeed.");
 	}
 	
 	public void orderShipToDock(Ship ship, Dock dock)

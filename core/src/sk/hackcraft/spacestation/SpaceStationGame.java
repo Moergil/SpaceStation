@@ -184,7 +184,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		gameStage.addActor(gameElapsedTimeLabel);
 		
 		scorelabel = new ScoreLabel(mainFont);
-		scorelabel.setPosition(200, gameStage.getHeight());
+		scorelabel.setPosition(200, gameStage.getHeight() - 5);
 		gameStage.addActor(scorelabel);
 		
 		station.setPosition(50, 10);
@@ -342,6 +342,8 @@ public class SpaceStationGame extends ApplicationAdapter
 			
 			private void initiate(final Ship ship, Planet planet, CargoContainer from, CargoContainer to)
 			{
+				ship.setVisible(false);
+				
 				final DistantShip dShip = distantShips.get(ship);
 				
 				final float flyTimeThere = 5, flyTimeBack = 5;
@@ -358,6 +360,7 @@ public class SpaceStationGame extends ApplicationAdapter
 							@Override
 							public void run()
 							{
+								ship.setVisible(true);
 								shipsQueueMenu.queueShip(ship);
 							}
 						}, flyTimeBack);
@@ -365,8 +368,6 @@ public class SpaceStationGame extends ApplicationAdapter
 						flyDistantShipTo(dShip, smallStation, flyTimeBack);
 					}
 				}.run();
-
-				
 			}
 		};
 
@@ -380,8 +381,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		}
 		
 		setupInteractions();
-		
-		// TODO debug
+
 		addShip(GoodsType.WATER);
 		addShip(GoodsType.HYDROGEN);
 		addShip(GoodsType.FERTILIZERS);

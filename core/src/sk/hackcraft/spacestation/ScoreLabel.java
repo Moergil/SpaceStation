@@ -27,6 +27,6 @@ public class ScoreLabel extends Actor
 	@Override
 	public void draw(Batch batch, float parentAlpha)
 	{
-		font.draw(batch, Integer.toString(score), getX(), getY());
+		font.draw(batch, "Score: " + Integer.toString(score), getX(), getY());
 	}
 }

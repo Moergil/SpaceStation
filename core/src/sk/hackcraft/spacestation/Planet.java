@@ -34,7 +34,7 @@ public class Planet extends Actor
 		
 		for (GoodsType goodsType : GoodsType.values())
 		{
-			final CargoContainer container = new CargoContainer(goodsType, 100);
+			final CargoContainer container = new CargoContainer(goodsType, 40);
 			cargoContainers.put(goodsType, container);
 			
 			Gauge gauge = Gauge.create(goodsType, 30);

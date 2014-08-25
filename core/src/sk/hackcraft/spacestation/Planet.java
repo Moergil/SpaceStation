@@ -13,10 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class Planet extends Actor
 {
-
 	public static final double INITIAL_PERCENTAGE_OF_AMOUNT_OF_GOODS = 0.5;
 
-	
 	private Sprite sprite;
 
 	private double distance;

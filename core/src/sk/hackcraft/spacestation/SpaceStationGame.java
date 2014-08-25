@@ -813,4 +813,11 @@ public class SpaceStationGame extends ApplicationAdapter
 		protected void initiated() {}
 		protected void finished() {}
 	}
+
+	public Station getStation()
+	{
+		return station;
+	}
+	
+	
 }

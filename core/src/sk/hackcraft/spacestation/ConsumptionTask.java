@@ -12,6 +12,7 @@ public class ConsumptionTask extends Timer.Task
 
 	
 	public ConsumptionTask(TaskAndPointsManager manager){
+		super();
 		this.manager = manager;
 	}
 

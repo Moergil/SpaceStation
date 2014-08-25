@@ -34,7 +34,7 @@ public class TaskStarter extends Timer.Task
 		//testovanie a debugg
 		System.out.println("test TaskStarter-run");
 		Date cas = new Date();
-		System.out.println(cas.toString()+" Planeta " + newTask.getPlanet()+" typ "+newTask.getType()+" mnozstvo "+newTask.getAmount());
+		System.out.println(cas.toString()+" Planeta " + newTask.getPlanet().getCenterX()+" typ "+newTask.getType()+" mnozstvo "+newTask.getAmount());
 		
 		if(manager.isGenerateTasks()){
 

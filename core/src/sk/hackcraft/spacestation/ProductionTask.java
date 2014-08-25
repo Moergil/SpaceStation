@@ -10,6 +10,7 @@ public class ProductionTask extends Timer.Task
 	public static final float SECONDS_BETWEEN_PRODUCTION = 2;
 	
 	public ProductionTask(TaskAndPointsManager manager){
+		super();
 		this.manager = manager;
 	}
 	@Override

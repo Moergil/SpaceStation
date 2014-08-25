@@ -34,6 +34,8 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class SpaceStationGame extends ApplicationAdapter
 {
+	public static BitmapFont mainFont;
+	
 	private Random random;
 	private Stage gameStage;
 	private GameView actualGameView;
@@ -56,7 +58,6 @@ public class SpaceStationGame extends ApplicationAdapter
 	
 	private Interaction interaction;
 
-	private BitmapFont mainFont;
 	private TaskAndPointsManager tpManager;
 	
 	private Map<Ship, DistantShip> distantShips = new HashMap<Ship, DistantShip>();
@@ -80,13 +81,15 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		mainFont = new BitmapFont(false);
 		
-		Music music = Gdx.audio.newMusic(Gdx.files.internal("sounds/Room_Of_Wires_-_01_-_Asylum_Sneaker.mp3"));
+		Music music = Gdx.audio.newMusic(Gdx.files.internal("sounds/SpaceStationAmol.ogg"));
+		mainFont = new BitmapFont(Gdx.files.internal("font/main.fnt"));
+
 		
 		music.setLooping(true);
 		music.play();
 		
-		//runIntro();
-		runGame();
+		runIntro();
+		//runGame();
 	}
 	
 	private void runIntro()
@@ -341,6 +344,8 @@ public class SpaceStationGame extends ApplicationAdapter
 			
 			private void initiate(final Ship ship, Planet planet, CargoContainer from, CargoContainer to)
 			{
+				ship.setVisible(false);
+				
 				final DistantShip dShip = distantShips.get(ship);
 				
 				final float flyTimeThere = 5, flyTimeBack = 5;
@@ -357,6 +362,7 @@ public class SpaceStationGame extends ApplicationAdapter
 							@Override
 							public void run()
 							{
+								ship.setVisible(true);
 								shipsQueueMenu.queueShip(ship);
 							}
 						}, flyTimeBack);
@@ -364,8 +370,6 @@ public class SpaceStationGame extends ApplicationAdapter
 						flyDistantShipTo(dShip, smallStation, flyTimeBack);
 					}
 				}.run();
-
-				
 			}
 		};
 
@@ -379,8 +383,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		}
 		
 		setupInteractions();
-		
-		// TODO debug
+
 		addShip(GoodsType.WATER);
 		addShip(GoodsType.HYDROGEN);
 		addShip(GoodsType.FERTILIZERS);

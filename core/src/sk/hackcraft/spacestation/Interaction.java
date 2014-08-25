@@ -32,6 +32,7 @@ public class Interaction extends Actor
 			
 			if (actorTouched(target))
 			{
+				System.out.println("Selection consumed.");
 				return true;
 			}
 			else
@@ -60,6 +61,7 @@ public class Interaction extends Actor
 	
 	public boolean actorTouched(Actor actor)
 	{
+		System.out.println("TOUCHED " + actor);
 		if (activeMaster == null && actions.containsKey(actor) && checks.get(actor).isActive())
 		{
 			System.out.println("New master selection");

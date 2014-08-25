@@ -31,10 +31,12 @@ public class PointsCountingTask extends Timer.Task
 		points += countPointsForPlanets();
 		this.manager.addPoints(points);
 		
+		this.manager.getGame().getScorelabel().setScore(this.manager.getPointsCounter());
+		
 		if(manager.isGenerateTasks()){
 
 			 manager.getGame().getTimer().scheduleTask(new PointsCountingTask(this.manager), SECONDS_BETWEEN_COUNTING);
-			 System.out.println("POINTS "+manager.getPointsCounter());
+			 
 		}
 	}
 	
@@ -65,8 +67,10 @@ public class PointsCountingTask extends Timer.Task
 				int amount = container.getCargoAmount();
 				
 				double percentage = (double)amount/(double)capacity;
-				if(percentage <= 0.10){
+				if(percentage <= 0.25 && percentage >0.1){
 					points -=1;
+				}else if(percentage <=0.1){
+					points -=2;
 				}else if(percentage > 0.70 && percentage <=0.90){
 					points+=0.5;
 				}else if(percentage >0.90){
@@ -78,5 +82,7 @@ public class PointsCountingTask extends Timer.Task
 		
 		return (int)points;
 	}
+	
+	
 
 }

@@ -279,16 +279,35 @@ public class SpaceStationGame extends ApplicationAdapter
 			}
 			
 			@Override
-			public void initiatePlanetAcquire(Ship ship, Planet planet)
+			public void initiatePlanetAcquire(final Ship ship, final Planet planet)
 			{
-				// TODO Auto-generated method stub
+				CargoContainer to = ship.getCargoContainer();
+				CargoContainer from = planet.getCargoContainer(to.getCargoType());
 				
+				initiate(ship, planet, from, to);
 			}
 			
 			@Override
 			public void initiatePlanetDelivery(Ship ship, Planet planet)
 			{
-				// TODO
+				CargoContainer from = ship.getCargoContainer();
+				CargoContainer to = planet.getCargoContainer(from.getCargoType());
+
+				initiate(ship, planet, from, to);
+			}
+			
+			private void initiate(final Ship ship, Planet planet, CargoContainer from, CargoContainer to)
+			{
+				new TransferCargoTask(from, to, 5).run();
+
+				timer.scheduleTask(new Timer.Task()
+				{
+					@Override
+					public void run()
+					{
+						shipsQueueMenu.queueShip(ship);
+					}
+				}, 10);
 			}
 		};
 
@@ -592,12 +611,6 @@ public class SpaceStationGame extends ApplicationAdapter
 				}
 				
 				@Override
-				public boolean isOneTime()
-				{
-					return true;
-				}
-				
-				@Override
 				public boolean executeWithTarget(Actor target)
 				{
 					if (target instanceof Dock)
@@ -625,12 +638,6 @@ public class SpaceStationGame extends ApplicationAdapter
 				public Set<? extends Actor> getTargets()
 				{
 					return new HashSet<Actor>(planets);
-				}
-				
-				@Override
-				public boolean isOneTime()
-				{
-					return true;
 				}
 				
 				@Override
@@ -662,12 +669,6 @@ public class SpaceStationGame extends ApplicationAdapter
 				public Set<? extends Actor> getTargets()
 				{
 					return new HashSet<Actor>(planets);
-				}
-				
-				@Override
-				public boolean isOneTime()
-				{
-					return true;
 				}
 				
 				@Override
@@ -742,35 +743,23 @@ public class SpaceStationGame extends ApplicationAdapter
 				default:
 					return false;
 			}
-
-			dock.setCargoTransfer(true);
-			sf.setCargoTransfer(true);
 			
-			timer.scheduleTask(new Timer.Task()
+			new TransferCargoTask(from, to, 0)
 			{
-				private int transferred;
+				@Override
+				protected void initiated()
+				{
+					dock.setCargoTransfer(true);
+					sf.setCargoTransfer(true);
+				}
 				
 				@Override
-				public void run()
+				protected void finished()
 				{
-					if (from.transferUnit(to))
-					{
-						timer.scheduleTask(this, 0.1f);
-						System.out.println("Transferring from " + dock.getName());
-						
-						transferred++;
-					}
-					else
-					{
-						dock.setCargoTransfer(false);
-						sf.setCargoTransfer(false);
-						System.out.println("Completed transfer " + direction + ", transferred " + transferred);
-
-						System.out.printf("From: %d/%d%n", from.getCargoAmount(), from.getCargoCapacity());
-						System.out.printf("To: %d/%d%n", to.getCargoAmount(), to.getCargoCapacity());
-					}
+					dock.setCargoTransfer(false);
+					sf.setCargoTransfer(false);
 				}
-			}, 0.1f);
+			}.run();
 			
 			return true;
 		}
@@ -781,5 +770,44 @@ public class SpaceStationGame extends ApplicationAdapter
 			GoodsType type = dock.getDockedShip().getCargoContainer().getCargoType();
 			return station.getFreeStorageFacilities(type);
 		}
+	}
+	
+	private class TransferCargoTask implements Runnable
+	{
+		private CargoContainer from, to;
+		private float initialSecondsDelay;
+		
+		public TransferCargoTask(CargoContainer from, CargoContainer to, float initialSecondsDelay)
+		{
+			this.from = from;
+			this.to = to;
+			
+			this.initialSecondsDelay = initialSecondsDelay;
+		}
+		
+		@Override
+		public void run()
+		{
+			initiated();
+			
+			timer.scheduleTask(new Timer.Task()
+			{
+				@Override
+				public void run()
+				{
+					if (from.transferUnitTo(to))
+					{
+						timer.scheduleTask(this, 0.1f);
+					}
+					else
+					{
+						finished();
+					}
+				}
+			}, initialSecondsDelay);
+		}
+		
+		protected void initiated() {}
+		protected void finished() {}
 	}
 }

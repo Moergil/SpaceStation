@@ -41,7 +41,7 @@ public class CargoContainer
 		this.amount = amount;
 	}
 	
-	public boolean transferUnit(CargoContainer target)
+	public boolean transferUnitTo(CargoContainer target)
 	{
 		int capacity = target.getRemainingCapacity();
 		

@@ -138,7 +138,7 @@ public class Ship extends Actor
 		
 		if (showCargoGauge)
 		{
-			cargoGauge.draw(batch, getX() + 30, getY() - 4);
+			cargoGauge.draw(batch, getX() + 40, getY() - 4);
 		}
 		
 		batch.setColor(oc);

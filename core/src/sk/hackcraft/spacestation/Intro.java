@@ -29,7 +29,7 @@ public class Intro extends Actor
 	
 	private String lines[] = {
 		"With the amount of people rapidly",
-		"increasing there was no other hope,",
+		"increasing, there was no other hope",
 		"than to colonize other planets.",
 		"The demand for resources grew rapidly,",
 		"not even new colonies could extinguish",
@@ -37,11 +37,11 @@ public class Intro extends Actor
 		"this galaxy were brought upon the edge...",
 		"",
 		"The only way to save the galaxy from",
-		"devastating war was a global",
+		"a devastating war was a global",
 		"resource storage and delivery station",
-		"to cover all planet�s needs. You",
+		"to cover all planet's needs. You",
 		"are to gain control of this station",
-		"and secure steady trade between the",
+		"and secure a steady trade between the",
 		"colonies as their only connection."
 	};
 

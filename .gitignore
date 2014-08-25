@@ -67,3 +67,8 @@ gradle.properties
 
 ## OS Specific
 .DS_Store
+
+# release
+build.xml
+SpaceStation.jar
+jar-in-jar-loader.zip

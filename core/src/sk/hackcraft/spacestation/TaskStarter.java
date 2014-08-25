@@ -21,15 +21,7 @@ public class TaskStarter extends Timer.Task
 	@Override
 	public void run()
 	{
-		//toto dokoncit, ked budu zname lode, zatial nastavene na 5
-		int numberOfShips = 5;
 		
-
-		PlanetTask newTask = TaskGenerator.generateNewTask(manager.getGame().getPlanets());
-		
-		newTask.getPlanet().reduceAmountOfGoods(newTask.getType(), newTask.getAmount());
-		
-		this.manager.checkGameOver();
 		
 		//testovanie a debugg
 		//System.out.println("test TaskStarter-run");
@@ -37,6 +29,16 @@ public class TaskStarter extends Timer.Task
 		//System.out.println(cas.toString()+" Planeta " + newTask.getPlanet().getCenterX()+" typ "+newTask.getType()+" mnozstvo "+newTask.getAmount());
 		
 		if(manager.isGenerateTasks()){
+			
+			//toto dokoncit, ked budu zname lode, zatial nastavene na 5
+			int numberOfShips = 5;
+			
+
+			PlanetTask newTask = TaskGenerator.generateNewTask(manager.getGame().getPlanets());
+			
+			newTask.getPlanet().reduceAmountOfGoods(newTask.getType(), newTask.getAmount());
+			
+			this.manager.checkGameOver();
 
 			float secondsOfDelay = (float)TimeGenerator.getDelayOfTask(this.numberOfTasks, manager.getGame().getPlanets().size(), numberOfShips);
 			this.numberOfTasks++;System.out.println("Seconds of delay"+secondsOfDelay);

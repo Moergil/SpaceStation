@@ -52,15 +52,15 @@ public class TaskGenerator
 		
 		double iterator = 0.0;
 		if(value < (iterator+=ONE_HUNDRED_TON_PERCENTAGE)){
-			return 2;
-		}
-		if(value < (iterator+=TWO_HUNDREDS_TON_PERCENTAGE)){
 			return 4;
 		}
-		if(value < (iterator+=THREE_HUNDREDS_TON_PERCENTAGE)){
-			return 6;
+		if(value < (iterator+=TWO_HUNDREDS_TON_PERCENTAGE)){
+			return 8;
 		}
-		return 8;
+		if(value < (iterator+=THREE_HUNDREDS_TON_PERCENTAGE)){
+			return 12;
+		}
+		return 16;
 	}
 	
 	public static GoodsType chooseRandomGoods(){

@@ -3,14 +3,21 @@ package sk.hackcraft.spacestation;
 import java.util.Collections;
 import java.util.Set;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public abstract class InteractAction extends Actor
 {
-	private final BitmapFont font = new BitmapFont();
+	private final BitmapFont font;
 
+	public InteractAction()
+	{
+		font = SpaceStationGame.mainFont;
+	}
+	
 	public void prepare(String name)
 	{
 		setName(name);

@@ -34,6 +34,8 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class SpaceStationGame extends ApplicationAdapter
 {
+	public static BitmapFont mainFont;
+	
 	private Random random;
 	private Stage gameStage;
 	private GameView actualGameView;
@@ -56,7 +58,6 @@ public class SpaceStationGame extends ApplicationAdapter
 	
 	private Interaction interaction;
 
-	private BitmapFont mainFont;
 	private TaskAndPointsManager tpManager;
 	
 	private Map<Ship, DistantShip> distantShips = new HashMap<Ship, DistantShip>();
@@ -78,8 +79,8 @@ public class SpaceStationGame extends ApplicationAdapter
 		// debugging
 		//gameStage.setDebugAll(true);
 		
-		mainFont = new BitmapFont(false);
-		
+		mainFont = new BitmapFont(Gdx.files.internal("font/main.fnt"));
+
 		Music music = Gdx.audio.newMusic(Gdx.files.internal("sounds/Room_Of_Wires_-_01_-_Asylum_Sneaker.mp3"));
 		
 		music.setLooping(true);
@@ -183,7 +184,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		gameStage.addActor(gameElapsedTimeLabel);
 		
 		scorelabel = new ScoreLabel(mainFont);
-		scorelabel.setPosition(200, gameStage.getHeight() - 5);
+		scorelabel.setPosition(200, gameStage.getHeight());
 		gameStage.addActor(scorelabel);
 		
 		station.setPosition(50, 10);

@@ -38,21 +38,21 @@ public abstract class ShipsQueueMenu extends Actor
 	{
 		batch.draw(texture, getX(), getY());
 		
-		float x = getX() + 15;
+		float x = getX() + 10;
 		float y = getY() + getHeight() - 30;
 		
 		int i = 0;
-		for (Ship avatar : waitingShipsQueue)
+		for (Ship ship : waitingShipsQueue)
 		{
 			if (i > 10)
 			{
 				break;
 			}
 
-			avatar.setPosition(x, y);
-			avatar.draw(batch, parentAlpha);
+			ship.setPosition(x, y);
+			ship.draw(batch, parentAlpha);
 			
-			y -= avatar.getHeight() + 5;
+			y -= ship.getHeight() + 7;
 			
 			i++;
 		}
@@ -61,13 +61,6 @@ public abstract class ShipsQueueMenu extends Actor
 	public Set<Ship> getWaitingShips()
 	{
 		return waitingShipsSet;
-	}
-
-	@Override
-	public void act(float delta)
-	{
-		// TODO Auto-generated method stub
-		super.act(delta);
 	}
 
 	public void queueShip(Ship ship)

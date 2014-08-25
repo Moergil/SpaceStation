@@ -29,22 +29,19 @@ public class TaskStarter extends Timer.Task
 		
 		newTask.getPlanet().reduceAmountOfGoods(newTask.getType(), newTask.getAmount());
 		
-
+		this.manager.checkGameOver();
 		
 		//testovanie a debugg
-		System.out.println("test TaskStarter-run");
-		Date cas = new Date();
-		System.out.println(cas.toString()+" Planeta " + newTask.getPlanet().getCenterX()+" typ "+newTask.getType()+" mnozstvo "+newTask.getAmount());
+		//System.out.println("test TaskStarter-run");
+		//Date cas = new Date();
+		//System.out.println(cas.toString()+" Planeta " + newTask.getPlanet().getCenterX()+" typ "+newTask.getType()+" mnozstvo "+newTask.getAmount());
 		
 		if(manager.isGenerateTasks()){
 
 			float secondsOfDelay = (float)TimeGenerator.getDelayOfTask(this.numberOfTasks, manager.getGame().getPlanets().size(), numberOfShips);
-			this.numberOfTasks++;
-			System.out.println("Seconds of delay"+secondsOfDelay);
+			this.numberOfTasks++;System.out.println("Seconds of delay"+secondsOfDelay);
 			 manager.getGame().getTimer().scheduleTask(new TaskStarter(this.manager), secondsOfDelay);
 			//manager.getGame().getTimer().scheduleTask(this, secondsOfDelay);
-			 
-			
 
 		}
 		

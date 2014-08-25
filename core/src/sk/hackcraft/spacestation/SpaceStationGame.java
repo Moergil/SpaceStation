@@ -59,12 +59,12 @@ public class SpaceStationGame extends ApplicationAdapter
 	private BitmapFont mainFont;
 	private TaskAndPointsManager tpManager;
 	
-	private long startTime;
-	
 	private Map<Ship, DistantShip> distantShips = new HashMap<Ship, DistantShip>();
 	
 	private GameElapsedTimeLabel gameElapsedTimeLabel;
 	private ScoreLabel scorelabel;
+
+	private BackgroundStars backgroundStars;
 
 	@Override
 	public void create()
@@ -160,6 +160,16 @@ public class SpaceStationGame extends ApplicationAdapter
 			}
 		});
 		
+		// background initialisation
+		backgroundStars = new BackgroundStars();
+		addNextBackgroundImage("sprite/stars1.png", 1f);
+		addNextBackgroundImage("sprite/stars2.png", 0.99f);
+		addNextBackgroundImage("sprite/stars3.png", 0.98f);
+		addNextBackgroundImage("sprite/stars4.png", 0.97f);
+		addNextBackgroundImage("sprite/stars5.png", 0.96f);
+		finishAddingBackgroundImages();
+		//END background init
+		
 		Texture stationTexture = new Texture(Gdx.files.internal("sprite/station.png"));
 		Sprite stationSprite = new Sprite(stationTexture);
 		station = new Station(stationSprite);
@@ -242,7 +252,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				Texture planetTextureFood = new Texture(Gdx.files.internal("sprite/planet1.png"));
 				Sprite planetSpriteFood = new Sprite(planetTextureFood);
 				Vector2 positionFood = new Vector2(460, 160);
-				Vector2 sizeFood = new Vector2(68, 68);
+				Vector2 sizeFood = new Vector2(planetSpriteFood.getWidth(), planetSpriteFood.getHeight());
 				Planet planetFood = new Planet(planetSpriteFood, sizeFood, positionFood, 20);
 				planets.add(planetFood);
 				gameStage.addActor(planetFood);
@@ -251,8 +261,8 @@ public class SpaceStationGame extends ApplicationAdapter
 		// Hydrogen
 				Texture planetTextureOre = new Texture(Gdx.files.internal("sprite/planet3.png"));
 				Sprite planetSpriteOre = new Sprite(planetTextureOre);
-				Vector2 positionOre = new Vector2(630, 0);
-				Vector2 sizeOre = new Vector2(68, 68);
+				Vector2 positionOre = new Vector2(630, 40);
+				Vector2 sizeOre = new Vector2(planetSpriteOre.getWidth(), planetSpriteOre.getHeight());
 				Planet planetOre = new Planet(planetSpriteOre, sizeOre, positionOre, 20);
 				planets.add(planetOre);
 				gameStage.addActor(planetOre);
@@ -262,7 +272,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				Texture planetTextureMedi = new Texture(Gdx.files.internal("sprite/planet5.png"));
 				Sprite planetSpriteMedi = new Sprite(planetTextureMedi);
 				Vector2 positionMedi = new Vector2(550,150);
-				Vector2 sizeMedi = new Vector2(68, 68);
+				Vector2 sizeMedi = new Vector2(planetSpriteMedi.getWidth(), planetSpriteMedi.getHeight());
 				Planet planetMedi = new Planet(planetSpriteMedi, sizeMedi, positionMedi, 20);
 				planets.add(planetMedi);
 				gameStage.addActor(planetMedi);
@@ -272,7 +282,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				Texture planetTextureMate = new Texture(Gdx.files.internal("sprite/planet4.png"));
 				Sprite planetSpriteMate = new Sprite(planetTextureMate);
 				Vector2 positionMate = new Vector2(500,60);
-				Vector2 sizeMate = new Vector2(68, 68);
+				Vector2 sizeMate = new Vector2(planetSpriteMate.getWidth(), planetSpriteMate.getHeight());
 				Planet planetMate = new Planet(planetSpriteMate, sizeMate, positionMate, 20);
 				planets.add(planetMate);
 				gameStage.addActor(planetMate);
@@ -281,8 +291,8 @@ public class SpaceStationGame extends ApplicationAdapter
 		// Goods
 				Texture planetTextureElec = new Texture(Gdx.files.internal("sprite/planet2.png"));
 				Sprite planetSpriteElec = new Sprite(planetTextureElec);
-				Vector2 positionElec = new Vector2(630,100);
-				Vector2 sizeElec = new Vector2(68, 68);
+				Vector2 positionElec = new Vector2(630,120);
+				Vector2 sizeElec = new Vector2(planetSpriteElec.getWidth(), planetSpriteElec.getHeight());
 				Planet planetElec = new Planet(planetSpriteElec, sizeElec, positionElec, 20);
 				planets.add(planetElec);
 				gameStage.addActor(planetElec);
@@ -376,7 +386,6 @@ public class SpaceStationGame extends ApplicationAdapter
 		addShip(GoodsType.FERTILIZERS);
 		addShip(GoodsType.METALS);
 		addShip(GoodsType.GOODS);
-		
 		
 		this.tpManager = new TaskAndPointsManager(this);
 		this.tpManager.startGeneratingTasks();
@@ -574,6 +583,7 @@ public class SpaceStationGame extends ApplicationAdapter
 	private void setGameView(GameView gameView, float duration)
 	{
 		float y = 0;
+
 		System.out.println(gameView.getOffset());
 		gameStage.addAction(Actions.moveTo(-gameView.getOffset(), y, duration, Interpolation.exp5));
 		
@@ -582,10 +592,14 @@ public class SpaceStationGame extends ApplicationAdapter
 		for (Actor actor : actorsToMove)
 		{
 			y = actor.getY();
-			float offset = actor.getX();
-			actor.addAction(Actions.moveTo(offset, y, duration, Interpolation.exp5));
+			float localX = actor.getX() - actualGameView.getOffset();
+			float x = localX + gameView.getOffset();
+			actor.addAction(Actions.moveTo(x, y, duration, Interpolation.exp5));
 		}
 		
+		//vsuvka od Epholla
+		backgroundStars.gameViewMoved(gameView.getOffset());
+
 		actualGameView = gameView;
 	}
 	
@@ -864,4 +878,32 @@ public class SpaceStationGame extends ApplicationAdapter
 		protected void initiated() {}
 		protected void finished() {}
 	}
+
+
+	public Station getStation()
+	{
+		return station;
+	}
+	
+	
+
+	
+	private void addNextBackgroundImage(String imageName, float moveAmount)
+	{
+		Texture texture = new Texture(Gdx.files.internal(imageName));
+		
+		Sprite sprite = new Sprite(texture);
+		backgroundStars.addSprite(sprite, moveAmount);
+		
+	}
+	
+	private void finishAddingBackgroundImages()
+	{
+		gameStage.addActor(backgroundStars);
+		for (BackgroundImage sprite: backgroundStars.getBackgroundImageActors())
+		{
+			gameStage.addActor(sprite);
+		}
+	}
+
 }

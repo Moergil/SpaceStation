@@ -4,10 +4,13 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
+import sk.hackcraft.spacestation.StationView.Intent;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 
 public abstract class ShipsQueueMenu extends Actor
 {
@@ -71,6 +74,7 @@ public abstract class ShipsQueueMenu extends Actor
 	{
 		if (waitingShipsSet.add(ship))
 		{
+			ship.addAction(Actions.fadeIn(0.3f));
 			waitingShipsQueue.add(ship);
 		}
 	}
@@ -80,7 +84,25 @@ public abstract class ShipsQueueMenu extends Actor
 		waitingShipsQueue.remove(ship);
 		waitingShipsSet.remove(ship);
 		
+		ship.addAction(Actions.fadeOut(0.3f));
+		
 		initiateDocking(ship, dock);
+	}
+	
+	public void sendShipToPlanet(Ship ship, Planet planet, Intent intent)
+	{
+		waitingShipsQueue.remove(ship);
+		waitingShipsSet.remove(ship);
+		
+		switch (intent)
+		{
+			case ACQUIRE:
+				initiatePlanetAcquire(ship, planet);
+				break;
+			case DELIVER:
+				initiatePlanetDelivery(ship, planet);
+				break;
+		}
 	}
 	
 	public boolean contains(Ship ship)
@@ -89,4 +111,6 @@ public abstract class ShipsQueueMenu extends Actor
 	}
 	
 	public abstract void initiateDocking(Ship ship, Dock dock);
+	public abstract void initiatePlanetDelivery(Ship ship, Planet planet);
+	public abstract void initiatePlanetAcquire(Ship ship, Planet planet);
 }

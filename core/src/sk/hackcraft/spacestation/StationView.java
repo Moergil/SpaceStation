@@ -7,12 +7,18 @@ package sk.hackcraft.spacestation;
  */
 public interface StationView
 {
+	public enum Intent
+	{
+		ACQUIRE,
+		DELIVER;
+	}
+	
 	void shipArrived(Ship ship);
 
 	void setListener(StationViewListener listener);
 
 	public interface StationViewListener
 	{
-		void shipDeparted(Ship ship);
+		void shipDepartedToPlanet(Ship ship, Planet destination, Intent intent);
 	}
 }

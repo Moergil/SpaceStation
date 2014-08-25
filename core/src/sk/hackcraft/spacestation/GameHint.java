@@ -10,7 +10,7 @@ public class GameHint extends Actor
 			"Press [TAB] for view switch.\n"
 			+ "\n"
 			+ "Interact with ships,\n"
-			+ " station and planets\n"
+			+ "station and planets\n"
 			+ "and manage resources.\n"
 			+ "\n"
 			+ "If resource on planet is\n"

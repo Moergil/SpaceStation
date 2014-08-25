@@ -114,7 +114,7 @@ public class Interaction extends Actor
 	public void removeMasterActor(Actor actor)
 	{
 		actions.remove(actor);
-		actor.removeCaptureListener(selectionListener);
+		actor.removeListener(selectionListener);
 	}
 	
 	public void addInteractAction(Actor masterActor, String title, InteractAction action)
@@ -166,23 +166,13 @@ public class Interaction extends Actor
 		float y = 0;
 		float verticalOffset = 5;
 		
-		/*if (actions.get(masterActor).size() == 1)
+		for (InteractAction action : actions.get(masterActor))
 		{
-			if (actions.get(masterActor).iterator().next().execute())
-			{
-				cancelSelection();
-			}
+			action.setPosition(x, y);
+			action.setVisible(true);
+			
+			y += verticalOffset + action.getHeight();
 		}
-		else
-		{*/
-			for (InteractAction action : actions.get(masterActor))
-			{
-				action.setPosition(x, y);
-				action.setVisible(true);
-				
-				y += verticalOffset + action.getHeight();
-			}
-		//}
 	}
 	
 	private void cancelSelection(boolean actionExecuted)
@@ -193,11 +183,6 @@ public class Interaction extends Actor
 			{
 				action.setVisible(false);
 			}
-		}
-		
-		if (actionExecuted && activeAction != null && activeAction.isOneTime())
-		{
-			removeMasterActor(activeMaster);
 		}
 		
 		activeMaster = null;

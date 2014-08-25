@@ -75,24 +75,30 @@ public abstract class ShipsQueueMenu extends Actor
 		if (waitingShipsSet.add(ship))
 		{
 			ship.addAction(Actions.fadeIn(0.3f));
+			ship.showCargoGauge(true);
 			waitingShipsQueue.add(ship);
 		}
 	}
 	
-	public void orderShipToDock(Ship ship, Dock dock)
+	private void removeShip(Ship ship)
 	{
 		waitingShipsQueue.remove(ship);
 		waitingShipsSet.remove(ship);
 		
+		ship.showCargoGauge(false);
 		ship.addAction(Actions.fadeOut(0.3f));
-		
+	}
+	
+	public void orderShipToDock(Ship ship, Dock dock)
+	{
+		removeShip(ship);
+
 		initiateDocking(ship, dock);
 	}
 	
 	public void sendShipToPlanet(Ship ship, Planet planet, Intent intent)
 	{
-		waitingShipsQueue.remove(ship);
-		waitingShipsSet.remove(ship);
+		removeShip(ship);
 		
 		switch (intent)
 		{

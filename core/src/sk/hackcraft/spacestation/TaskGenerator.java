@@ -75,20 +75,20 @@ public class TaskGenerator
 			int value = getInstance().getChoosingGoodsGenerator().nextInt(GoodsType.getNumberOfAllTypes());
 			switch(value){
 				case 0:
-					if(forbidenType != GoodsType.FOOD)
-						return GoodsType.FOOD;
+					if(forbidenType != GoodsType.FERTILIZERS)
+						return GoodsType.FERTILIZERS;
 				case 1:
-					if(forbidenType != GoodsType.ORE)
-						return GoodsType.ORE;	
+					if(forbidenType != GoodsType.HYDROGEN)
+						return GoodsType.HYDROGEN;	
 				case 2:
-					if(forbidenType != GoodsType.MEDICINE)
-						return GoodsType.MEDICINE;
+					if(forbidenType != GoodsType.WATER)
+						return GoodsType.WATER;
 				case 3:
-					if(forbidenType != GoodsType.MATERIAL)
-						return GoodsType.MATERIAL;
+					if(forbidenType != GoodsType.METALS)
+						return GoodsType.METALS;
 				case 4:
-					if(forbidenType != GoodsType.ELECTRONICS)
-						return GoodsType.ELECTRONICS;	
+					if(forbidenType != GoodsType.GOODS)
+						return GoodsType.GOODS;	
 			}// switch
 			
 		}//while

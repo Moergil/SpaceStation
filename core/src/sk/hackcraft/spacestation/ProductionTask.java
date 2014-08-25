@@ -7,7 +7,7 @@ public class ProductionTask extends Timer.Task
 	private TaskAndPointsManager manager;
 
 	public static final int PRODUCING_AMOUNT_PER_SEC = 1;
-	public static final float SECONDS_BETWEEN_PRODUCTION = 5;
+	public static final float SECONDS_BETWEEN_PRODUCTION = 4;
 	
 	public ProductionTask(TaskAndPointsManager manager){
 		super();

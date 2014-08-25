@@ -51,7 +51,7 @@ public class PointsCountingTask extends Timer.Task
 			int capacity = facility.getCargoContainer().getCargoCapacity();
 			points += ((double)amount / (double) capacity)*POINTS_FOR_STORAGE;
 		}
-
+		this.manager.checkGameOver();
 		return (int) points;
 	}
 	

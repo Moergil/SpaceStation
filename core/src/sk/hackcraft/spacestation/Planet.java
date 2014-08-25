@@ -13,7 +13,9 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class Planet extends Actor
 {
+
 	public static final double INITIAL_PERCENTAGE_OF_AMOUNT_OF_GOODS = 0.4;
+
 	
 	private Sprite sprite;
 
@@ -34,7 +36,7 @@ public class Planet extends Actor
 		
 		for (GoodsType goodsType : GoodsType.values())
 		{
-			final CargoContainer container = new CargoContainer(goodsType, 100);
+			final CargoContainer container = new CargoContainer(goodsType, 40);
 			cargoContainers.put(goodsType, container);
 			
 			Gauge gauge = Gauge.create(goodsType, 30);

@@ -6,7 +6,7 @@ public class ConsumptionTask extends Timer.Task
 {
 	
 	public static final int CONSUMPTION_AMOUNT_PER_SEC = 1;
-	public static final float SECONDS_BETWEEN_CONSUMPTION = 30;
+	public static final float SECONDS_BETWEEN_CONSUMPTION = 60;
 	
 	private TaskAndPointsManager manager;
 

@@ -273,6 +273,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		// generating planets
 
 		// Fertilizers
+
 		Texture planetTextureFood = new Texture(Gdx.files.internal("sprite/planet1.png"));
 		Sprite planetSpriteFood = new Sprite(planetTextureFood);
 		Vector2 positionFood = new Vector2(460, 160);
@@ -292,7 +293,15 @@ public class SpaceStationGame extends ApplicationAdapter
 		gameStage.addActor(planetOre);
 		interaction.addSelectionListener(planetOre);
 
-		// Water
+
+
+				
+		
+		
+
+		
+
+
 		Texture planetTextureMedi = new Texture(Gdx.files.internal("sprite/planet5.png"));
 		Sprite planetSpriteMedi = new Sprite(planetTextureMedi);
 		Vector2 positionMedi = new Vector2(550, 150);
@@ -321,6 +330,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		planets.add(planetElec);
 		gameStage.addActor(planetElec);
 		interaction.addSelectionListener(planetElec);
+
 
 		// ships generation
 		shipsCreator = new ShipsCreator(activeSelectionBound);
@@ -410,14 +420,12 @@ public class SpaceStationGame extends ApplicationAdapter
 		addShip(GoodsType.FERTILIZERS);
 		addShip(GoodsType.METALS);
 		addShip(GoodsType.GOODS);
-
-		this.tpManager = new TaskAndPointsManager(this);
-		this.tpManager.startGeneratingTasks();
 		
 		gameOverScreen = new GameOverScreen();
 		gameOverScreen.setVisible(false);
 		hudStage.addActor(gameOverScreen);
 
+		this.tpManager = new TaskAndPointsManager(this);
 		tpManager.setGameOverListener(new Runnable()
 		{
 			@Override
@@ -429,6 +437,8 @@ public class SpaceStationGame extends ApplicationAdapter
 			}
 		});
 		
+		this.tpManager.startGeneratingTasks();
+
 		gameHint = new GameHint();
 		gameHint.setPosition(160, 200);
 		hudStage.addActor(gameHint);

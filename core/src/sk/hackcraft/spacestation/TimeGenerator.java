@@ -16,6 +16,8 @@ public class TimeGenerator
 	
 	private static TimeGenerator instance = null;
 	
+
+	
 	private Random seedGenerator;
 	
 	private Random delayOfTaskGenerator;
@@ -39,22 +41,25 @@ public class TimeGenerator
 	}
 	
 	public static double getDelayOfTask(int numberOfTasks, int numberOfPlanets,int numberOfShips){
-		
-		int primarySeconds = 0;
-		if(numberOfTasks < 10){
-			primarySeconds = 15;
+		int seconds = 0;
+		if(numberOfTasks < 8){
+			seconds = 30;
 		}else if(numberOfTasks < 20){
-			primarySeconds = 20;
-		}else if(numberOfTasks < 30){
-			primarySeconds = 8;
-		}else if(numberOfTasks < 40){
-			primarySeconds = 5;
-		}else primarySeconds = 3;
+			seconds = 20;
+		}else if(numberOfTasks < 36){
+			seconds = 15;
+		}else if(numberOfTasks < 50){
+			seconds = 10;
+		}else{
+			seconds = 5;
+		}
 		
 		double middleValue = (double)numberOfPlanets/(double)numberOfShips;
 		
 		getInstance();
-		double result = primarySeconds*TimeGenerator.getValueOfExponencialDistribution(middleValue,	getInstance().delayOfTaskGenerator);			
+		double result = seconds*TimeGenerator.getValueOfExponencialDistribution(middleValue,	getInstance().delayOfTaskGenerator);			
+		
+		System.out.println("counter"+numberOfTasks + " primarySeconds "+ seconds+" delay "+result);
 		
 		return result;
 	}
@@ -79,4 +84,8 @@ public class TimeGenerator
 	{
 		return seedGenerator;
 	}
+
+
+	
+	
 }

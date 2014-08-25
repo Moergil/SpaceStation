@@ -7,13 +7,14 @@ import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class Interaction extends Actor
 {
-	private final Stage stage;
+	private final Group actionsLayer;
 	
 	private final SelectionBound selectedBound;
 	private final SelectionBound possibleSelectBound;
@@ -42,11 +43,13 @@ public class Interaction extends Actor
 		}
 	};
 	
-	public Interaction(Stage stage, SelectionBound selectedBound, SelectionBound possibleSelectBound)
+	public Interaction(Group actionsLayer, SelectionBound selectedBound, SelectionBound possibleSelectBound)
 	{
-		this.stage = stage;
+		this.actionsLayer = actionsLayer;
 		this.selectedBound = selectedBound;
 		this.possibleSelectBound = possibleSelectBound;
+		
+		setZIndex(Scene.Z_SELECTION);
 	}
 	
 	public void cancelActualInteraction()
@@ -146,7 +149,7 @@ public class Interaction extends Actor
 		
 		addSelectionListener(action);
 		
-		stage.addActor(action);
+		actionsLayer.addActor(action);
 	}
 	
 	@Override
@@ -163,8 +166,6 @@ public class Interaction extends Actor
 	@Override
 	public void draw(Batch batch, float parentAlpha)
 	{
-		toFront();
-		
 		if (activeMaster != null)
 		{
 			selectedBound.draw(activeMaster, batch);

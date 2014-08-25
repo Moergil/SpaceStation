@@ -2,7 +2,9 @@
 package sk.hackcraft.spacestation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import com.badlogic.gdx.ApplicationAdapter;
@@ -51,6 +53,10 @@ public class SpaceStationGame extends ApplicationAdapter
 
 	private BitmapFont mainFont;
 	private TaskAndPointsManager tpManager;
+	
+	private long startTime;
+	
+	private Map<Ship, DistantShip> distantShips = new HashMap<Ship, DistantShip>();
 
 	@Override
 	public void create()
@@ -65,13 +71,13 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		mainFont = new BitmapFont(false);
 		
-		runIntro();
-		//runGame();
-		
 		Music music = Gdx.audio.newMusic(Gdx.files.internal("sounds/Room_Of_Wires_-_01_-_Asylum_Sneaker.mp3"));
 		
 		music.setLooping(true);
 		music.play();
+		
+		//runIntro();
+		runGame();
 	}
 	
 	private void runIntro()
@@ -133,7 +139,7 @@ public class SpaceStationGame extends ApplicationAdapter
 	}
 	
 	public void runGame()
-	{
+	{		
 		// TODO debug
 		gameStage.addListener(new InputListener()
 		{
@@ -153,8 +159,9 @@ public class SpaceStationGame extends ApplicationAdapter
 		Texture stationDoorsTexture = new Texture(Gdx.files.internal("sprite/station_doors.png"));
 		station.setTextures(stationDoorsTexture, 55);
 		
-		// TODO uncomment in release
-		//mngrSound.runMusicGame();
+		GameElapsedTime gameElapsedTime = new GameElapsedTime(System.currentTimeMillis(), mainFont);
+		gameElapsedTime.setPosition(5, gameStage.getHeight() - gameElapsedTime.getHeight() - 5);
+		gameStage.addActor(gameElapsedTime);
 		
 		station.setPosition(50, 10);
 		gameStage.addActor(station);
@@ -200,7 +207,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		Texture stationSmallLightsTexture = new Texture(Gdx.files.internal("sprite/station_small_lights.png"));
 		
 		Vector2 stationSmallPosition = new Vector2(420, 15);
-		StationSmall smallStation = new StationSmall(smallStationSprite, stationSmallPosition);
+		final StationSmall smallStation = new StationSmall(smallStationSprite, stationSmallPosition);
 		smallStation.setLights(stationSmallLightsTexture);
 		gameStage.addActor(smallStation);
 		
@@ -299,16 +306,33 @@ public class SpaceStationGame extends ApplicationAdapter
 			
 			private void initiate(final Ship ship, Planet planet, CargoContainer from, CargoContainer to)
 			{
-				new TransferCargoTask(from, to, 5).run();
-
-				timer.scheduleTask(new Timer.Task()
+				final DistantShip dShip = distantShips.get(ship);
+				
+				final float flyTimeThere = 5, flyTimeBack = 5;
+				
+				dShip.setPosition(smallStation.getX(), smallStation.getX());
+				
+				dShip.addAction(Actions.moveTo(planet.getX(), planet.getY(), flyTimeThere));
+				
+				new TransferCargoTask(from, to, flyTimeThere)
 				{
 					@Override
-					public void run()
+					protected void finished()
 					{
-						shipsQueueMenu.queueShip(ship);
+						timer.scheduleTask(new Timer.Task()
+						{
+							@Override
+							public void run()
+							{
+								shipsQueueMenu.queueShip(ship);
+							}
+						}, flyTimeBack);
+						
+						dShip.addAction(Actions.moveTo(smallStation.getX(), smallStation.getX(), flyTimeBack));
 					}
-				}, 10);
+				}.run();
+
+				
 			}
 		};
 
@@ -441,13 +465,17 @@ public class SpaceStationGame extends ApplicationAdapter
 
 	private void addShip(GoodsType goodsType)
 	{
-		final Ship ship = shipsGenerator.create(goodsType);
+		final Ship ship = shipsGenerator.createShip(goodsType);
 
 		gameStage.addActor(ship);
 		
 		stationViewMaster.shipArrived(ship);
 		
 		interaction.addSelectionListener(ship);
+		
+		DistantShip distantShip = null;
+		
+		distantShips.put(ship, distantShip);
 	}
 	
 	@Override

@@ -5,13 +5,13 @@ import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 public class ShipsCreator
 {
-	private int i = 0;
-	
 	private Map<GoodsType, ShipDescription> descriptions = new EnumMap<GoodsType, ShipsCreator.ShipDescription>(GoodsType.class);
+	private Map<GoodsType, TextureRegion> distantShips = new EnumMap<GoodsType, TextureRegion>(GoodsType.class);
 	
 	public ShipsCreator(SelectionBound selectionBound)
 	{
@@ -80,7 +80,7 @@ public class ShipsCreator
 		}
 	}
 
-	public Ship create(GoodsType type)
+	public Ship createShip(GoodsType type)
 	{
 		ShipDescription d = descriptions.get(type);
 		
@@ -89,6 +89,18 @@ public class ShipsCreator
 		ship.getCargoContainer().setCargoAmount(5);
 		
 		return ship;
+	}
+	
+	public DistantShip createDistantShip(Ship ship)
+	{
+		//ShipDescription d = descriptions.get(type);
+		
+		/*Ship ship = constructShip(d);
+		
+		ship.getCargoContainer().setCargoAmount(5);
+		
+		return ship;*/
+		return null;
 	}
 	
 	private Ship constructShip(ShipDescription description)

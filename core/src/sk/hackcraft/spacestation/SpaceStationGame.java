@@ -86,7 +86,7 @@ public class SpaceStationGame extends ApplicationAdapter
 
 		
 		music.setLooping(true);
-		music.play();
+		//music.play();
 		
 		runIntro();
 		//runGame();

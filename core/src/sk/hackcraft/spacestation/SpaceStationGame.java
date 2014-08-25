@@ -31,13 +31,14 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class SpaceStationGame extends ApplicationAdapter
 {
 	public static BitmapFont mainFont;
 	
 	private Random random;
-	private Stage gameStage;
+	private Stage gameStage, hudStage;
 	private GameView actualGameView;
 
 	private ShipsCreator shipsCreator;
@@ -73,9 +74,12 @@ public class SpaceStationGame extends ApplicationAdapter
 		random = new Random();
 		timer = new Timer();
 
-		gameStage = new Stage(new FitViewport(400, 240));
+		Viewport viewport = new FitViewport(400, 240);
+		gameStage = new Stage(viewport);
 		Gdx.input.setInputProcessor(gameStage);
 		
+		hudStage = new Stage(viewport);
+
 		// debugging
 		//gameStage.setDebugAll(true);
 		
@@ -183,11 +187,11 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		gameElapsedTimeLabel = new GameElapsedTimeLabel(System.currentTimeMillis(), mainFont);
 		gameElapsedTimeLabel.setPosition(5, gameStage.getHeight() - 5);
-		gameStage.addActor(gameElapsedTimeLabel);
+		hudStage.addActor(gameElapsedTimeLabel);
 		
 		scorelabel = new ScoreLabel(mainFont);
 		scorelabel.setPosition(200, gameStage.getHeight() - 5);
-		gameStage.addActor(scorelabel);
+		hudStage.addActor(scorelabel);
 		
 		station.setPosition(50, 10);
 		gameStage.addActor(station);
@@ -547,9 +551,12 @@ public class SpaceStationGame extends ApplicationAdapter
 	{
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		gameStage.act(Gdx.graphics.getDeltaTime());
+		float deltaTime = Gdx.graphics.getDeltaTime();
+		gameStage.act(deltaTime);
+		hudStage.act(deltaTime);
 		
 		gameStage.draw();
+		hudStage.draw();
 	}
 
 	private enum GameView
@@ -594,18 +601,10 @@ public class SpaceStationGame extends ApplicationAdapter
 	{
 		float y = 0;
 
-		System.out.println(gameView.getOffset());
 		gameStage.addAction(Actions.moveTo(-gameView.getOffset(), y, duration, Interpolation.exp5));
-		
-		Actor actorsToMove[] = {shipsQueueMenu, gameElapsedTimeLabel, scorelabel};
-		
-		for (Actor actor : actorsToMove)
-		{
-			y = actor.getY();
-			float localX = actor.getX() - actualGameView.getOffset();
-			float x = localX + gameView.getOffset();
-			actor.addAction(Actions.moveTo(x, y, duration, Interpolation.exp5));
-		}
+
+		float x = gameView.getOffset() + gameStage.getWidth() - shipsQueueMenu.getWidth();
+		shipsQueueMenu.addAction(Actions.moveTo(x, y, duration, Interpolation.exp5));
 		
 		//vsuvka od Epholla
 		backgroundStars.gameViewMoved(gameView.getOffset());

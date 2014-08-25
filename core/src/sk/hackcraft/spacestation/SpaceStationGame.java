@@ -266,7 +266,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				Sprite planetSpriteFood = new Sprite(planetTextureFood);
 				Vector2 positionFood = new Vector2(460, 160);
 				Vector2 sizeFood = new Vector2(planetSpriteFood.getWidth(), planetSpriteFood.getHeight());
-				Planet planetFood = new Planet(planetSpriteFood, sizeFood, positionFood, 10);
+				Planet planetFood = new Planet(planetSpriteFood, sizeFood, positionFood, 20);
 				planets.add(planetFood);
 				gameStage.addActor(planetFood);
 				interaction.addSelectionListener(planetFood);
@@ -276,7 +276,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				Sprite planetSpriteOre = new Sprite(planetTextureOre);
 				Vector2 positionOre = new Vector2(630, 40);
 				Vector2 sizeOre = new Vector2(planetSpriteOre.getWidth(), planetSpriteOre.getHeight());
-				Planet planetOre = new Planet(planetSpriteOre, sizeOre, positionOre, 10);
+				Planet planetOre = new Planet(planetSpriteOre, sizeOre, positionOre, 20);
 				planets.add(planetOre);
 				gameStage.addActor(planetOre);
 				interaction.addSelectionListener(planetOre);
@@ -286,7 +286,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				Sprite planetSpriteMedi = new Sprite(planetTextureMedi);
 				Vector2 positionMedi = new Vector2(550,150);
 				Vector2 sizeMedi = new Vector2(planetSpriteMedi.getWidth(), planetSpriteMedi.getHeight());
-				Planet planetMedi = new Planet(planetSpriteMedi, sizeMedi, positionMedi, 10);
+				Planet planetMedi = new Planet(planetSpriteMedi, sizeMedi, positionMedi, 20);
 				planets.add(planetMedi);
 				gameStage.addActor(planetMedi);
 				interaction.addSelectionListener(planetMedi);
@@ -296,7 +296,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				Sprite planetSpriteMate = new Sprite(planetTextureMate);
 				Vector2 positionMate = new Vector2(500,60);
 				Vector2 sizeMate = new Vector2(planetSpriteMate.getWidth(), planetSpriteMate.getHeight());
-				Planet planetMate = new Planet(planetSpriteMate, sizeMate, positionMate, 10);
+				Planet planetMate = new Planet(planetSpriteMate, sizeMate, positionMate, 20);
 				planets.add(planetMate);
 				gameStage.addActor(planetMate);
 				interaction.addSelectionListener(planetMate);
@@ -306,61 +306,14 @@ public class SpaceStationGame extends ApplicationAdapter
 				Sprite planetSpriteElec = new Sprite(planetTextureElec);
 				Vector2 positionElec = new Vector2(630,120);
 				Vector2 sizeElec = new Vector2(planetSpriteElec.getWidth(), planetSpriteElec.getHeight());
-				Planet planetElec = new Planet(planetSpriteElec, sizeElec, positionElec, 10);
+				Planet planetElec = new Planet(planetSpriteElec, sizeElec, positionElec, 20);
 				planets.add(planetElec);
 				gameStage.addActor(planetElec);
 				interaction.addSelectionListener(planetElec);
 		
 
-		Texture planetTextureFood = new Texture(Gdx.files.internal("sprite/planet1.png"));
-		Sprite planetSpriteFood = new Sprite(planetTextureFood);
-		Vector2 positionFood = new Vector2(460, 160);
-		Vector2 sizeFood = new Vector2(planetSpriteFood.getWidth(), planetSpriteFood.getHeight());
-		Planet planetFood = new Planet(planetSpriteFood, sizeFood, positionFood, 100);
-		planets.add(planetFood);
-		gameStage.addActor(planetFood);
-		interaction.addSelectionListener(planetFood);
+		
 
-		// Hydrogen
-		Texture planetTextureOre = new Texture(Gdx.files.internal("sprite/planet3.png"));
-		Sprite planetSpriteOre = new Sprite(planetTextureOre);
-		Vector2 positionOre = new Vector2(630, 40);
-		Vector2 sizeOre = new Vector2(planetSpriteOre.getWidth(), planetSpriteOre.getHeight());
-		Planet planetOre = new Planet(planetSpriteOre, sizeOre, positionOre, 100);
-		planets.add(planetOre);
-		gameStage.addActor(planetOre);
-		interaction.addSelectionListener(planetOre);
-
-		// Water
-		Texture planetTextureMedi = new Texture(Gdx.files.internal("sprite/planet5.png"));
-		Sprite planetSpriteMedi = new Sprite(planetTextureMedi);
-		Vector2 positionMedi = new Vector2(550, 150);
-		Vector2 sizeMedi = new Vector2(planetSpriteMedi.getWidth(), planetSpriteMedi.getHeight());
-		Planet planetMedi = new Planet(planetSpriteMedi, sizeMedi, positionMedi, 100);
-		planets.add(planetMedi);
-		gameStage.addActor(planetMedi);
-		interaction.addSelectionListener(planetMedi);
-
-		// Metal
-		Texture planetTextureMate = new Texture(Gdx.files.internal("sprite/planet4.png"));
-		Sprite planetSpriteMate = new Sprite(planetTextureMate);
-		Vector2 positionMate = new Vector2(500, 60);
-		Vector2 sizeMate = new Vector2(planetSpriteMate.getWidth(), planetSpriteMate.getHeight());
-		Planet planetMate = new Planet(planetSpriteMate, sizeMate, positionMate, 100);
-		planets.add(planetMate);
-		gameStage.addActor(planetMate);
-		interaction.addSelectionListener(planetMate);
->>>>>>> c214d0740f16727672d70848771b664fa544bd03
-
-		// Goods
-		Texture planetTextureElec = new Texture(Gdx.files.internal("sprite/planet2.png"));
-		Sprite planetSpriteElec = new Sprite(planetTextureElec);
-		Vector2 positionElec = new Vector2(630, 120);
-		Vector2 sizeElec = new Vector2(planetSpriteElec.getWidth(), planetSpriteElec.getHeight());
-		Planet planetElec = new Planet(planetSpriteElec, sizeElec, positionElec, 100);
-		planets.add(planetElec);
-		gameStage.addActor(planetElec);
-		interaction.addSelectionListener(planetElec);
 
 		// ships generation
 		shipsCreator = new ShipsCreator(activeSelectionBound);

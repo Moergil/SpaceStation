@@ -40,7 +40,8 @@ public class TaskStarter extends Timer.Task
 			
 			this.manager.checkGameOver();
 
-			float secondsOfDelay = (float)TimeGenerator.getDelayOfTask(this.numberOfTasks, manager.getGame().getPlanets().size(), numberOfShips);
+			float secondsOfDelay = (float)TimeGenerator.getDelayOfTask(this.manager.getTasksCounter(), manager.getGame().getPlanets().size(), numberOfShips);
+			this.manager.setTasksCounter(this.manager.getTasksCounter()+1);
 			this.numberOfTasks++;System.out.println("Seconds of delay"+secondsOfDelay);
 			 manager.getGame().getTimer().scheduleTask(new TaskStarter(this.manager), secondsOfDelay);
 			//manager.getGame().getTimer().scheduleTask(this, secondsOfDelay);

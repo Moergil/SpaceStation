@@ -16,8 +16,7 @@ public class TimeGenerator
 	
 	private static TimeGenerator instance = null;
 	
-	private double timeCounter;
-	private float primarySeconds;
+
 	
 	private Random seedGenerator;
 	
@@ -28,9 +27,6 @@ public class TimeGenerator
 		this.seedGenerator =  new Random();
 		
 		this.delayOfTaskGenerator = new Random(this.seedGenerator.nextInt());
-		
-		this.timeCounter = 1;
-		this.primarySeconds =60;
 
 	}
 	
@@ -45,17 +41,25 @@ public class TimeGenerator
 	}
 	
 	public static double getDelayOfTask(int numberOfTasks, int numberOfPlanets,int numberOfShips){
-		double counter =  getInstance().getTimeCounter();
-		float seconds = getInstance().getPrimarySeconds();
-		if(numberOfTasks >= counter){
-			getInstance().setTimeCounter( counter + (60/seconds));
-			getInstance().setPrimarySeconds((float)(seconds - 0.1*seconds));
+		int seconds = 0;
+		if(numberOfTasks < 8){
+			seconds = 30;
+		}else if(numberOfTasks < 20){
+			seconds = 20;
+		}else if(numberOfTasks < 36){
+			seconds = 15;
+		}else if(numberOfTasks < 50){
+			seconds = 10;
+		}else{
+			seconds = 5;
 		}
 		
 		double middleValue = (double)numberOfPlanets/(double)numberOfShips;
 		
 		getInstance();
 		double result = seconds*TimeGenerator.getValueOfExponencialDistribution(middleValue,	getInstance().delayOfTaskGenerator);			
+		
+		System.out.println("counter"+numberOfTasks + " primarySeconds "+ seconds+" delay "+result);
 		
 		return result;
 	}
@@ -81,25 +85,7 @@ public class TimeGenerator
 		return seedGenerator;
 	}
 
-	public double getTimeCounter()
-	{
-		return timeCounter;
-	}
 
-	public void setTimeCounter(double timeCounter)
-	{
-		this.timeCounter = timeCounter;
-	}
-
-	public float getPrimarySeconds()
-	{
-		return primarySeconds;
-	}
-
-	public void setPrimarySeconds(float primarySeconds)
-	{
-		this.primarySeconds = primarySeconds;
-	}
 	
 	
 }

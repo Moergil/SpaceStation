@@ -7,11 +7,13 @@ public class TaskAndPointsManager
 
 	private boolean generateTasks;
 	private int pointsCounter;
+	private int tasksCounter ;
 	
 	public TaskAndPointsManager(SpaceStationGame game){
 		this.game = game;
 		this.generateTasks = true;
-		this.pointsCounter = 0;		
+		this.pointsCounter = 0;	
+		this.tasksCounter = 0;
 	}
 	
 	
@@ -74,5 +76,20 @@ public class TaskAndPointsManager
 		
 		return false;
 	}
+
+
+
+	public int getTasksCounter()
+	{
+		return tasksCounter;
+	}
+
+
+
+	public void setTasksCounter(int tasksCounter)
+	{
+		this.tasksCounter = tasksCounter;
+	}
+	
 	
 }

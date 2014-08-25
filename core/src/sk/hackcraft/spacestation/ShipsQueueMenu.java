@@ -76,6 +76,7 @@ public abstract class ShipsQueueMenu extends Actor
 		{
 			ship.addAction(Actions.fadeIn(0.3f));
 			ship.showCargoGauge(true);
+			ship.setIdle();
 			waitingShipsQueue.add(ship);
 		}
 	}

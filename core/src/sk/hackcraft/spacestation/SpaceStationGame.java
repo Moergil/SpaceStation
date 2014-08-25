@@ -8,6 +8,7 @@ import java.util.Set;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -43,8 +44,6 @@ public class SpaceStationGame extends ApplicationAdapter
 	
 	private ShipsQueueMenu shipsQueueMenu;
 
-	private SoundMngr mngrSound;
-	
 	private Station station;
 	private StationViewMaster stationViewMaster;
 	
@@ -57,8 +56,6 @@ public class SpaceStationGame extends ApplicationAdapter
 	public void create()
 	{
 		timer = new Timer();
-		
-		mngrSound = new SoundMngr();
 
 		gameStage = new Stage(new FitViewport(400, 240));
 		Gdx.input.setInputProcessor(gameStage);
@@ -68,8 +65,13 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		mainFont = new BitmapFont(false);
 		
-		//runIntro();
-		runGame();
+		runIntro();
+		//runGame();
+		
+		Music music = Gdx.audio.newMusic(Gdx.files.internal("sounds/Room_Of_Wires_-_01_-_Asylum_Sneaker.mp3"));
+		
+		music.setLooping(true);
+		music.play();
 	}
 	
 	private void runIntro()
@@ -77,8 +79,6 @@ public class SpaceStationGame extends ApplicationAdapter
 		// setting up intro
 		final Intro intro = new Intro();
 		intro.setPosition(0, 0);
-		
-		mngrSound.runIntro();
 			
 		gameStage.addActor(intro);
 
@@ -117,9 +117,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		}
 		
 		timer.clear();
-		mngrSound.stopIntro();
-		
-		
+
 		intro.clear();
 		intro = null;
 		

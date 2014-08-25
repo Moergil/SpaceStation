@@ -39,8 +39,11 @@ public class Ship extends Actor
 	private Vector2 dockingPortPosition;
 
 	private CargoContainer cargoContainer;
+	
+	private Gauge cargoGauge;
+	private boolean showCargoGauge;
 
-	public Ship(String name, Texture texture, Vector2 size, Vector2 dockingPortPosition, CargoContainer cargoContainer)
+	public Ship(String name, Texture texture, Vector2 size, Vector2 dockingPortPosition, final CargoContainer cargoContainer)
 	{
 		setName("Ship " + name);
 		
@@ -52,6 +55,18 @@ public class Ship extends Actor
 		this.dockingPortPosition = dockingPortPosition;
 
 		this.cargoContainer = cargoContainer;
+		
+		cargoGauge = Gauge.create(cargoContainer.getCargoType(), 15);
+		
+		cargoGauge.setMax(cargoContainer.getCargoCapacity());
+		cargoGauge.setValueProvider(new Gauge.ValueProvider()
+		{
+			@Override
+			public float getValue()
+			{
+				return cargoContainer.getCargoAmount();
+			}
+		});
 	}
 
 	public Vector2 getDockingAdapterPosition()
@@ -121,12 +136,17 @@ public class Ship extends Actor
 			break;
 		}
 		
+		if (showCargoGauge)
+		{
+			cargoGauge.draw(batch, getX() + 30, getY() - 4);
+		}
+		
 		batch.setColor(oc);
 	}
 	
-	public void showGauge(boolean gauge)
+	public void showCargoGauge(boolean gauge)
 	{
-		
+		this.showCargoGauge = gauge;
 	}
 	
 	@Override

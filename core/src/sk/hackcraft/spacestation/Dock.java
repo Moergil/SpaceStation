@@ -14,8 +14,6 @@ public class Dock extends Actor
 	private boolean reserved;
 	private boolean cargoTransfer;
 	
-	private Gauge dockedShipGauge;
-	
 	public Dock(int dockIndex)
 	{
 		setName("Dock no" + dockIndex);
@@ -35,22 +33,11 @@ public class Dock extends Actor
 		Vector2 shipPosition = calculateShipDockingPosition(ship);
 		ship.setPosition(shipPosition.x, shipPosition.y);
 		
+		ship.showCargoGauge(true);
+		
 		dockedShip = ship;
 		
 		toFront();
-		
-		final CargoContainer container = ship.getCargoContainer();
-		dockedShipGauge = Gauge.create(container.getCargoType(), 15);
-		
-		dockedShipGauge.setMax(container.getCargoCapacity());
-		dockedShipGauge.setValueProvider(new Gauge.ValueProvider()
-		{
-			@Override
-			public float getValue()
-			{
-				return container.getCargoAmount();
-			}
-		});
 	}
 	
 	public Vector2 calculateShipDockingPosition(Ship ship)
@@ -72,10 +59,10 @@ public class Dock extends Actor
 	
 	public void undockShip()
 	{
+		dockedShip.showCargoGauge(false);
+		
 		dockedShip = null;
 		reserved = false;
-		
-		dockedShipGauge = null;
 	}
 	
 	public Ship getDockedShip()
@@ -101,20 +88,6 @@ public class Dock extends Actor
 	public boolean isTransferringCargo()
 	{
 		return cargoTransfer;
-	}
-	
-	@Override
-	public void draw(Batch batch, float parentAlpha)
-	{
-		if (hasDockedShip())
-		{
-			drawLoadGauge(batch);
-		}
-	}
-	
-	private void drawLoadGauge(Batch batch)
-	{
-		dockedShipGauge.draw(batch, getX() + 30, getY() - 4);
 	}
 	
 	@Override

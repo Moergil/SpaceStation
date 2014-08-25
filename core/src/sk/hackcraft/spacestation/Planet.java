@@ -1,5 +1,6 @@
 package sk.hackcraft.spacestation;
 
+
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -15,6 +16,9 @@ public class Planet extends Actor
 	private Sprite sprite;
 
 	private double distance;
+
+	private boolean isDestroyed;
+
 	
 	private Map<GoodsType, CargoContainer> cargoContainers = new EnumMap<GoodsType, CargoContainer>(GoodsType.class);
 	private List<Gauge> gaugesList = new ArrayList<Gauge>();
@@ -24,6 +28,7 @@ public class Planet extends Actor
 		this.sprite = sprite;
 		setSize(size.x, size.y);
 		setPosition(position.x, position.y);
+		this.isDestroyed = false;
 		
 		for (GoodsType goodsType : GoodsType.values())
 		{
@@ -48,7 +53,7 @@ public class Planet extends Actor
 	{
 		return cargoContainers.get(goodsType);
 	}
-	
+
 	public double getDistance()
 	{
 		return distance;
@@ -58,10 +63,49 @@ public class Planet extends Actor
 	public void act(float delta)
 	{
 		super.act(delta);
+				
+	}
+	
+	public void reduceAmountofGoods(GoodsType type, int amount){
+		
+		int originAmount = this.cargoContainers.get(type).getCargoAmount();
+		
+		if(originAmount > amount){
+			this.cargoContainers.get(type).setCargoAmount(originAmount - amount);
+			
+		}else{
+			this.cargoContainers.get(type).setCargoAmount(0);
+			this.setDestroyed(true);
+		}
 		
 		
 	}
 	
+	public boolean isDestroyed()
+	{
+		return isDestroyed;
+	}
+
+	public void setDestroyed(boolean isDestroyed)
+	{
+		this.isDestroyed = isDestroyed;
+	}
+
+	public Map<GoodsType, CargoContainer> getCargoContainers()
+	{
+		return cargoContainers;
+	}
+
+	public List<Gauge> getGaugesList()
+	{
+		return gaugesList;
+	}
+
+	public void setDistance(double distance)
+	{
+		this.distance = distance;
+	}
+
 	@Override
 	public void draw(Batch batch, float parentAlpha)
 	{
@@ -77,4 +121,6 @@ public class Planet extends Actor
 			gaugesList.get(i).draw(batch, x, y);
 		}
 	}
+	
+	
 }

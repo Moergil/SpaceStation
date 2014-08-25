@@ -13,19 +13,18 @@ public class TimeGenerator
 	public static final double TIME_OF_LOADING = 2.0;
 	public static final double TIME_ON_PLANET = 4.0;
 	
+	
 	private static TimeGenerator instance = null;
 	
 	private Random seedGenerator;
 	
 	private Random delayOfTaskGenerator;
-	private Random durationOfTaskGenerator;
 	
 	protected TimeGenerator(){
 		
 		this.seedGenerator =  new Random();
 		
 		this.delayOfTaskGenerator = new Random(this.seedGenerator.nextInt());
-		this.durationOfTaskGenerator = new Random(this.seedGenerator.nextInt());
 
 	}
 	
@@ -40,20 +39,26 @@ public class TimeGenerator
 	}
 	
 	public static double getDelayOfTask(int numberOfTasks, int numberOfPlanets,int numberOfShips){
-		double value = ((double)numberOfPlanets/(double) numberOfShips)*numberOfTasks*4;
 		
-		return getValueOfExponencialDistribution(value, getInstance().getDelayOfTaskGenerator());
+		int primarySeconds = 0;
+		if(numberOfTasks < 10){
+			primarySeconds = 30;
+		}else if(numberOfTasks < 20){
+			primarySeconds = 20;
+		}else if(numberOfTasks < 30){
+			primarySeconds = 15;
+		}else if(numberOfTasks < 40){
+			primarySeconds = 10;
+		}else primarySeconds = 5;
+		
+		double middleValue = (double)numberOfPlanets/(double)numberOfShips;
+		
+		getInstance();
+		double result = primarySeconds*TimeGenerator.getValueOfExponencialDistribution(middleValue,	getInstance().delayOfTaskGenerator);			
+		
+		return result;
 	}
 	
-	public static double getDurationOfTask(int numberOfTasks,int numberOfCargo, double distance){
-		//raw time = min time
-		double minTime = distance + 2 * TIME_OF_LANDING + TIME_OF_DOCKING + (numberOfCargo/100)*TIME_OF_LOADING + TIME_ON_PLANET;
-		
-		double middleValue = minTime*0.4;
-		
-		return getValueOfExponencialDistribution(middleValue, getInstance().getDurationOfTaskGenerator()) + minTime;
-		
-	}
 	
 	
 	public static double getValueOfExponencialDistribution(double middleValue,Random generator){
@@ -68,11 +73,6 @@ public class TimeGenerator
 	public Random getDelayOfTaskGenerator()
 	{
 		return delayOfTaskGenerator;
-	}
-
-	public Random getDurationOfTaskGenerator()
-	{
-		return durationOfTaskGenerator;
 	}
 
 	public Random getSeedGenerator()

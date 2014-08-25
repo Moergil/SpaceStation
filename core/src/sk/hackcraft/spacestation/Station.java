@@ -133,7 +133,7 @@ public class Station extends Actor
 	private void incrementTexturePointer(int i)
 	{
 		int value = (texturePointers.get(i)+1) % textures.get(i).length;
-		System.out.println(value);
+
 		texturePointers.set(i, value);
 	}
 }

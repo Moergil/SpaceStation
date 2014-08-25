@@ -19,10 +19,10 @@ public class ShipsCreator
 		float shipHeight = 20;
 		
 		Texture waterTankerTexture = new Texture(Gdx.files.internal("sprite/ship1.png"));
-		Texture hydrogenVesselTexture = new Texture(Gdx.files.internal("sprite/ship2.png"));
+		Texture hydrogenVesselTexture = new Texture(Gdx.files.internal("sprite/ship5.png"));
 		Texture fertilizerContainerTexture = new Texture(Gdx.files.internal("sprite/ship3.png"));
 		Texture metalsMoverTexture = new Texture(Gdx.files.internal("sprite/ship4.png"));
-		Texture goodsContainerTexture = new Texture(Gdx.files.internal("sprite/ship5.png"));
+		Texture goodsContainerTexture = new Texture(Gdx.files.internal("sprite/ship2.png"));
 		
 		{
 			ShipDescription d = new ShipDescription();

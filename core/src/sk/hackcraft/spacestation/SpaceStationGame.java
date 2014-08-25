@@ -80,13 +80,13 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		mainFont = new BitmapFont(false);
 		
-		Music music = Gdx.audio.newMusic(Gdx.files.internal("sounds/Room_Of_Wires_-_01_-_Asylum_Sneaker.mp3"));
+		Music music = Gdx.audio.newMusic(Gdx.files.internal("sounds/SpaceStationAmol.ogg"));
 		
 		music.setLooping(true);
 		music.play();
 		
-		//runIntro();
-		runGame();
+		runIntro();
+		//runGame();
 	}
 	
 	private void runIntro()

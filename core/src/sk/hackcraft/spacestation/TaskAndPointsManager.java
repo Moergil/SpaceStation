@@ -19,6 +19,9 @@ public class TaskAndPointsManager
 		
 		ProductionTask production = new ProductionTask(this);
 		production.run();
+		
+		ConsumptionTask consumption = new ConsumptionTask(this);
+		consumption.run();
 	
 	}
 	

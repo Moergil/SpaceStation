@@ -42,14 +42,14 @@ public class TimeGenerator
 		
 		int primarySeconds = 0;
 		if(numberOfTasks < 10){
-			primarySeconds = 30;
+			primarySeconds = 15;
 		}else if(numberOfTasks < 20){
 			primarySeconds = 20;
 		}else if(numberOfTasks < 30){
-			primarySeconds = 15;
+			primarySeconds = 8;
 		}else if(numberOfTasks < 40){
-			primarySeconds = 10;
-		}else primarySeconds = 5;
+			primarySeconds = 5;
+		}else primarySeconds = 3;
 		
 		double middleValue = (double)numberOfPlanets/(double)numberOfShips;
 		

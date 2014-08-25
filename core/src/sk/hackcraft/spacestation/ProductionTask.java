@@ -7,6 +7,7 @@ public class ProductionTask extends Timer.Task
 	private TaskAndPointsManager manager;
 
 	public static final int PRODUCING_AMOUNT_PER_SEC = 1;
+	public static final float SECONDS_BETWEEN_PRODUCTION = 2;
 	
 	public ProductionTask(TaskAndPointsManager manager){
 		this.manager = manager;
@@ -42,7 +43,7 @@ public class ProductionTask extends Timer.Task
 		
 		if(manager.isGenerateTasks()){
 
-			 manager.getGame().getTimer().scheduleTask(new ProductionTask(this.manager), (float)1.0);
+			 manager.getGame().getTimer().scheduleTask(new ProductionTask(this.manager), SECONDS_BETWEEN_PRODUCTION);
 
 		}
 	}

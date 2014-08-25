@@ -253,7 +253,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				Sprite planetSpriteFood = new Sprite(planetTextureFood);
 				Vector2 positionFood = new Vector2(460, 160);
 				Vector2 sizeFood = new Vector2(planetSpriteFood.getWidth(), planetSpriteFood.getHeight());
-				Planet planetFood = new Planet(planetSpriteFood, sizeFood, positionFood, 20);
+				Planet planetFood = new Planet(planetSpriteFood, sizeFood, positionFood, 100);
 				planets.add(planetFood);
 				gameStage.addActor(planetFood);
 				interaction.addSelectionListener(planetFood);
@@ -263,7 +263,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				Sprite planetSpriteOre = new Sprite(planetTextureOre);
 				Vector2 positionOre = new Vector2(630, 40);
 				Vector2 sizeOre = new Vector2(planetSpriteOre.getWidth(), planetSpriteOre.getHeight());
-				Planet planetOre = new Planet(planetSpriteOre, sizeOre, positionOre, 20);
+				Planet planetOre = new Planet(planetSpriteOre, sizeOre, positionOre, 100);
 				planets.add(planetOre);
 				gameStage.addActor(planetOre);
 				interaction.addSelectionListener(planetOre);
@@ -273,7 +273,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				Sprite planetSpriteMedi = new Sprite(planetTextureMedi);
 				Vector2 positionMedi = new Vector2(550,150);
 				Vector2 sizeMedi = new Vector2(planetSpriteMedi.getWidth(), planetSpriteMedi.getHeight());
-				Planet planetMedi = new Planet(planetSpriteMedi, sizeMedi, positionMedi, 20);
+				Planet planetMedi = new Planet(planetSpriteMedi, sizeMedi, positionMedi, 100);
 				planets.add(planetMedi);
 				gameStage.addActor(planetMedi);
 				interaction.addSelectionListener(planetMedi);
@@ -283,7 +283,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				Sprite planetSpriteMate = new Sprite(planetTextureMate);
 				Vector2 positionMate = new Vector2(500,60);
 				Vector2 sizeMate = new Vector2(planetSpriteMate.getWidth(), planetSpriteMate.getHeight());
-				Planet planetMate = new Planet(planetSpriteMate, sizeMate, positionMate, 20);
+				Planet planetMate = new Planet(planetSpriteMate, sizeMate, positionMate, 100);
 				planets.add(planetMate);
 				gameStage.addActor(planetMate);
 				interaction.addSelectionListener(planetMate);
@@ -293,7 +293,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				Sprite planetSpriteElec = new Sprite(planetTextureElec);
 				Vector2 positionElec = new Vector2(630,120);
 				Vector2 sizeElec = new Vector2(planetSpriteElec.getWidth(), planetSpriteElec.getHeight());
-				Planet planetElec = new Planet(planetSpriteElec, sizeElec, positionElec, 20);
+				Planet planetElec = new Planet(planetSpriteElec, sizeElec, positionElec, 100);
 				planets.add(planetElec);
 				gameStage.addActor(planetElec);
 				interaction.addSelectionListener(planetElec);

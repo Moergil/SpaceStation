@@ -38,18 +38,13 @@ public class TaskGenerator
 		return instance;
 	}
 	
-	public static PlanetTask generateNewTask(ArrayList<Planet> planetList, int numberOfTasks){
+	public static PlanetTask generateNewTask(ArrayList<Planet> planetList){
 		
 		Planet planet = chooseRandomPlanet(planetList);
 		GoodsType type = chooseRandomGoods(planet);
 		int amount = chooseRandomAmountOfGoods();
-		Date fromTime = new Date();
-		
-		long duration = (long)(getInstance().getTimeGenerator().getDurationOfTask(numberOfTasks, amount, planet.getDistance()) * 1000);
-		
-		Date toTime = new Date(fromTime.getTime()+duration);
-		
-		return new PlanetTask(planet,type,amount,fromTime,toTime);
+
+		return new PlanetTask(planet,type,amount);
 	}
 	
 	public static int chooseRandomAmountOfGoods(){
@@ -101,7 +96,6 @@ public class TaskGenerator
 		double value = getInstance().getChoosingPlanetGenerator().nextDouble();
 		
 		for(int i = 0 ; i < numberOfPlanets-1; i++){
-			double iterator = i * (1.0 / (double) numberOfPlanets);
 			
 			if(value < i * (1.0 / (double) numberOfPlanets) ){
 				

@@ -521,7 +521,7 @@ public class SpaceStationGame extends ApplicationAdapter
 	{
 		float y = 0;
 		float duration = 0.3f;
-		System.out.println(gameView.getOffset());
+		//System.out.println(gameView.getOffset());
 		gameStage.addAction(Actions.moveTo(gameView.getOffset(), y, duration, Interpolation.exp5));
 		
 		//vsuvka od Epholla

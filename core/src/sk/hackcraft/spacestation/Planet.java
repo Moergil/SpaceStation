@@ -13,6 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class Planet extends Actor
 {
+	public static final double INITIAL_PERCENTAGE_OF_AMOUNT_OF_GOODS = 0.4;
+	
 	private Sprite sprite;
 
 	private double distance;
@@ -47,6 +49,8 @@ public class Planet extends Actor
 			});
 			gaugesList.add(gauge);
 		}
+		
+		this.setInitialGoods();
 	}
 
 	public CargoContainer getCargoContainer(GoodsType goodsType)
@@ -90,6 +94,29 @@ public class Planet extends Actor
 		
 		
 	}
+	
+	public void setInitialGoods(){
+		this.cargoContainers.get(GoodsType.FERTILIZERS).
+			setCargoAmount((int)(this.cargoContainers.get(GoodsType.FERTILIZERS).getCargoCapacity()*
+					INITIAL_PERCENTAGE_OF_AMOUNT_OF_GOODS));
+		
+		this.cargoContainers.get(GoodsType.GOODS).
+		setCargoAmount((int)(this.cargoContainers.get(GoodsType.GOODS).getCargoCapacity()*
+				INITIAL_PERCENTAGE_OF_AMOUNT_OF_GOODS));
+		
+		this.cargoContainers.get(GoodsType.HYDROGEN).
+		setCargoAmount((int)(this.cargoContainers.get(GoodsType.HYDROGEN).getCargoCapacity()*
+				INITIAL_PERCENTAGE_OF_AMOUNT_OF_GOODS));
+		
+		this.cargoContainers.get(GoodsType.METALS).
+		setCargoAmount((int)(this.cargoContainers.get(GoodsType.METALS).getCargoCapacity()*
+				INITIAL_PERCENTAGE_OF_AMOUNT_OF_GOODS));
+		
+		this.cargoContainers.get(GoodsType.WATER).
+		setCargoAmount((int)(this.cargoContainers.get(GoodsType.WATER).getCargoCapacity()*
+				INITIAL_PERCENTAGE_OF_AMOUNT_OF_GOODS));
+	}
+	
 	
 	public boolean isDestroyed()
 	{

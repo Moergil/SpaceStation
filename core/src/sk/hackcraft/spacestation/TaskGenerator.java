@@ -70,7 +70,9 @@ public class TaskGenerator
 	
 	public static GoodsType chooseRandomGoods(Planet planet){
 		
-		GoodsType forbidenType = planet.getType();
+		//GoodsType forbidenType = planet.getType();
+		// TODO hack poriesit neskor
+		GoodsType forbidenType = GoodsType.FERTILIZERS;
 		while(true){
 			int value = getInstance().getChoosingGoodsGenerator().nextInt(GoodsType.getNumberOfAllTypes());
 			switch(value){

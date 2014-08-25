@@ -21,15 +21,15 @@ public class ShipsCreator
 		Texture waterTankerTexture = new Texture(Gdx.files.internal("sprite/ship1.png"));
 		Texture hydrogenVesselTexture = new Texture(Gdx.files.internal("sprite/ship2.png"));
 		Texture fertilizerContainerTexture = new Texture(Gdx.files.internal("sprite/ship3.png"));
-		Texture metalsMoverTexture = new Texture(Gdx.files.internal("sprite/ship3.png"));
-		Texture goodsContainerTexture = new Texture(Gdx.files.internal("sprite/ship3.png"));
+		Texture metalsMoverTexture = new Texture(Gdx.files.internal("sprite/ship4.png"));
+		Texture goodsContainerTexture = new Texture(Gdx.files.internal("sprite/ship5.png"));
 		
 		{
 			ShipDescription d = new ShipDescription();
 			d.name = "Water Tanker";
 			d.texture = waterTankerTexture;
 			d.size = new Vector2(shipWidth, shipHeight);
-			d.dockingPortOffset = new Vector2(10, 10);
+			d.dockingPortOffset = new Vector2(28, 11);
 			d.cargoContainer = new CargoContainer(GoodsType.WATER, 10);
 			
 			descriptions.put(GoodsType.WATER, d);
@@ -40,7 +40,7 @@ public class ShipsCreator
 			d.name = "Hydrogen Vessel";
 			d.texture = hydrogenVesselTexture;
 			d.size = new Vector2(shipWidth, shipHeight);
-			d.dockingPortOffset = new Vector2(35, 10);
+			d.dockingPortOffset = new Vector2(26, 9);
 			d.cargoContainer = new CargoContainer(GoodsType.HYDROGEN, 10);
 			
 			descriptions.put(GoodsType.HYDROGEN, d);
@@ -51,7 +51,7 @@ public class ShipsCreator
 			d.name = "Fertilizer Container";
 			d.texture = fertilizerContainerTexture;
 			d.size = new Vector2(shipWidth, shipHeight);
-			d.dockingPortOffset = new Vector2(30, 10);
+			d.dockingPortOffset = new Vector2(27, 11);
 			d.cargoContainer = new CargoContainer(GoodsType.FERTILIZERS, 10);
 			
 			descriptions.put(GoodsType.FERTILIZERS, d);
@@ -62,7 +62,7 @@ public class ShipsCreator
 			d.name = "Metals Mover";
 			d.texture = metalsMoverTexture;
 			d.size = new Vector2(shipWidth, shipHeight);
-			d.dockingPortOffset = new Vector2(0, 0);
+			d.dockingPortOffset = new Vector2(23, 9);
 			d.cargoContainer = new CargoContainer(GoodsType.METALS, 10);
 			
 			descriptions.put(GoodsType.METALS, d);
@@ -73,7 +73,7 @@ public class ShipsCreator
 			d.name = "Goods Container";
 			d.texture = goodsContainerTexture;
 			d.size = new Vector2(shipWidth, shipHeight);
-			d.dockingPortOffset = new Vector2(0, 0);
+			d.dockingPortOffset = new Vector2(14, 9);
 			d.cargoContainer = new CargoContainer(GoodsType.GOODS, 10);
 			
 			descriptions.put(GoodsType.GOODS, d);
@@ -84,7 +84,11 @@ public class ShipsCreator
 	{
 		ShipDescription d = descriptions.get(type);
 		
-		return constructShip(d);
+		Ship ship = constructShip(d);
+		
+		ship.getCargoContainer().setCargoAmount(5);
+		
+		return ship;
 	}
 	
 	private Ship constructShip(ShipDescription description)

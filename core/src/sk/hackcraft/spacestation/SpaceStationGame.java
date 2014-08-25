@@ -61,7 +61,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		Gdx.input.setInputProcessor(gameStage);
 		
 		// debugging
-		gameStage.setDebugAll(true);
+		//gameStage.setDebugAll(true);
 		
 		mainFont = new BitmapFont(false);
 		
@@ -148,7 +148,8 @@ public class SpaceStationGame extends ApplicationAdapter
 		Sprite stationSprite = new Sprite(stationTexture);
 		station = new Station(stationSprite);
 		
-		mngrSound.runMusicGame();
+		// TODO uncomment in release
+		//mngrSound.runMusicGame();
 		
 		station.setPosition(50, 10);
 		gameStage.addActor(station);
@@ -201,7 +202,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				Sprite planetSpriteFood = new Sprite(planetTextureFood);
 				Vector2 positionFood = new Vector2(460, 160);
 				Vector2 sizeFood = new Vector2(68, 68);
-				Planet planetFood = new Planet(planetSpriteFood, sizeFood, positionFood, GoodsType.FERTILIZERS, 20);
+				Planet planetFood = new Planet(planetSpriteFood, sizeFood, positionFood, 20);
 				planets.add(planetFood);
 				gameStage.addActor(planetFood);
 				
@@ -210,7 +211,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				Sprite planetSpriteOre = new Sprite(planetTextureOre);
 				Vector2 positionOre = new Vector2(630, 0);
 				Vector2 sizeOre = new Vector2(68, 68);
-				Planet planetOre = new Planet(planetSpriteOre, sizeOre, positionOre, GoodsType.HYDROGEN, 20);
+				Planet planetOre = new Planet(planetSpriteOre, sizeOre, positionOre, 20);
 				planets.add(planetOre);
 				gameStage.addActor(planetOre);
 				
@@ -219,7 +220,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				Sprite planetSpriteMedi = new Sprite(planetTextureMedi);
 				Vector2 positionMedi = new Vector2(550,150);
 				Vector2 sizeMedi = new Vector2(68, 68);
-				Planet planetMedi = new Planet(planetSpriteMedi, sizeMedi, positionMedi, GoodsType.WATER, 20);
+				Planet planetMedi = new Planet(planetSpriteMedi, sizeMedi, positionMedi, 20);
 				planets.add(planetMedi);
 				gameStage.addActor(planetMedi);
 				
@@ -228,7 +229,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				Sprite planetSpriteMate = new Sprite(planetTextureMate);
 				Vector2 positionMate = new Vector2(500,60);
 				Vector2 sizeMate = new Vector2(68, 68);
-				Planet planetMate = new Planet(planetSpriteMate, sizeMate, positionMate, GoodsType.METALS, 20);
+				Planet planetMate = new Planet(planetSpriteMate, sizeMate, positionMate, 20);
 				planets.add(planetMate);
 				gameStage.addActor(planetMate);
 				
@@ -237,7 +238,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				Sprite planetSpriteElec = new Sprite(planetTextureElec);
 				Vector2 positionElec = new Vector2(630,100);
 				Vector2 sizeElec = new Vector2(68, 68);
-				Planet planetElec = new Planet(planetSpriteElec, sizeElec, positionElec, GoodsType.GOODS, 20);
+				Planet planetElec = new Planet(planetSpriteElec, sizeElec, positionElec, 20);
 				planets.add(planetElec);
 				gameStage.addActor(planetElec);
 		
@@ -248,11 +249,23 @@ public class SpaceStationGame extends ApplicationAdapter
 		shipsQueueMenu = new ShipsQueueMenu()
 		{
 			@Override
-			public void initiateDocking(Ship ship, Dock dock)
+			public void initiateDocking(final Ship ship, final Dock dock)
 			{
-				ship.setPosition(450, dock.getY());
+				ship.addAction(Actions.fadeOut(0.3f));
 				
-				flyShipToDock(ship, dock);
+				timer.scheduleTask(new Timer.Task()
+				{
+					@Override
+					public void run()
+					{
+						ship.setPosition(450, dock.getY());
+						
+						ship.addAction(Actions.fadeIn(0.3f));
+
+						flyShipToDock(ship, dock);
+					}
+				}, 0.3f);
+				
 			}
 		};
 
@@ -294,7 +307,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		for (int i = 0; i < 4; i++)
 		{
-			Dock dock = new Dock(i, activeSelectionBound);
+			Dock dock = new Dock(i);
 			dock.setPosition(121, positionY[i]);
 			
 			station.addDock(dock);
@@ -332,9 +345,11 @@ public class SpaceStationGame extends ApplicationAdapter
 		for (int i = 0; i < 5; i++)
 		{
 			CargoContainer container = containers[i];
+			container.setCargoAmount(10);
+			
 			StorageFacility sf = new StorageFacility(container);
 			
-			sf.setPosition(positionX[i], positionY[i]);
+			sf.setCenterPosition(positionX[i], positionY[i]);
 			
 			station.addStorageFacility(sf);
 			

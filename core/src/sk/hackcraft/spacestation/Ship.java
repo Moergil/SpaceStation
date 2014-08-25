@@ -124,6 +124,11 @@ public class Ship extends Actor
 		batch.setColor(oc);
 	}
 	
+	public void showGauge(boolean gauge)
+	{
+		
+	}
+	
 	@Override
 	public void drawDebug(ShapeRenderer shapes)
 	{

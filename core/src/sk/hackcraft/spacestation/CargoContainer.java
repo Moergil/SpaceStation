@@ -43,7 +43,7 @@ public class CargoContainer
 	
 	public boolean transferUnit(CargoContainer target)
 	{
-		int capacity = target.getCargoCapacity();
+		int capacity = target.getRemainingCapacity();
 		
 		if (capacity > 0 && getCargoAmount() > 0)
 		{

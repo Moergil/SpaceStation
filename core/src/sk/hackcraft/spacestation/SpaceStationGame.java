@@ -52,6 +52,8 @@ public class SpaceStationGame extends ApplicationAdapter
 
 	private BitmapFont mainFont;
 	private TaskAndPointsManager tpManager;
+	
+	private BackgroundStars backgroundStars;
 
 	@Override
 	public void create()
@@ -146,6 +148,16 @@ public class SpaceStationGame extends ApplicationAdapter
 				return false;
 			}
 		});
+		
+		// background initialisation
+		backgroundStars = new BackgroundStars();
+		addNextBackgroundImage("sprite/stars1.png", 1f);
+		addNextBackgroundImage("sprite/stars2.png", 0.99f);
+		addNextBackgroundImage("sprite/stars3.png", 0.98f);
+		addNextBackgroundImage("sprite/stars4.png", 0.97f);
+		addNextBackgroundImage("sprite/stars5.png", 0.96f);
+		finishAddingBackgroundImages();
+		//END background init
 		
 		Texture stationTexture = new Texture(Gdx.files.internal("sprite/station.png"));
 		Sprite stationSprite = new Sprite(stationTexture);
@@ -332,7 +344,6 @@ public class SpaceStationGame extends ApplicationAdapter
 		addShip(GoodsType.METALS);
 		addShip(GoodsType.GOODS);
 		
-		
 		this.tpManager = new TaskAndPointsManager(this);
 		this.tpManager.startGeneratingTasks();
 	}
@@ -512,6 +523,9 @@ public class SpaceStationGame extends ApplicationAdapter
 		float duration = 0.3f;
 		System.out.println(gameView.getOffset());
 		gameStage.addAction(Actions.moveTo(gameView.getOffset(), y, duration, Interpolation.exp5));
+		
+		//vsuvka od Epholla
+		backgroundStars.gameViewMoved(gameView.getOffset());
 		
 		float shipsQueueMenuOffset = -gameView.getOffset() + 400 - shipsQueueMenu.getWidth();
 		shipsQueueMenu.addAction(Actions.moveTo(shipsQueueMenuOffset, y, duration, Interpolation.exp5));
@@ -812,5 +826,23 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		protected void initiated() {}
 		protected void finished() {}
+	}
+	
+	private void addNextBackgroundImage(String imageName, float moveAmount)
+	{
+		Texture texture = new Texture(Gdx.files.internal(imageName));
+		
+		Sprite sprite = new Sprite(texture);
+		backgroundStars.addSprite(sprite, moveAmount);
+		
+	}
+	
+	private void finishAddingBackgroundImages()
+	{
+		gameStage.addActor(backgroundStars);
+		for (BackgroundImage sprite: backgroundStars.getBackgroundImageActors())
+		{
+			gameStage.addActor(sprite);
+		}
 	}
 }

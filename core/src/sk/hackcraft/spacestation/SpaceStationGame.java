@@ -163,6 +163,10 @@ public class SpaceStationGame extends ApplicationAdapter
 		activeSelectionBound = new SelectionBound(activeSelectionAtlas);
 		targetSelectionBound = new SelectionBound(targetSelectionAtlas);
 		
+		// interaction mechanics
+		interaction = new Interaction(gameStage, activeSelectionBound, targetSelectionBound);
+		gameStage.addActor(interaction);
+		
 		// actual view of the player
 		actualGameView = GameView.DOCKS;
 		
@@ -209,6 +213,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				Planet planetFood = new Planet(planetSpriteFood, sizeFood, positionFood, 20);
 				planets.add(planetFood);
 				gameStage.addActor(planetFood);
+				interaction.addSelectionListener(planetFood);
 				
 		// Hydrogen
 				Texture planetTextureOre = new Texture(Gdx.files.internal("sprite/planet1.png"));
@@ -218,6 +223,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				Planet planetOre = new Planet(planetSpriteOre, sizeOre, positionOre, 20);
 				planets.add(planetOre);
 				gameStage.addActor(planetOre);
+				interaction.addSelectionListener(planetOre);
 				
 		// Water
 				Texture planetTextureMedi = new Texture(Gdx.files.internal("sprite/planet1.png"));
@@ -227,6 +233,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				Planet planetMedi = new Planet(planetSpriteMedi, sizeMedi, positionMedi, 20);
 				planets.add(planetMedi);
 				gameStage.addActor(planetMedi);
+				interaction.addSelectionListener(planetMedi);
 				
 		// Metal
 				Texture planetTextureMate = new Texture(Gdx.files.internal("sprite/planet1.png"));
@@ -236,6 +243,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				Planet planetMate = new Planet(planetSpriteMate, sizeMate, positionMate, 20);
 				planets.add(planetMate);
 				gameStage.addActor(planetMate);
+				interaction.addSelectionListener(planetMate);
 				
 		// Goods
 				Texture planetTextureElec = new Texture(Gdx.files.internal("sprite/planet1.png"));
@@ -245,6 +253,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				Planet planetElec = new Planet(planetSpriteElec, sizeElec, positionElec, 20);
 				planets.add(planetElec);
 				gameStage.addActor(planetElec);
+				interaction.addSelectionListener(planetElec);
 		
 
 		// ships generation		
@@ -254,9 +263,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		{
 			@Override
 			public void initiateDocking(final Ship ship, final Dock dock)
-			{
-				ship.addAction(Actions.fadeOut(0.3f));
-				
+			{				
 				timer.scheduleTask(new Timer.Task()
 				{
 					@Override
@@ -269,7 +276,19 @@ public class SpaceStationGame extends ApplicationAdapter
 						flyShipToDock(ship, dock);
 					}
 				}, 0.3f);
+			}
+			
+			@Override
+			public void initiatePlanetAcquire(Ship ship, Planet planet)
+			{
+				// TODO Auto-generated method stub
 				
+			}
+			
+			@Override
+			public void initiatePlanetDelivery(Ship ship, Planet planet)
+			{
+				// TODO
 			}
 		};
 
@@ -362,11 +381,7 @@ public class SpaceStationGame extends ApplicationAdapter
 	}
 	
 	private void setupInteractions()
-	{
-		
-		interaction = new Interaction(gameStage, activeSelectionBound, targetSelectionBound);
-		gameStage.addActor(interaction);
-		
+	{		
 		for (final Dock dock : station.getDocks())
 		{
 			interaction.addMasterActor(dock, new Interaction.ActiveCheck()
@@ -522,15 +537,24 @@ public class SpaceStationGame extends ApplicationAdapter
 				ship.depart(targetPosition, 5, timer);
 			}
 		}, 1);
+		
+		timer.scheduleTask(new Timer.Task()
+		{
+			@Override
+			public void run()
+			{
+				shipsQueueMenu.queueShip(ship);
+			}
+		}, 6);
 	}
 	
 	private class StationViewMaster implements StationView
 	{
 		private StationViewListener listener;
 		
-		public void releaseShip(Ship ship)
+		public void sendShipToPlanet(Ship ship, Planet planet, Intent intent)
 		{
-			listener.shipDeparted(ship);
+			listener.shipDepartedToPlanet(ship, planet, intent);
 		}
 		
 		@Override
@@ -594,7 +618,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				@Override
 				public boolean isActive()
 				{
-					return true;
+					return shipsQueueMenu.contains(ship);
 				}
 				
 				@Override
@@ -612,17 +636,54 @@ public class SpaceStationGame extends ApplicationAdapter
 				@Override
 				public boolean executeWithTarget(Actor target)
 				{
-					/*if (target instanceof Dock)
-					{						
-						Dock dock = (Dock)target;
-						dock.setReserved();
-						shipsQueueMenu.orderShipToDock(ship, dock);
+					if (target instanceof Planet)
+					{
+						Planet planet = (Planet)target;
+						shipsQueueMenu.sendShipToPlanet(ship, planet, Intent.DELIVER);
 						
 						return true;
 					}
-					
-					return false;*/
-					return false;
+					else
+					{
+						return false;
+					}
+				}
+			});
+			
+			interaction.addInteractAction(ship, "Acquire", new InteractAction()
+			{
+				@Override
+				public boolean isActive()
+				{
+					return shipsQueueMenu.contains(ship);
+				}
+				
+				@Override
+				public Set<? extends Actor> getTargets()
+				{
+					return new HashSet<Actor>(planets);
+				}
+				
+				@Override
+				public boolean isOneTime()
+				{
+					return true;
+				}
+				
+				@Override
+				public boolean executeWithTarget(Actor target)
+				{
+					if (target instanceof Planet)
+					{
+						Planet planet = (Planet)target;
+						shipsQueueMenu.sendShipToPlanet(ship, planet, Intent.ACQUIRE);
+						
+						return true;
+					}
+					else
+					{
+						return false;
+					}
 				}
 			});
 		}

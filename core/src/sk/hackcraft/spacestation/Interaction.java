@@ -132,6 +132,8 @@ public class Interaction extends Actor
 	@Override
 	public void draw(Batch batch, float parentAlpha)
 	{
+		toFront();
+		
 		if (activeMaster != null)
 		{
 			selectedBound.draw(activeMaster, batch);

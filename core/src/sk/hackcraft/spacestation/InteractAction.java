@@ -26,6 +26,7 @@ public abstract class InteractAction extends Actor
 	
 	public Set<? extends Actor> getTargets() { return Collections.emptySet(); }
 	
+	@Deprecated
 	public boolean isOneTime() { return false; }
 	
 	@Override

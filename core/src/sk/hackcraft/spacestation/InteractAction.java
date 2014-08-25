@@ -38,8 +38,6 @@ public abstract class InteractAction extends Actor
 	@Override
 	public void draw(Batch batch, float parentAlpha)
 	{
-		toFront();
-
 		if (isActive())
 		{
 			font.draw(batch, getName(), getX(), getY() + getHeight());

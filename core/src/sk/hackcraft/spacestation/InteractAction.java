@@ -17,6 +17,8 @@ public abstract class InteractAction extends Actor
 		
 		setWidth(font.getBounds(name).width);
 		setHeight(font.getBounds(name).height);
+		
+		setZIndex(Scene.Z_ACTION);
 	}
 	
 	public abstract boolean isActive();
@@ -29,6 +31,8 @@ public abstract class InteractAction extends Actor
 	@Override
 	public void draw(Batch batch, float parentAlpha)
 	{
+		toFront();
+
 		if (isActive())
 		{
 			font.draw(batch, getName(), getX(), getY() + getHeight());

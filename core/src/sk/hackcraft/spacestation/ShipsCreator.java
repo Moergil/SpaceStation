@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 public class ShipsCreator
 {
 	private Map<GoodsType, ShipDescription> descriptions = new EnumMap<GoodsType, ShipsCreator.ShipDescription>(GoodsType.class);
-	private Map<GoodsType, TextureRegion> distantShips = new EnumMap<GoodsType, TextureRegion>(GoodsType.class);
+	private Map<GoodsType, Texture> distantShips = new EnumMap<GoodsType, Texture>(GoodsType.class);
 	
 	public ShipsCreator(SelectionBound selectionBound)
 	{
@@ -24,6 +24,8 @@ public class ShipsCreator
 		Texture metalsMoverTexture = new Texture(Gdx.files.internal("sprite/ship4.png"));
 		Texture goodsContainerTexture = new Texture(Gdx.files.internal("sprite/ship2.png"));
 		
+		Texture distantShipTexture;
+		
 		{
 			ShipDescription d = new ShipDescription();
 			d.name = "Water Tanker";
@@ -33,6 +35,9 @@ public class ShipsCreator
 			d.cargoContainer = new CargoContainer(GoodsType.WATER, 10);
 			
 			descriptions.put(GoodsType.WATER, d);
+			
+			distantShipTexture = new Texture(Gdx.files.internal("sprite/dot1.png"));
+			distantShips.put(GoodsType.WATER, distantShipTexture);
 		}
 		
 		{
@@ -44,6 +49,9 @@ public class ShipsCreator
 			d.cargoContainer = new CargoContainer(GoodsType.HYDROGEN, 10);
 			
 			descriptions.put(GoodsType.HYDROGEN, d);
+			
+			distantShipTexture = new Texture(Gdx.files.internal("sprite/dot2.png"));
+			distantShips.put(GoodsType.HYDROGEN, distantShipTexture);
 		}
 		
 		{
@@ -55,6 +63,9 @@ public class ShipsCreator
 			d.cargoContainer = new CargoContainer(GoodsType.FERTILIZERS, 10);
 			
 			descriptions.put(GoodsType.FERTILIZERS, d);
+			
+			distantShipTexture = new Texture(Gdx.files.internal("sprite/dot3.png"));
+			distantShips.put(GoodsType.FERTILIZERS, distantShipTexture);
 		}
 		
 		{
@@ -66,6 +77,9 @@ public class ShipsCreator
 			d.cargoContainer = new CargoContainer(GoodsType.METALS, 10);
 			
 			descriptions.put(GoodsType.METALS, d);
+			
+			distantShipTexture = new Texture(Gdx.files.internal("sprite/dot4.png"));
+			distantShips.put(GoodsType.METALS, distantShipTexture);
 		}
 		
 		{
@@ -77,6 +91,9 @@ public class ShipsCreator
 			d.cargoContainer = new CargoContainer(GoodsType.GOODS, 10);
 			
 			descriptions.put(GoodsType.GOODS, d);
+			
+			distantShipTexture = new Texture(Gdx.files.internal("sprite/dot5.png"));
+			distantShips.put(GoodsType.GOODS, distantShipTexture);
 		}
 	}
 
@@ -93,14 +110,8 @@ public class ShipsCreator
 	
 	public DistantShip createDistantShip(Ship ship)
 	{
-		//ShipDescription d = descriptions.get(type);
-		
-		/*Ship ship = constructShip(d);
-		
-		ship.getCargoContainer().setCargoAmount(5);
-		
-		return ship;*/
-		return null;
+		Texture texture = distantShips.get(ship.getCargoContainer().getCargoType());
+		return new DistantShip(texture);
 	}
 	
 	private Ship constructShip(ShipDescription description)

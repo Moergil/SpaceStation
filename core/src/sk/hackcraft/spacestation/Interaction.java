@@ -30,7 +30,14 @@ public class Interaction extends Actor
 		{
 			Actor target = event.getTarget();
 			
-			return actorTouched(target);
+			if (actorTouched(target))
+			{
+				return true;
+			}
+			else
+			{
+				return super.touchDown(event, x, y, pointer, button);
+			}
 		}
 	};
 	
@@ -39,6 +46,16 @@ public class Interaction extends Actor
 		this.stage = stage;
 		this.selectedBound = selectedBound;
 		this.possibleSelectBound = possibleSelectBound;
+	}
+	
+	public void cancelActualInteraction()
+	{
+		cancelSelection();
+	}
+	
+	public boolean hasActualInteraction()
+	{
+		return activeMaster != null;
 	}
 	
 	public boolean actorTouched(Actor actor)
@@ -52,7 +69,7 @@ public class Interaction extends Actor
 		else if (activeMaster == actor)
 		{
 			System.out.println("Cancelled selection");
-			cancelSelection(false);
+			cancelSelection();
 			return true;
 		}
 		else if (activeMaster != null)
@@ -68,14 +85,15 @@ public class Interaction extends Actor
 				
 				System.out.println("Changed action: " + action.getName());
 				changeAction(action);
+				setActionsVisibility(activeMaster, false);
 				
 				if (action.execute())
 				{
 					System.out.println("Action immediate executed");
-					cancelSelection(true);
-					
-					return true;
+					cancelSelection();	
 				}
+				
+				return true;
 			}
 			else if (activeAction != null && activeAction.getTargets().contains(actor))
 			{
@@ -87,7 +105,7 @@ public class Interaction extends Actor
 				if (activeAction.executeWithTarget(actor))
 				{
 					System.out.println("Action executed with target " + actor.getName());
-					cancelSelection(true);
+					cancelSelection();
 					
 					return true;
 				}
@@ -130,6 +148,17 @@ public class Interaction extends Actor
 	}
 	
 	@Override
+	public void act(float delta)
+	{
+		super.act(delta);
+		
+		if (activeMaster != null)
+		{
+			updateInteractActionPositions();
+		}
+	}
+	
+	@Override
 	public void draw(Batch batch, float parentAlpha)
 	{
 		toFront();
@@ -162,31 +191,42 @@ public class Interaction extends Actor
 	{
 		this.activeMaster = masterActor;
 		
-		float x = 0;
-		float y = 0;
+		updateInteractActionPositions();
+		
+		setActionsVisibility(activeMaster, true);
+	}
+	
+	private void updateInteractActionPositions()
+	{
+		float x = activeMaster.getX();
+		float y = activeMaster.getY();
 		float verticalOffset = 5;
 		
-		for (InteractAction action : actions.get(masterActor))
+		for (InteractAction action : actions.get(activeMaster))
 		{
 			action.setPosition(x, y);
-			action.setVisible(true);
 			
-			y += verticalOffset + action.getHeight();
+			y -= verticalOffset + action.getHeight();
 		}
 	}
 	
-	private void cancelSelection(boolean actionExecuted)
+	private void cancelSelection()
 	{
 		if (activeMaster != null && actions.containsKey(activeMaster))
 		{
-			for (InteractAction action : actions.get(activeMaster))
-			{
-				action.setVisible(false);
-			}
+			setActionsVisibility(activeMaster, false);
 		}
 		
 		activeMaster = null;
 		activeAction = null;
+	}
+	
+	private void setActionsVisibility(Actor masterActor, boolean visible)
+	{
+		for (InteractAction action : actions.get(masterActor))
+		{
+			action.setVisible(visible);
+		}
 	}
 	
 	private void changeAction(InteractAction action)

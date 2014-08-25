@@ -5,7 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
+
+import javax.swing.text.StyleContext.SmallAttributeSet;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -31,11 +34,11 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class SpaceStationGame extends ApplicationAdapter
 {
-	
+	private Random random;
 	private Stage gameStage;
 	private GameView actualGameView;
 
-	private ShipsCreator shipsGenerator;
+	private ShipsCreator shipsCreator;
 	private Timer timer;
 
 	private ArrayList<Planet> planets = new ArrayList<Planet>();
@@ -49,6 +52,8 @@ public class SpaceStationGame extends ApplicationAdapter
 	private Station station;
 	private StationViewMaster stationViewMaster;
 	
+	private StationSmall smallStation;
+	
 	private Interaction interaction;
 
 	private BitmapFont mainFont;
@@ -57,10 +62,14 @@ public class SpaceStationGame extends ApplicationAdapter
 	private long startTime;
 	
 	private Map<Ship, DistantShip> distantShips = new HashMap<Ship, DistantShip>();
+	
+	private GameElapsedTimeLabel gameElapsedTimeLabel;
+	private ScoreLabel scorelabel;
 
 	@Override
 	public void create()
 	{
+		random = new Random();
 		timer = new Timer();
 
 		gameStage = new Stage(new FitViewport(400, 240));
@@ -159,9 +168,13 @@ public class SpaceStationGame extends ApplicationAdapter
 		Texture stationDoorsTexture = new Texture(Gdx.files.internal("sprite/station_doors.png"));
 		station.setTextures(stationDoorsTexture, 55);
 		
-		GameElapsedTime gameElapsedTime = new GameElapsedTime(System.currentTimeMillis(), mainFont);
-		gameElapsedTime.setPosition(5, gameStage.getHeight() - gameElapsedTime.getHeight() - 5);
-		gameStage.addActor(gameElapsedTime);
+		gameElapsedTimeLabel = new GameElapsedTimeLabel(System.currentTimeMillis(), mainFont);
+		gameElapsedTimeLabel.setPosition(5, gameStage.getHeight() - 5);
+		gameStage.addActor(gameElapsedTimeLabel);
+		
+		scorelabel = new ScoreLabel(mainFont);
+		scorelabel.setPosition(200, gameStage.getHeight() - 5);
+		gameStage.addActor(scorelabel);
 		
 		station.setPosition(50, 10);
 		gameStage.addActor(station);
@@ -193,9 +206,21 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 				return false;
 			}
+			
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button)
+			{
+				if (!event.isHandled())
+				{
+					interaction.cancelActualInteraction();
+					return true;
+				}
+				else
+				{
+					return super.touchDown(event, x, y, pointer, button);
+				}
+			}
 		});
-		
-		setInstantGameView(GameView.DOCKS);
 		
 		createDocks();
 		createStorageFacilities();
@@ -207,7 +232,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		Texture stationSmallLightsTexture = new Texture(Gdx.files.internal("sprite/station_small_lights.png"));
 		
 		Vector2 stationSmallPosition = new Vector2(420, 15);
-		final StationSmall smallStation = new StationSmall(smallStationSprite, stationSmallPosition);
+		smallStation = new StationSmall(smallStationSprite, stationSmallPosition);
 		smallStation.setLights(stationSmallLightsTexture);
 		gameStage.addActor(smallStation);
 		
@@ -265,7 +290,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 
 		// ships generation		
-		shipsGenerator = new ShipsCreator(activeSelectionBound);
+		shipsCreator = new ShipsCreator(activeSelectionBound);
 		
 		shipsQueueMenu = new ShipsQueueMenu()
 		{
@@ -310,9 +335,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				
 				final float flyTimeThere = 5, flyTimeBack = 5;
 				
-				dShip.setPosition(smallStation.getX(), smallStation.getX());
-				
-				dShip.addAction(Actions.moveTo(planet.getX(), planet.getY(), flyTimeThere));
+				flyDistantShipTo(dShip, planet, flyTimeThere);
 				
 				new TransferCargoTask(from, to, flyTimeThere)
 				{
@@ -328,7 +351,7 @@ public class SpaceStationGame extends ApplicationAdapter
 							}
 						}, flyTimeBack);
 						
-						dShip.addAction(Actions.moveTo(smallStation.getX(), smallStation.getX(), flyTimeBack));
+						flyDistantShipTo(dShip, smallStation, flyTimeBack);
 					}
 				}.run();
 
@@ -357,6 +380,8 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		this.tpManager = new TaskAndPointsManager(this);
 		this.tpManager.startGeneratingTasks();
+		
+		setGameView(GameView.DOCKS, 0);
 	}
 	
 	public Timer getTimer(){
@@ -465,7 +490,7 @@ public class SpaceStationGame extends ApplicationAdapter
 
 	private void addShip(GoodsType goodsType)
 	{
-		final Ship ship = shipsGenerator.createShip(goodsType);
+		final Ship ship = shipsCreator.createShip(goodsType);
 
 		gameStage.addActor(ship);
 		
@@ -473,9 +498,23 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		interaction.addSelectionListener(ship);
 		
-		DistantShip distantShip = null;
-		
+		DistantShip distantShip = shipsCreator.createDistantShip(ship);
+		gameStage.addActor(distantShip);
+
 		distantShips.put(ship, distantShip);
+		
+		flyDistantShipTo(distantShip, smallStation, 0);
+	}
+	
+	private void flyDistantShipTo(DistantShip ship, Actor target, float duration)
+	{
+		int offsetX = random.nextInt(30) - 5;
+		int offsetY = random.nextInt(30) - 5;
+		
+		float x = target.getCenterX() + offsetX;
+		float y = target.getCenterY() + offsetY;
+		
+		ship.addAction(Actions.moveTo(x, y, duration));
 	}
 	
 	@Override
@@ -497,7 +536,7 @@ public class SpaceStationGame extends ApplicationAdapter
 	private enum GameView
 	{
 		DOCKS(0),
-		MAP(-400);
+		MAP(400);
 		
 		private float offset;
 		
@@ -529,27 +568,24 @@ public class SpaceStationGame extends ApplicationAdapter
 				return;
 		}
 		
-		setGameView(nextGameView);
+		setGameView(nextGameView, 0.3f);
 	}
 	
-	private void setGameView(GameView gameView)
+	private void setGameView(GameView gameView, float duration)
 	{
 		float y = 0;
-		float duration = 0.3f;
 		System.out.println(gameView.getOffset());
-		gameStage.addAction(Actions.moveTo(gameView.getOffset(), y, duration, Interpolation.exp5));
+		gameStage.addAction(Actions.moveTo(-gameView.getOffset(), y, duration, Interpolation.exp5));
 		
-		float shipsQueueMenuOffset = -gameView.getOffset() + 400 - shipsQueueMenu.getWidth();
-		shipsQueueMenu.addAction(Actions.moveTo(shipsQueueMenuOffset, y, duration, Interpolation.exp5));
-		actualGameView = gameView;
-	}
-	
-	private void setInstantGameView(GameView gameView)
-	{
-		float y = 0;
-		float duration = 0.0f;
-		MoveToAction action = Actions.moveTo(gameView.getOffset(), y, duration);
-		gameStage.addAction(action);
+		Actor actorsToMove[] = {shipsQueueMenu, gameElapsedTimeLabel, scorelabel};
+		
+		for (Actor actor : actorsToMove)
+		{
+			y = actor.getY();
+			float offset = actor.getX();
+			actor.addAction(Actions.moveTo(offset, y, duration, Interpolation.exp5));
+		}
+		
 		actualGameView = gameView;
 	}
 	
@@ -598,19 +634,6 @@ public class SpaceStationGame extends ApplicationAdapter
 	
 	private class StationViewMaster implements StationView
 	{
-		private StationViewListener listener;
-		
-		public void sendShipToPlanet(Ship ship, Planet planet, Intent intent)
-		{
-			listener.shipDepartedToPlanet(ship, planet, intent);
-		}
-		
-		@Override
-		public void setListener(StationViewListener listener)
-		{
-			this.listener = listener;
-		}
-		
 		@Override
 		public void shipArrived(final Ship ship)
 		{
@@ -803,6 +826,8 @@ public class SpaceStationGame extends ApplicationAdapter
 	
 	private class TransferCargoTask implements Runnable
 	{
+		private float unitTransferDelay = 0.3f;
+		
 		private CargoContainer from, to;
 		private float initialSecondsDelay;
 		
@@ -826,7 +851,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				{
 					if (from.transferUnitTo(to))
 					{
-						timer.scheduleTask(this, 0.1f);
+						timer.scheduleTask(this, unitTransferDelay);
 					}
 					else
 					{

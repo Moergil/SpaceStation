@@ -7,12 +7,12 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-public class GameElapsedTime extends Actor
+public class GameElapsedTimeLabel extends Actor
 {
 	private final long startTime;
 	private final BitmapFont font;
 
-	public GameElapsedTime(long startTime, BitmapFont font)
+	public GameElapsedTimeLabel(long startTime, BitmapFont font)
 	{
 		this.startTime = startTime;
 		this.font = font;

@@ -14,11 +14,4 @@ public interface StationView
 	}
 	
 	void shipArrived(Ship ship);
-
-	void setListener(StationViewListener listener);
-
-	public interface StationViewListener
-	{
-		void shipDepartedToPlanet(Ship ship, Planet destination, Intent intent);
-	}
 }

@@ -24,8 +24,6 @@ public abstract class InteractAction extends Actor
 		
 		setWidth(font.getBounds(name).width);
 		setHeight(font.getBounds(name).height);
-		
-		setZIndex(Scene.Z_ACTION);
 	}
 	
 	public abstract boolean isActive();

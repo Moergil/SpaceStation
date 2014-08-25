@@ -2,6 +2,7 @@
 package sk.hackcraft.spacestation;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.badlogic.gdx.ApplicationAdapter;
@@ -473,8 +474,10 @@ public class SpaceStationGame extends ApplicationAdapter
 		float y = 0;
 		float duration = 0.3f;
 		System.out.println(gameView.getOffset());
-		MoveToAction action = Actions.moveTo(gameView.getOffset(), y, duration, Interpolation.exp5);
-		gameStage.addAction(action);
+		gameStage.addAction(Actions.moveTo(gameView.getOffset(), y, duration, Interpolation.exp5));
+		
+		float shipsQueueMenuOffset = -gameView.getOffset() + 400 - shipsQueueMenu.getWidth();
+		shipsQueueMenu.addAction(Actions.moveTo(shipsQueueMenuOffset, y, duration, Interpolation.exp5));
 		actualGameView = gameView;
 	}
 	
@@ -582,6 +585,43 @@ public class SpaceStationGame extends ApplicationAdapter
 						return true;
 					}
 					
+					return false;
+				}
+			});
+			
+			interaction.addInteractAction(ship, "Deliver", new InteractAction()
+			{
+				@Override
+				public boolean isActive()
+				{
+					return true;
+				}
+				
+				@Override
+				public Set<? extends Actor> getTargets()
+				{
+					return new HashSet<Actor>(planets);
+				}
+				
+				@Override
+				public boolean isOneTime()
+				{
+					return true;
+				}
+				
+				@Override
+				public boolean executeWithTarget(Actor target)
+				{
+					/*if (target instanceof Dock)
+					{						
+						Dock dock = (Dock)target;
+						dock.setReserved();
+						shipsQueueMenu.orderShipToDock(ship, dock);
+						
+						return true;
+					}
+					
+					return false;*/
 					return false;
 				}
 			});

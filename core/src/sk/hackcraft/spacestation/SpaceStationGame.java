@@ -216,7 +216,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				interaction.addSelectionListener(planetFood);
 				
 		// Hydrogen
-				Texture planetTextureOre = new Texture(Gdx.files.internal("sprite/planet1.png"));
+				Texture planetTextureOre = new Texture(Gdx.files.internal("sprite/planet3.png"));
 				Sprite planetSpriteOre = new Sprite(planetTextureOre);
 				Vector2 positionOre = new Vector2(630, 0);
 				Vector2 sizeOre = new Vector2(68, 68);
@@ -226,7 +226,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				interaction.addSelectionListener(planetOre);
 				
 		// Water
-				Texture planetTextureMedi = new Texture(Gdx.files.internal("sprite/planet1.png"));
+				Texture planetTextureMedi = new Texture(Gdx.files.internal("sprite/planet5.png"));
 				Sprite planetSpriteMedi = new Sprite(planetTextureMedi);
 				Vector2 positionMedi = new Vector2(550,150);
 				Vector2 sizeMedi = new Vector2(68, 68);
@@ -236,7 +236,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				interaction.addSelectionListener(planetMedi);
 				
 		// Metal
-				Texture planetTextureMate = new Texture(Gdx.files.internal("sprite/planet1.png"));
+				Texture planetTextureMate = new Texture(Gdx.files.internal("sprite/planet4.png"));
 				Sprite planetSpriteMate = new Sprite(planetTextureMate);
 				Vector2 positionMate = new Vector2(500,60);
 				Vector2 sizeMate = new Vector2(68, 68);
@@ -246,7 +246,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				interaction.addSelectionListener(planetMate);
 				
 		// Goods
-				Texture planetTextureElec = new Texture(Gdx.files.internal("sprite/planet1.png"));
+				Texture planetTextureElec = new Texture(Gdx.files.internal("sprite/planet2.png"));
 				Sprite planetSpriteElec = new Sprite(planetTextureElec);
 				Vector2 positionElec = new Vector2(630,100);
 				Vector2 sizeElec = new Vector2(68, 68);

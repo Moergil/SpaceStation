@@ -2,6 +2,7 @@
 package sk.hackcraft.spacestation;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.badlogic.gdx.ApplicationAdapter;
@@ -48,7 +49,6 @@ public class SpaceStationGame extends ApplicationAdapter
 	private StationViewMaster stationViewMaster;
 	
 	private Interaction interaction;
-	private Space space;
 
 	private BitmapFont mainFont;
 	private TaskAndPointsManager tpManager;
@@ -64,12 +64,12 @@ public class SpaceStationGame extends ApplicationAdapter
 		Gdx.input.setInputProcessor(gameStage);
 		
 		// debugging
-		gameStage.setDebugAll(false);
+		//gameStage.setDebugAll(true);
 		
 		mainFont = new BitmapFont(false);
 		
-		runIntro();
-//		runGame();
+		//runIntro();
+		runGame();
 	}
 	
 	private void runIntro()
@@ -89,7 +89,7 @@ public class SpaceStationGame extends ApplicationAdapter
 			{
 				cleanupIntro(intro);
 			}
-		}, 15,15);
+		}, 2,10);
 		
 		gameStage.addListener(new InputListener()
 		{
@@ -150,8 +150,13 @@ public class SpaceStationGame extends ApplicationAdapter
 		Texture stationTexture = new Texture(Gdx.files.internal("sprite/station.png"));
 		Sprite stationSprite = new Sprite(stationTexture);
 		station = new Station(stationSprite);
+		Texture stationLightsTexture = new Texture(Gdx.files.internal("sprite/station_lights.png"));
+		station.setTextures(stationLightsTexture, 40);
+		Texture stationDoorsTexture = new Texture(Gdx.files.internal("sprite/station_doors.png"));
+		station.setTextures(stationDoorsTexture, 55);
 		
-		mngrSound.runMusicGame();
+		// TODO uncomment in release
+		//mngrSound.runMusicGame();
 		
 		station.setPosition(50, 10);
 		gameStage.addActor(station);
@@ -171,16 +176,9 @@ public class SpaceStationGame extends ApplicationAdapter
 			@Override
 			public boolean keyDown(InputEvent event, int keycode)
 			{
-				if (keycode == Input.Keys.A)
+				if (keycode == Input.Keys.TAB)
 				{
 					nextGameView();
-					return true;
-				}
-				
-				if (keycode == Input.Keys.S)
-				{
-					addShip();
-
 					return true;
 				}
 		
@@ -206,50 +204,54 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		//generating planets
 		
-		//Food
+		// Fertilizers
 				Texture planetTextureFood = new Texture(Gdx.files.internal("sprite/planet1.png"));
 				Sprite planetSpriteFood = new Sprite(planetTextureFood);
 				Vector2 positionFood = new Vector2(460, 160);
 				Vector2 sizeFood = new Vector2(68, 68);
-				Planet planetFood = new Planet(planetSpriteFood, sizeFood, positionFood, GoodsType.FOOD, 20);
+				Planet planetFood = new Planet(planetSpriteFood, sizeFood, positionFood, 20);
 				planets.add(planetFood);
 				gameStage.addActor(planetFood);
 				
+<<<<<<< HEAD
 				
 				
 		//Ore
+=======
+		// Hydrogen
+>>>>>>> db53df0c753acd9f15c14d60c95dd8d5b31b2c54
 				Texture planetTextureOre = new Texture(Gdx.files.internal("sprite/planet1.png"));
 				Sprite planetSpriteOre = new Sprite(planetTextureOre);
 				Vector2 positionOre = new Vector2(630, 0);
 				Vector2 sizeOre = new Vector2(68, 68);
-				Planet planetOre = new Planet(planetSpriteOre, sizeOre, positionOre, GoodsType.ORE, 20);
+				Planet planetOre = new Planet(planetSpriteOre, sizeOre, positionOre, 20);
 				planets.add(planetOre);
 				gameStage.addActor(planetOre);
 				
-		//Medicine
+		// Water
 				Texture planetTextureMedi = new Texture(Gdx.files.internal("sprite/planet1.png"));
 				Sprite planetSpriteMedi = new Sprite(planetTextureMedi);
 				Vector2 positionMedi = new Vector2(550,150);
 				Vector2 sizeMedi = new Vector2(68, 68);
-				Planet planetMedi = new Planet(planetSpriteMedi, sizeMedi, positionMedi, GoodsType.MEDICINE, 20);
+				Planet planetMedi = new Planet(planetSpriteMedi, sizeMedi, positionMedi, 20);
 				planets.add(planetMedi);
 				gameStage.addActor(planetMedi);
 				
-		//Material
+		// Metal
 				Texture planetTextureMate = new Texture(Gdx.files.internal("sprite/planet1.png"));
 				Sprite planetSpriteMate = new Sprite(planetTextureMate);
 				Vector2 positionMate = new Vector2(500,60);
 				Vector2 sizeMate = new Vector2(68, 68);
-				Planet planetMate = new Planet(planetSpriteMate, sizeMate, positionMate, GoodsType.MATERIAL, 20);
+				Planet planetMate = new Planet(planetSpriteMate, sizeMate, positionMate, 20);
 				planets.add(planetMate);
 				gameStage.addActor(planetMate);
 				
-		//Electronics
+		// Goods
 				Texture planetTextureElec = new Texture(Gdx.files.internal("sprite/planet1.png"));
 				Sprite planetSpriteElec = new Sprite(planetTextureElec);
 				Vector2 positionElec = new Vector2(630,100);
 				Vector2 sizeElec = new Vector2(68, 68);
-				Planet planetElec = new Planet(planetSpriteElec, sizeElec, positionElec, GoodsType.MATERIAL, 20);
+				Planet planetElec = new Planet(planetSpriteElec, sizeElec, positionElec, 20);
 				planets.add(planetElec);
 				gameStage.addActor(planetElec);
 				
@@ -263,11 +265,23 @@ public class SpaceStationGame extends ApplicationAdapter
 		shipsQueueMenu = new ShipsQueueMenu()
 		{
 			@Override
-			public void initiateDocking(Ship ship, Dock dock)
+			public void initiateDocking(final Ship ship, final Dock dock)
 			{
-				ship.setPosition(450, dock.getY());
+				ship.addAction(Actions.fadeOut(0.3f));
 				
-				flyShipToDock(ship, dock);
+				timer.scheduleTask(new Timer.Task()
+				{
+					@Override
+					public void run()
+					{
+						ship.setPosition(450, dock.getY());
+						
+						ship.addAction(Actions.fadeIn(0.3f));
+
+						flyShipToDock(ship, dock);
+					}
+				}, 0.3f);
+				
 			}
 		};
 
@@ -283,9 +297,11 @@ public class SpaceStationGame extends ApplicationAdapter
 		setupInteractions();
 		
 		// TODO debug
-		addShip();
-		addShip();
-		addShip();
+		addShip(GoodsType.WATER);
+		addShip(GoodsType.HYDROGEN);
+		addShip(GoodsType.FERTILIZERS);
+		addShip(GoodsType.METALS);
+		addShip(GoodsType.GOODS);
 		
 		//testovanie
 		this.tpManager = new TaskAndPointsManager(this);
@@ -307,7 +323,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		for (int i = 0; i < 4; i++)
 		{
-			Dock dock = new Dock(i, activeSelectionBound);
+			Dock dock = new Dock(i);
 			dock.setPosition(121, positionY[i]);
 			
 			station.addDock(dock);
@@ -319,11 +335,11 @@ public class SpaceStationGame extends ApplicationAdapter
 	private void createStorageFacilities()
 	{
 		CargoContainer containers[] = {
-			new CargoContainer(GoodsType.ELECTRONICS, 100),
-			new CargoContainer(GoodsType.FOOD, 100),
-			new CargoContainer(GoodsType.MATERIAL, 100),
-			new CargoContainer(GoodsType.MEDICINE, 100),
-			new CargoContainer(GoodsType.ORE, 100),
+			new CargoContainer(GoodsType.GOODS, 100),
+			new CargoContainer(GoodsType.FERTILIZERS, 100),
+			new CargoContainer(GoodsType.METALS, 100),
+			new CargoContainer(GoodsType.WATER, 100),
+			new CargoContainer(GoodsType.HYDROGEN, 100),
 		};
 		
 		float positionX[] = {
@@ -345,9 +361,11 @@ public class SpaceStationGame extends ApplicationAdapter
 		for (int i = 0; i < 5; i++)
 		{
 			CargoContainer container = containers[i];
+			container.setCargoAmount(10);
+			
 			StorageFacility sf = new StorageFacility(container);
 			
-			sf.setPosition(positionX[i], positionY[i]);
+			sf.setCenterPosition(positionX[i], positionY[i]);
 			
 			station.addStorageFacility(sf);
 			
@@ -398,9 +416,9 @@ public class SpaceStationGame extends ApplicationAdapter
 		}
 	}
 
-	private void addShip()
+	private void addShip(GoodsType goodsType)
 	{
-		final Ship ship = shipsGenerator.createGeneric();
+		final Ship ship = shipsGenerator.create(goodsType);
 
 		gameStage.addActor(ship);
 		
@@ -468,8 +486,10 @@ public class SpaceStationGame extends ApplicationAdapter
 		float y = 0;
 		float duration = 0.3f;
 		System.out.println(gameView.getOffset());
-		MoveToAction action = Actions.moveTo(gameView.getOffset(), y, duration, Interpolation.exp5);
-		gameStage.addAction(action);
+		gameStage.addAction(Actions.moveTo(gameView.getOffset(), y, duration, Interpolation.exp5));
+		
+		float shipsQueueMenuOffset = -gameView.getOffset() + 400 - shipsQueueMenu.getWidth();
+		shipsQueueMenu.addAction(Actions.moveTo(shipsQueueMenuOffset, y, duration, Interpolation.exp5));
 		actualGameView = gameView;
 	}
 	
@@ -577,6 +597,43 @@ public class SpaceStationGame extends ApplicationAdapter
 						return true;
 					}
 					
+					return false;
+				}
+			});
+			
+			interaction.addInteractAction(ship, "Deliver", new InteractAction()
+			{
+				@Override
+				public boolean isActive()
+				{
+					return true;
+				}
+				
+				@Override
+				public Set<? extends Actor> getTargets()
+				{
+					return new HashSet<Actor>(planets);
+				}
+				
+				@Override
+				public boolean isOneTime()
+				{
+					return true;
+				}
+				
+				@Override
+				public boolean executeWithTarget(Actor target)
+				{
+					/*if (target instanceof Dock)
+					{						
+						Dock dock = (Dock)target;
+						dock.setReserved();
+						shipsQueueMenu.orderShipToDock(ship, dock);
+						
+						return true;
+					}
+					
+					return false;*/
 					return false;
 				}
 			});

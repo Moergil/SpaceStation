@@ -14,14 +14,15 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 
 public class Intro extends Actor
 {
-	private String IntroTextLines[] =  {"Since the number of people rapidly increase",", they must start to colony new planets.","Due to limited resources of these planets","an unlimited demands for new gods of its inhabitants","a big galaxy war was upon the edge… ", "The only hope to save galaxy from destructive war","was the global resource space station to delivery"," all needs to other planets.","And they made you as the Captain..."};
+//	private String IntroTextLines[] =  {"Since the number of people rapidly increase",", they must start to colony new planets.","Due to limited resources of these planets","an unlimited demands for new gods of its inhabitants","a big galaxy war was upon the edge… ", "The only hope to save galaxy from destructive war","was the global resource space station to delivery"," all needs to other planets.","And they made you as the Captain..."};
 //	private String IntroText =  "SpaceStation";
 	private SpriteBatch batch;
     private BitmapFont font;
     private int actualNum;
     final private int pageNum = 2;
     final private int duration = 30;
-	private int backgroundX,backgroundY;
+	
+	private boolean showText;
     
     private Sprite Background;
     private Sprite introStation;
@@ -29,8 +30,7 @@ public class Intro extends Actor
 	
 	public Intro()
 	{
-		backgroundX = 0;
-		backgroundY = 0;
+		showText = false;
 		actualNum = 0;
 		batch = new SpriteBatch();    
 		introPages = new Sprite[pageNum];
@@ -63,13 +63,34 @@ public class Intro extends Actor
 	
 	public boolean setNextPage()
 	{
-		if (hasNextPage())
+		/*
+		 * 0 page no text
+		 * 1 page text page1  
+		 * 2 page text page2
+		 * last page no text  
+		 */
+		
+		boolean ret = false;
+		if (!showText && actualNum == 0)
+		{
+			showText = true;
+			ret = true;
+		}
+		else if (hasNextPage())
 		{
 			actualNum++;
-			return true;
+			ret = true;
+		}
+		else if (!hasNextPage() && !showText)
+		{
+			ret = false;
 		}
 		else
-			return false;
+		{
+			showText = false;
+			ret = true;
+		}
+		return ret;
 		
 	}
 	
@@ -91,9 +112,7 @@ public class Intro extends Actor
 		batch.draw(Background, getX(), getY(), getOriginX() , getOriginY()+240, 400, 240, 1, 3, 0);
 		batch.draw(introStation, getX() + 50, getY() - 460, getOriginX() , getOriginY(), introStation.getWidth(), introStation.getHeight(), 1, 1, 0);
 		
-		
-		for (int i = 0; i < pageNum; i++)
+		if (showText)
 			introPages[actualNum].draw(batch);
-//			batch.draw(introPages[actualNum], getX(), getY(), getOriginX() , getOriginY(), 400, 240, 1, 1, 0);
-    }
+	}
 }

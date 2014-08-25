@@ -45,7 +45,7 @@ public abstract class ShipsQueueMenu extends Actor
 			{
 				break;
 			}
-			
+
 			avatar.setPosition(x, y);
 			avatar.draw(batch, parentAlpha);
 			

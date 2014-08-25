@@ -2,6 +2,7 @@ package sk.hackcraft.spacestation.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+
 import sk.hackcraft.spacestation.SpaceStationGame;
 
 public class DesktopLauncher

@@ -11,17 +11,13 @@ public class Dock extends Actor
 	private Ship dockedShip;
 	private Vector2 dockingAdapterPosition;
 
-	private SelectionBound selectionBound;
-	
 	private boolean reserved;
 	private boolean cargoTransfer;
 	
-	public Dock(int dockIndex, SelectionBound selectionBound)
+	public Dock(int dockIndex)
 	{
 		setName("Dock no" + dockIndex);
-		
-		this.selectionBound = selectionBound;
-		
+
 		setSize(16, 16);
 		
 		dockingAdapterPosition = new Vector2(8, 8);
@@ -36,6 +32,8 @@ public class Dock extends Actor
 	{
 		Vector2 shipPosition = calculateShipDockingPosition(ship);
 		ship.setPosition(shipPosition.x, shipPosition.y);
+		
+		ship.showCargoGauge(true);
 		
 		dockedShip = ship;
 		
@@ -61,6 +59,8 @@ public class Dock extends Actor
 	
 	public void undockShip()
 	{
+		dockedShip.showCargoGauge(false);
+		
 		dockedShip = null;
 		reserved = false;
 	}
@@ -88,20 +88,6 @@ public class Dock extends Actor
 	public boolean isTransferringCargo()
 	{
 		return cargoTransfer;
-	}
-	
-	@Override
-	public void draw(Batch batch, float parentAlpha)
-	{
-		if (hasDockedShip())
-		{
-			drawLoadGauge(batch);
-		}
-	}
-	
-	private void drawLoadGauge(Batch batch)
-	{
-		
 	}
 	
 	@Override

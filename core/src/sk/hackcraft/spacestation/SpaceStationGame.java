@@ -109,7 +109,7 @@ public class SpaceStationGame extends ApplicationAdapter
 			{
 				cleanupIntro(intro);
 			}
-		}, 2, 10);
+		}, Intro.duration);
 
 		gameStage.addListener(new InputListener()
 		{
@@ -131,11 +131,6 @@ public class SpaceStationGame extends ApplicationAdapter
 
 	private void cleanupIntro(Intro intro)
 	{
-		if (intro.setNextPage())
-		{
-			return;
-		}
-
 		timer.clear();
 
 		intro.clear();

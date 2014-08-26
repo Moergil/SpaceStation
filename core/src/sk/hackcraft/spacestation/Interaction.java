@@ -25,10 +25,17 @@ public class Interaction extends Actor
 	private Map<Actor, List<InteractAction>> actions = new HashMap<Actor, List<InteractAction>>();
 	private Map<Actor, ActiveCheck> checks = new HashMap<Actor, Interaction.ActiveCheck>();
 	
+	private boolean gameEnded;
+	
 	private final InputListener selectionListener = new InputListener()
 	{
 		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button)
 		{
+			if (gameEnded)
+			{
+				return false;
+			}
+			
 			Actor target = event.getTarget();
 			
 			if (actorTouched(target))
@@ -48,8 +55,11 @@ public class Interaction extends Actor
 		this.actionsLayer = actionsLayer;
 		this.selectedBound = selectedBound;
 		this.possibleSelectBound = possibleSelectBound;
-		
-		setZIndex(Scene.Z_SELECTION);
+	}
+	
+	public void gameEnded()
+	{
+		this.gameEnded = true;
 	}
 	
 	public void cancelActualInteraction()
@@ -74,7 +84,7 @@ public class Interaction extends Actor
 		else if (activeMaster == actor)
 		{
 			System.out.println("Cancelled selection");
-			cancelSelection();
+			//cancelSelection();
 			return true;
 		}
 		else if (activeMaster != null)
@@ -166,6 +176,11 @@ public class Interaction extends Actor
 	@Override
 	public void draw(Batch batch, float parentAlpha)
 	{
+		if (gameEnded)
+		{
+			return;
+		}
+		
 		if (activeMaster != null)
 		{
 			selectedBound.draw(activeMaster, batch);

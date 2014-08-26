@@ -66,6 +66,8 @@ public class SpaceStationGame extends ApplicationAdapter
 	private ScoreLabel scorelabel;
 
 	private BackgroundStars backgroundStars;
+	
+	private GameOverScreen gameOverScreen;
 
 	@Override
 	public void create()
@@ -344,7 +346,8 @@ public class SpaceStationGame extends ApplicationAdapter
 
 				final DistantShip dShip = distantShips.get(ship);
 
-				final float flyTimeThere = 5, flyTimeBack = 5;
+				float distance = (float)planet.getDistance();
+				final float flyTimeThere = distance, flyTimeBack = distance;
 
 				flyDistantShipTo(dShip, planet, flyTimeThere);
 
@@ -388,6 +391,21 @@ public class SpaceStationGame extends ApplicationAdapter
 
 		this.tpManager = new TaskAndPointsManager(this);
 		this.tpManager.startGeneratingTasks();
+		
+		gameOverScreen = new GameOverScreen();
+		gameOverScreen.setVisible(false);
+		interActions.addActor(gameOverScreen);
+
+		tpManager.setGameOverListener(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				gameOverScreen.setVisible(true);
+				
+				interaction.gameEnded();
+			}
+		});
 
 		setGameView(GameView.DOCKS, 0);
 
@@ -421,7 +439,7 @@ public class SpaceStationGame extends ApplicationAdapter
 
 			station.addDock(dock);
 
-			gameStage.addActor(dock);
+			interActions.addActor(dock);
 		}
 	}
 
@@ -591,7 +609,7 @@ public class SpaceStationGame extends ApplicationAdapter
 	{
 		Vector2 dockingPosition = dock.calculateShipDockingPosition(ship);
 
-		float flyDuration = 5;
+		float flyDuration = TimeGenerator.TIME_OF_DOCKING_APPROACH;
 		ship.arrive(dockingPosition, flyDuration);
 
 		timer.scheduleTask(new Timer.Task()
@@ -602,7 +620,7 @@ public class SpaceStationGame extends ApplicationAdapter
 				dock.dockShip(ship);
 				ship.setIdle();
 			}
-		}, 6);
+		}, TimeGenerator.TIME_OF_COMPLETE_DOCKING);
 	}
 
 	private void releaseShipFromDock(final Dock dock)
@@ -616,9 +634,9 @@ public class SpaceStationGame extends ApplicationAdapter
 			public void run()
 			{
 				Vector2 targetPosition = new Vector2(350, ship.getY());
-				ship.depart(targetPosition, 5, timer);
+				ship.depart(targetPosition, TimeGenerator.TIME_OF_DOCKING_APPROACH, timer);
 			}
-		}, 1);
+		}, TimeGenerator.TIME_OF_DOCKING);
 
 		timer.scheduleTask(new Timer.Task()
 		{
@@ -627,7 +645,7 @@ public class SpaceStationGame extends ApplicationAdapter
 			{
 				shipsQueueMenu.queueShip(ship);
 			}
-		}, 6);
+		}, TimeGenerator.TIME_OF_COMPLETE_DOCKING);
 	}
 
 	private class StationViewMaster implements StationView

@@ -68,6 +68,7 @@ public class SpaceStationGame extends ApplicationAdapter
 	private BackgroundStars backgroundStars;
 	
 	private GameOverScreen gameOverScreen;
+	private GameHint gameHint;
 
 	private Music introMusic;
 	private Music mainMusic;
@@ -191,8 +192,9 @@ public class SpaceStationGame extends ApplicationAdapter
 		Texture stationDoorsTexture = new Texture(Gdx.files.internal("sprite/station_doors.png"));
 		station.setTextures(stationDoorsTexture, 55);
 
-		gameElapsedTimeLabel = new GameElapsedTimeLabel(System.currentTimeMillis(), mainFont);
+		gameElapsedTimeLabel = new GameElapsedTimeLabel(mainFont);
 		gameElapsedTimeLabel.setPosition(5, gameStage.getHeight() - 5);
+		gameElapsedTimeLabel.start();
 		hudStage.addActor(gameElapsedTimeLabel);
 
 		scorelabel = new ScoreLabel(mainFont);
@@ -221,6 +223,15 @@ public class SpaceStationGame extends ApplicationAdapter
 			@Override
 			public boolean keyDown(InputEvent event, int keycode)
 			{
+				if (keycode == Input.Keys.SPACE)
+				{
+					if (gameHint != null)
+					{
+						gameHint.remove();
+						gameHint = null;
+					}
+				}
+				
 				if (keycode == Input.Keys.TAB)
 				{
 					nextGameView();
@@ -405,7 +416,7 @@ public class SpaceStationGame extends ApplicationAdapter
 		
 		gameOverScreen = new GameOverScreen();
 		gameOverScreen.setVisible(false);
-		interActions.addActor(gameOverScreen);
+		hudStage.addActor(gameOverScreen);
 
 		tpManager.setGameOverListener(new Runnable()
 		{
@@ -417,6 +428,10 @@ public class SpaceStationGame extends ApplicationAdapter
 				interaction.gameEnded();
 			}
 		});
+		
+		gameHint = new GameHint();
+		gameHint.setPosition(50, 200);
+		hudStage.addActor(gameHint);
 
 		setGameView(GameView.DOCKS, 0);
 

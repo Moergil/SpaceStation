@@ -9,21 +9,30 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class GameElapsedTimeLabel extends Actor
 {
-	private final long startTime;
+	private long startTime = -1;
 	private final BitmapFont font;
 
-	public GameElapsedTimeLabel(long startTime, BitmapFont font)
+	public GameElapsedTimeLabel(BitmapFont font)
 	{
-		this.startTime = startTime;
 		this.font = font;
 		
 		TextBounds bounds = font.getBounds("00:00");
 		setSize(bounds.width, bounds.height);
 	}
 	
+	public void start()
+	{
+		startTime = System.currentTimeMillis();
+	}
+	
 	@Override
 	public void draw(Batch batch, float parentAlpha)
 	{
+		if (startTime == -1)
+		{
+			return;
+		}
+		
 		long diff = System.currentTimeMillis() - startTime;
 		
 		int totalSeconds = (int)(diff / 1000);

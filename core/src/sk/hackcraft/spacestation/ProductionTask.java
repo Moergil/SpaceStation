@@ -47,7 +47,7 @@ public class ProductionTask extends Timer.Task
 			}
 
 			 manager.getGame().getTimer().scheduleTask(new ProductionTask(this.manager), SECONDS_BETWEEN_PRODUCTION);
-
+			 this.manager.checkGameOver();
 		}
 	}
 

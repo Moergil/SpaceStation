@@ -6,8 +6,8 @@ public class TaskAndPointsManager
 
 	private boolean generateTasks;
 	private int pointsCounter;
-	private int tasksCounter ;
-	
+	private int tasksCounter;
+
 	private Runnable gameOverListener;
 
 	public TaskAndPointsManager(SpaceStationGame game)
@@ -15,12 +15,11 @@ public class TaskAndPointsManager
 		this.game = game;
 		this.generateTasks = true;
 
-		this.pointsCounter = 0;	
+		this.pointsCounter = 0;
 		this.tasksCounter = 0;
 
-
 	}
-	
+
 	public void setGameOverListener(Runnable gameOverListener)
 	{
 		this.gameOverListener = gameOverListener;
@@ -77,12 +76,12 @@ public class TaskAndPointsManager
 			{
 				this.generateTasks = false;
 				System.out.println("GAME OVER");
-				
+
 				if (gameOverListener != null)
 				{
 					gameOverListener.run();
 				}
-				
+
 				return true;
 			}
 		}
@@ -90,21 +89,14 @@ public class TaskAndPointsManager
 		return false;
 	}
 
-
-
-
 	public int getTasksCounter()
 	{
 		return tasksCounter;
 	}
 
-
-
 	public void setTasksCounter(int tasksCounter)
 	{
 		this.tasksCounter = tasksCounter;
 	}
-	
-	
 
 }

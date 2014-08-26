@@ -50,7 +50,7 @@ public class ShipsCreator
 			
 			descriptions.put(GoodsType.HYDROGEN, d);
 			
-			distantShipTexture = new Texture(Gdx.files.internal("sprite/dot2.png"));
+			distantShipTexture = new Texture(Gdx.files.internal("sprite/dot5.png"));
 			distantShips.put(GoodsType.HYDROGEN, distantShipTexture);
 		}
 		
@@ -92,7 +92,7 @@ public class ShipsCreator
 			
 			descriptions.put(GoodsType.GOODS, d);
 			
-			distantShipTexture = new Texture(Gdx.files.internal("sprite/dot5.png"));
+			distantShipTexture = new Texture(Gdx.files.internal("sprite/dot2.png"));
 			distantShips.put(GoodsType.GOODS, distantShipTexture);
 		}
 	}

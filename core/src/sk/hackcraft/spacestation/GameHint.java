@@ -16,7 +16,7 @@ public class GameHint extends Actor
 			+ "If resource on planet is\n"
 			+ "depleted, you will lose.\n"
 			+ "Keep resources on station\n"
-			+ "for emergencies.\n"
+			+ "for emergencies and score.\n"
 			+ "\n"
 			+ "Press [SPACE] to dismiss.";
 					

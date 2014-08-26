@@ -410,14 +410,12 @@ public class SpaceStationGame extends ApplicationAdapter
 		addShip(GoodsType.FERTILIZERS);
 		addShip(GoodsType.METALS);
 		addShip(GoodsType.GOODS);
-
-		this.tpManager = new TaskAndPointsManager(this);
-		this.tpManager.startGeneratingTasks();
 		
 		gameOverScreen = new GameOverScreen();
 		gameOverScreen.setVisible(false);
 		hudStage.addActor(gameOverScreen);
 
+		this.tpManager = new TaskAndPointsManager(this);
 		tpManager.setGameOverListener(new Runnable()
 		{
 			@Override
@@ -429,6 +427,8 @@ public class SpaceStationGame extends ApplicationAdapter
 			}
 		});
 		
+		this.tpManager.startGeneratingTasks();
+
 		gameHint = new GameHint();
 		gameHint.setPosition(160, 200);
 		hudStage.addActor(gameHint);

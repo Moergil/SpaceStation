@@ -61,7 +61,7 @@ public class Interaction extends Actor
 		this.possibleSelectBound = possibleSelectBound;
 		
 		this.buttonSound = buttonSound = Gdx.audio.newMusic(Gdx.files.internal("sounds/button.ogg"));
-		buttonSound.setVolume(0.3f);
+		buttonSound.setVolume(0.1f);
 	}
 	
 	public void gameEnded()

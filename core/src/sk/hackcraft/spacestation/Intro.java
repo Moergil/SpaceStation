@@ -19,7 +19,8 @@ public class Intro extends Actor
 {
 	private BitmapFont font;
 
-	public static final int duration = 33;
+	public static final int start = 1, center = 31, end = 1;
+	public static final int duration = start + center + end;
 
 	private boolean showText;
 
@@ -69,7 +70,7 @@ public class Intro extends Actor
 		texture = new Texture(Gdx.files.internal("sprite/station.png"));
 		introStation = new Sprite(texture);
 
-		addAction(Actions.moveTo(0, 480, duration, Interpolation.sineIn));
+		addAction(Actions.sequence(Actions.delay(start), Actions.moveTo(0, 480, center), Actions.delay(end)));
 	}
 
 	@Override

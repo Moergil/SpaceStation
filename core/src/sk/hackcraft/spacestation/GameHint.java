@@ -9,13 +9,16 @@ public class GameHint extends Actor
 	private final String text =
 			"Press [TAB] for view switch.\n"
 			+ "\n"
-			+ "Interact with ships, station and planets\n"
+			+ "Interact with ships,\n"
+			+ " station and planets\n"
 			+ "and manage resources.\n"
 			+ "\n"
-			+ "If resource on planet is depleted, you will lose.\n"
-			+ "Keep resources on station for emergencies.\n"
+			+ "If resource on planet is\n"
+			+ "depleted, you will lose.\n"
+			+ "Keep resources on station\n"
+			+ "for emergencies.\n"
 			+ "\n"
-			+ "Press [SPACE] to start.";
+			+ "Press [SPACE] to dismiss.";
 					
 					
 	@Override

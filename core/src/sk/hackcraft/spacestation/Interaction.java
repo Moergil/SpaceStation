@@ -5,12 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class Interaction extends Actor
 {
@@ -24,8 +25,9 @@ public class Interaction extends Actor
 	
 	private Map<Actor, List<InteractAction>> actions = new HashMap<Actor, List<InteractAction>>();
 	private Map<Actor, ActiveCheck> checks = new HashMap<Actor, Interaction.ActiveCheck>();
-	
+
 	private boolean gameEnded;
+	private Music buttonSound;
 	
 	private final InputListener selectionListener = new InputListener()
 	{
@@ -40,6 +42,8 @@ public class Interaction extends Actor
 			
 			if (actorTouched(target))
 			{
+				buttonSound.stop();
+				buttonSound.play();
 				System.out.println("Selection consumed.");
 				return true;
 			}
@@ -55,6 +59,9 @@ public class Interaction extends Actor
 		this.actionsLayer = actionsLayer;
 		this.selectedBound = selectedBound;
 		this.possibleSelectBound = possibleSelectBound;
+		
+		this.buttonSound = buttonSound = Gdx.audio.newMusic(Gdx.files.internal("sounds/button.ogg"));
+		buttonSound.setVolume(0.5f);
 	}
 	
 	public void gameEnded()

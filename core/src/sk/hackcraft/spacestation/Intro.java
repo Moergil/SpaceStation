@@ -19,7 +19,7 @@ public class Intro extends Actor
 {
 	private BitmapFont font;
 
-	public static final int duration = 30;
+	public static final int duration = 33;
 
 	private boolean showText;
 
@@ -38,7 +38,7 @@ public class Intro extends Actor
 		"The only way to save the galaxy from",
 		"devastating war was a global",
 		"resource storage and delivery station",
-		"to cover all planet’s needs. You",
+		"to cover all planetï¿½s needs. You",
 		"are to gain control of this station",
 		"and secure steady trade between the",
 		"colonies as their only connection."
@@ -48,10 +48,10 @@ public class Intro extends Actor
 	 * With the amount of people rapidly increasing there was no other hope,
 	 * than to colonize other planets. The demand for resources grew rapidly,
 	 * not even new colonies could extinguish this thirst. The inhabitants of
-	 * this galaxy were brought upon the edge…
+	 * this galaxy were brought upon the edgeï¿½
 	 * 
 	 * The only way to save the galaxy from devastating war was a global
-	 * resource storage and delivery station to cover all planet’s needs. You
+	 * resource storage and delivery station to cover all planetï¿½s needs. You
 	 * are to gain control of this station and secure steady trade between the
 	 * colonies as their only connection.
 	 */
